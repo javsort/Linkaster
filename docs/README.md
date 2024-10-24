@@ -10,7 +10,7 @@
 
 ### Permissions (Google Docs)
 - On Google Docs, go to **Extensions** -> **Apps Script**
-    - Make a copy of the [Docs Script](./docs_script) called `
+    - Make a copy of the [Docs Script](./docs_script) called `github-integration-d<deliverable #>-<your-name>.gs`
 
 ## Google Docs extensions -> `Apps Scripts`
 
