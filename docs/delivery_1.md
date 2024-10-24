@@ -283,6 +283,9 @@ Runtime Architecture
 UML Sequence Diagram
 Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
 Marcos
+
+Module management: 
+
 State Diagram 
 Marcos
 
