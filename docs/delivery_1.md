@@ -269,7 +269,7 @@ Responsibilities:
 Provide a feedback system for all students.
 Provide the option of anonymity for feedback submission.
 
-External API Integration 
+External API Integration Service 
 Description: Buenas tryout
 Responsibilities:
 
