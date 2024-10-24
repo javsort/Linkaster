@@ -284,10 +284,27 @@ UML Sequence Diagram
 Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
 Marcos
 
-Module management: 
+User Management: 
+https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=sharing 
 
+Module management: 
+https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
+Ayuda de marcos por 3
+
+
+File Upload & Storage (missing last case, need to watch video of public keys)
+
+https://drive.google.com/file/d/1mjO8DoAzUmWG3DQkH3J0oeo0iUf8mXcT/view?usp=sharing 
+
+Notification and Messaging
+
+Timetable
+
+Reservation
+
+Feedback
 State Diagram 
-Marcos
+Marcos needs to do 3 states of a task (like send file in chat, join module and library usage)
 
 Features:
 Services: Scheduling service, Notification Service and Messaging, private messaging, encryption service, Announcements Service.
