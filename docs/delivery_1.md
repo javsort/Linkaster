@@ -286,7 +286,7 @@ Marcos
 
 Module management: 
 https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
-Ayuda dmia
+Ayuda de marcos por 3
 
 State Diagram 
 Marcos
