@@ -180,7 +180,7 @@ File Upload & Storage (missing last case, need to watch video of public keys)
 
 https://drive.google.com/file/d/1mjO8DoAzUmWG3DQkH3J0oeo0iUf8mXcT/view?usp=sharing 
 
-Notification and Messaging
+Notification and Messaging(missing public keys)
 
 https://drive.google.com/file/d/1SEN3NnAW5jGsDiCrB0-DDORNeJTbAGwK/view?usp=sharing 
 Timetable
