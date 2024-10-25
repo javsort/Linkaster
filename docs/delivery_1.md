@@ -173,23 +173,31 @@ https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=shari
 
 Module management: 
 https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
-Ayuda de marcos por 3
+
 
 
 File Upload & Storage (missing last case, need to watch video of public keys)
 
 https://drive.google.com/file/d/1mjO8DoAzUmWG3DQkH3J0oeo0iUf8mXcT/view?usp=sharing 
 
-Notification and Messaging(missing public keys)
+Notification and Messaging
 
 https://drive.google.com/file/d/1SEN3NnAW5jGsDiCrB0-DDORNeJTbAGwK/view?usp=sharing 
+
+
 Timetable
 https://drive.google.com/file/d/1Y6PX01lDG-x_wvGn3XbMtzN7dEJZ337I/view?usp=sharing 
+
+
 Reservation
 https://drive.google.com/file/d/1ht1wtrFgYJ9BAlvY007ycZ03V-UZ2Awx/view?usp=sharing 
 
+
+
 Feedback
 https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=sharing 
+
+
 
 State Diagram
 Marcos needs to do 3 states of a task (like send file in chat, join module and library usage)
