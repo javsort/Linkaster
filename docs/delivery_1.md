@@ -212,14 +212,51 @@ https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=shari
 
 
 
+
+
+
+
 State Diagram
 Case student sends file
 https://drive.google.com/file/d/1BGy3Bf_KE-y1f3Dz_fRly5Tb1NvvOjBW/view?usp=sharing 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Case student joins module
 https://drive.google.com/file/d/1dZRJQBuqDdCRmI7gIOIJSXlDr_e6pd5V/view?usp=sharing 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Case student makes reservation
 https://drive.google.com/file/d/1hy_fdEXhsdNsRSYsKd9sFQ_CqGcBarLd/view?usp=sharing 
+
+
+
 Marcos needs to do 3 states of a task (like send file in chat, join module and library usage)
 
 Features:
