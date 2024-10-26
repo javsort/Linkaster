@@ -26,8 +26,8 @@ Once your file is ready, **EACH TIME** you've done the changes you worked on for
 
 For the first time, google will ask for user authentication, follow the steps and approve all, the first upload should be committed to the `main` branch.
 
-> [!ALERT]
-> **THIS IS THE ONLY SCRIPT ALLOWED TO COMMIT TO MAIN**, for all other commits, YOU MUST OPEN A **Pull-Request** and **wait** for approval.
+## :warning: Important Notice
+**THIS IS THE ONLY SCRIPT ALLOWED TO COMMIT TO MAIN**, for all other commits, YOU MUST OPEN A **Pull-Request** and **wait** for approval.
 
 ### Regular use
 After the first use of the script, it is sufficient to just click **Run** on your personal script to add your update to the repository
