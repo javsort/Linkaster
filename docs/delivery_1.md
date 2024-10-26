@@ -156,11 +156,21 @@ The system?s front-end shall be built mainly in Flutter, and supported by:
 
 System Design and Architecture 
 System Design
+High-Level Architecture
+Layered Architecture
+Client-Server Architecture
+Event-Driven Architecture
+Service-Oriented Architecture
+Microservices Architecture
+From the architectures described, the following high-level component diagram was outlined, which will be followed further in the report by a developed component diagram:
 
+https://drive.google.com/file/d/1odZTdcW7gJUNxFq5uFWitMnfNHlG_mlq/view?usp=sharing 
 Design Patterns and Architecture
 UML Class Diagram
 Marlene
 Refine the created architecture by presenting Design time architecture to be modeled via UML class and component diagrams.
+
+https://lucid.app/lucidchart/e00b1124-b25e-4bc2-a4e7-db0ab8ae0551/edit?viewport_loc=-4112%2C2049%2C3392%2C1995%2CHWEp-vi-RSFO&invitationId=inv_3d0bf8da-719d-4214-9ba5-005e2ee71de5 
 Component Diagram
 Marlene
 System Architecture
