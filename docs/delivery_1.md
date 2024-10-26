@@ -28,31 +28,22 @@ UML Sequence and State Diagrams
 
 
 Table of Contents 
-Finished
-Needs proof-reading
-In progress
-Not started
 Introduction
 Purpose
-Intended Audience
-Product Scope
 Definitions and Acronyms 
-Overall Description
-User Classes and Characteristics 
-Assumptions and Dependencies
-System Features and Requirements
+Architecturally Significant Requirements
 Functional Requirements
 Non-Functional Requirements
-Interface Details
 Constraints 
-Architecture 
-Architecture Style
-Design-Time Architecture
+System Design and Architecture 
+System Design
+Design Patterns and Architecture
 UML Class Diagram
 Component Diagram
-Runtime Architecture
+System Architecture
 UML Sequence Diagram
 State Diagram 
+Architecture Style
 Appendix
 Sources
 
@@ -61,41 +52,10 @@ Purpose
 	The purpose of L!nkaster is to provide students and educators at Lancaster University Leipzig with an app and website that they can use for all their university-related needs. LUL students are required to use a variety of tools, each specialized for a single task. Timetabler, for example, is a website that is used exclusively for students to view their schedule. Several of these tools, such as Moodle, require students to log in every time, some even requiring two-factor authentication. L!nkaster combines all relevant tools into one app and website so that students can access all their educational information in one place without the hassle of logging in to each one or installing multiple apps. 
 Students and instructors can easily communicate with each other through L!nkaster without needing to exchange personal information (account creation simply requires an LUL email address). Instructors can use this to notify students about canceling class, a new assignment being posted, grades being released, and other academic announcements. Furthermore, each module automatically generates a group chat with enrolled students to encourage students to communicate and provides them with a space to ask questions, share notes, and generally form connections. 
 To summarize, L!nkaster is a single platform that combines many different tools into one and is specifically customized to LUL. It promotes communication and teamwork between classmates and is overall an efficient alternative to the many different tools LUL currently uses. 
-Intended Audience
-This document informs the reader about L!nkaster by describing its uses and users. It also goes into depth about the system?s requirements, defines the classes it will use, and describes the architecture with which the software will be built. The reader should be familiar with software engineering concepts such as the different types of software architecture, common programming languages, and should have a good understanding of how software is built. The reader should also know how to read UML class and sequence diagrams, component diagrams, and state diagrams. The reader is encouraged to independently research any terms they may not be familiar with. The document should be read in the numerical order of its sections (1.1, then 1.2, and so on).
-Product Scope
-	L!nkaster is intended for students, educators, and other staff of LUL, though different tools are made with more specific audiences in mind. For instance, the announcement feature is intended for educators to use while the group chats are made for inter-student communication. The different types of users (teacher, student, class representative student, etc) can be assigned to anyone within LUL. This means that regular students can assume administrative roles by, for instance, becoming the leader of a club. 
-L!nkaster should be used mainly for academic purposes when communicating with instructors or classmates about module-related topics, planning their academic workload, and viewing their class schedule. However, other uses are also supported. The private chats feature allows students to chat with anyone without a filter that might deter them from casual communication. Additionally, modules are typically courses but can also be clubs or other extracurricular activities, meaning that all academic features can also be used for extracurriculars. 
 Definitions and Acronyms 
 LUL: Lancaster University Leipzig
-
-
-Overall Description
-User Classes and Characteristics 
-Students
-Student: 
-	Students are the largest amount of expected users. They have limited functionalities when it comes to publishing announcements and notifications, but they are capable of consulting their timetable, receiving notifications, and joining classes.
-
-Class Representative Student:
-	Class Representative Students are the ones that the students of the program nominate. They can make announcements to the students of the program regarding the problems or news in it.
-
-Social Committee Student:
-	Social Committee Students are part of the social committee of the university. They have the ability to create social-committee related announcements to all the students in order to notify the events or promotion of new clubs to them. 
-
-Club Student:
-	Club Students are created by the administrative teacher. They can make club-related announcements to the students part of the club.
-	
-Teachers
-Module Teacher:
-The module teacher is a user type assigned by the administrative teacher. This type of teacher is capable of creating a group within the module (for group assignments), uploading files for the modules, and can make module-related announcements.
-
-Administrative Teacher:
-	The Administrative Teacher involves any faculty member in an administrative position at the university. They are one of the user types with the highest priorities. Since they are able to create modules and assign other Teachers/Club Students to it, they are also capable of sending generalized announcements and reminders, while also being capable of seeing the information in their created modules.
-Assumptions and Dependencies
-<List any assumed factors (as opposed to known facts) that could affect the requirements stated in the SRS. These could include third-party or commercial components that you plan to use, issues around the development or operating environment, or constraints. The project could be affected if these assumptions are incorrect, are not shared, or change. Also identify any dependencies the project has on external factors, such as software components that you intend to reuse from another project, unless they are already documented elsewhere (for example, in the vision and scope document or the project plan).>
-
-System Features and Requirements
-System Features and Functional Requirements
+Requirements and Constraints
+Functional Requirements
 Marcos 
 Elicit all the architecturally significant requirements (ASRs) for L!nkaster app. The ASRs must cover the entire scenario.
 
@@ -141,6 +101,7 @@ The system should allow students to provide feedback on modules directly to teac
 Profile Customization:
 The system should allow students and teachers to customize their profiles with personal information.
 The system shall ensure that personal information is stored safely and respects GDPR?s guidelines.
+
 Non-Functional Requirements
 Marcos
 Performance:
@@ -164,8 +125,6 @@ Availability:
 The system should guarantee high availability (99.9% uptime) to ensure access at all times, except during scheduled maintenance periods
 Usability:
 The system shall uphold its design to Nielsen?s 10 Usability Heuristics for User Interface Design to ensure a user-friendly design.
-
-Interface Details
 
 Constraints
 Javier
@@ -195,7 +154,63 @@ SpringBoot:
 The system?s front-end shall be built mainly in Flutter, and supported by:
 
 
-Architecture 
+System Design and Architecture 
+System Design
+
+Design Patterns and Architecture
+UML Class Diagram
+Marlene
+Refine the created architecture by presenting Design time architecture to be modeled via UML class and component diagrams.
+Component Diagram
+Marlene
+System Architecture
+UML Sequence Diagram
+Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
+Marcos
+
+User Management: 
+https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=sharing 
+
+Module management: 
+https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
+
+
+
+File Upload & Storage (missing last case, need to watch video of public keys)
+
+https://drive.google.com/file/d/1mjO8DoAzUmWG3DQkH3J0oeo0iUf8mXcT/view?usp=sharing 
+
+Notification and Messaging
+
+https://drive.google.com/file/d/1SEN3NnAW5jGsDiCrB0-DDORNeJTbAGwK/view?usp=sharing 
+
+
+Timetable
+https://drive.google.com/file/d/1Y6PX01lDG-x_wvGn3XbMtzN7dEJZ337I/view?usp=sharing 
+
+
+Reservation
+https://drive.google.com/file/d/1ht1wtrFgYJ9BAlvY007ycZ03V-UZ2Awx/view?usp=sharing 
+
+
+
+Feedback
+https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=sharing 
+
+
+
+State Diagram
+Marcos needs to do 3 states of a task (like send file in chat, join module and library usage)
+
+Features:
+Services: Scheduling service, Notification Service and Messaging, private messaging, encryption service, Announcements Service.
+Module: Schedules, Subscription to schedule.
+Restriction of messages when in class
+Support of files such as pdf and images.
+Restriction of characters
+Profile creation
+Mandatory and optional schedules (classes and office hours eg)
+Settings
 Architecture Style
 Javier
 Architect the TutorLink app by applying the most suitable architecture style(s) and justify the rationale for the selection of your style. Please note, the app by-default follows a client-server based and layered organization so your selected style must be other than the generic client server and layered architecture.
@@ -273,48 +288,6 @@ External API Integration Service
 Description: Buenas tryout
 Responsibilities:
 
-Design-Time Architecture
-UML Class Diagram
-Marlene
-Refine the created architecture by presenting Design time architecture to be modeled via UML class and component diagrams.
-Component Diagram
-Marlene
-Runtime Architecture
-UML Sequence Diagram
-Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
-Marcos
-
-User Management: 
-https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=sharing 
-
-Module management: 
-https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
-Ayuda de marcos por 3
-
-
-File Upload & Storage (missing last case, need to watch video of public keys)
-
-https://drive.google.com/file/d/1mjO8DoAzUmWG3DQkH3J0oeo0iUf8mXcT/view?usp=sharing 
-
-Notification and Messaging
-
-Timetable
-
-Reservation
-
-Feedback
-State Diagram 
-Marcos needs to do 3 states of a task (like send file in chat, join module and library usage)
-
-Features:
-Services: Scheduling service, Notification Service and Messaging, private messaging, encryption service, Announcements Service.
-Module: Schedules, Subscription to schedule.
-Restriction of messages when in class
-Support of files such as pdf and images.
-Restriction of characters
-Profile creation
-Mandatory and optional schedules (classes and office hours eg)
-Settings
 
 
 Appendix
