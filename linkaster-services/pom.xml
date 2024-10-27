@@ -16,4 +16,7 @@
         <module>services/feedbackService</module>
         <module>services/messageHandler</module>
     </modules>
+
+    <dependencies>
+    </dependencies>
 </project>

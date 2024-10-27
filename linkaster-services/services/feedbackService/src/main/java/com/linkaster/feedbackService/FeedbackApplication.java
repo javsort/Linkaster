@@ -1,10 +1,10 @@
-package com.linkaster.cabinetService;
+package com.linkaster.feedbackService;
 
 /**
  * Hello world!
  *
  */
-public class App 
+public class FeedbackApplication
 {
     public static void main( String[] args )
     {
