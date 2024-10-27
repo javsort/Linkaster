@@ -175,9 +175,12 @@ Refine the created architecture by presenting Design time architecture to be mod
 
 https://lucid.app/lucidchart/e00b1124-b25e-4bc2-a4e7-db0ab8ae0551/edit?viewport_loc=-4112%2C2049%2C3392%2C1995%2CHWEp-vi-RSFO&invitationId=inv_3d0bf8da-719d-4214-9ba5-005e2ee71de5 
 Component Diagram
-After properl
+This section intends to justify the choice for microservices, and give a wider description of the inner services within our modules. Following the core microservices structure of Controller -> Service -> Repository, we further distinguished differences between the services for better resource management and functionality. Through the next diagram it is also intended to display most interactions within the services and show how components are expected to interact.
+
+To gain a good understanding of our system, it is necessary to give this high-level overview, since also based on microservices usual structure, all communication between services is expected to be of a loose-coupling nature, and not expose internal objects other than the services who manage them. This is why, the following component diagram was brought up:
 
 
+https://drive.google.com/file/d/174GHoknSBu4yiTfKNKH852lsSnHDHFba/view?usp=sharing 
 System Architecture
 UML Sequence Diagram
 Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
