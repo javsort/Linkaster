@@ -175,7 +175,9 @@ Refine the created architecture by presenting Design time architecture to be mod
 
 https://lucid.app/lucidchart/e00b1124-b25e-4bc2-a4e7-db0ab8ae0551/edit?viewport_loc=-4112%2C2049%2C3392%2C1995%2CHWEp-vi-RSFO&invitationId=inv_3d0bf8da-719d-4214-9ba5-005e2ee71de5 
 Component Diagram
-Marlene
+After properl
+
+
 System Architecture
 UML Sequence Diagram
 Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
@@ -219,6 +221,10 @@ https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=shari
 State Diagram
 Case student sends file
 https://drive.google.com/file/d/1BGy3Bf_KE-y1f3Dz_fRly5Tb1NvvOjBW/view?usp=sharing 
+
+
+
+
 
 
 
