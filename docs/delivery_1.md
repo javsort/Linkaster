@@ -283,12 +283,7 @@ State Diagram
 Case student sends file
 https://drive.google.com/file/d/1BGy3Bf_KE-y1f3Dz_fRly5Tb1NvvOjBW/view?usp=sharing 
 
-
-
-
-
-
-
+	The user wants to send a file to another user, so first the user needs to logIn to the application, after the log in it enters to the chet and selects add attachment. It opens the file storage which is managed by the file service, here it can see all the options selects the preferred file and submits. The next step is managed by the messaging service with the encryption process and once is sent the app sends a notification to the user. 
 
 
 
@@ -304,13 +299,10 @@ https://drive.google.com/file/d/1BGy3Bf_KE-y1f3Dz_fRly5Tb1NvvOjBW/view?usp=shari
 
 Case student joins module
 https://drive.google.com/file/d/1dZRJQBuqDdCRmI7gIOIJSXlDr_e6pd5V/view?usp=sharing 
+	The user wants to join a module, so first the user needs to logIn to the application, here there is a process that all the authentication is correct. Then it clicks on join module, it puts the code that the teacher gives and after processing it adds the user to the module. The timetable once is joined then updates the schedule of that student and the it sends the update to the notification service which then notifies the update to te user.
 
 
-
-
-
-
-
+	
 
 
 
@@ -321,6 +313,7 @@ https://drive.google.com/file/d/1dZRJQBuqDdCRmI7gIOIJSXlDr_e6pd5V/view?usp=shari
 
 Case student makes reservation
 https://drive.google.com/file/d/1hy_fdEXhsdNsRSYsKd9sFQ_CqGcBarLd/view?usp=sharing 
+	The user wants to book a space in the library, so first the user needs to logIn to the application. After that, the user selects space and time for the booking, the request is processed by the the reservation service and its approved. Then it sends the time and slot to the timetable service which after receiving it, updates the user schedule and sends the confirmation to the notification to generate a notification to the user.
 
 
 
