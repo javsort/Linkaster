@@ -272,16 +272,12 @@ The timetable works exactly the same in the same cases, so when the student is j
 
 Reservation
 https://drive.google.com/file/d/1ht1wtrFgYJ9BAlvY007ycZ03V-UZ2Awx/view?usp=sharing 
-
+	The reservation system works when the user selects the slot in library it checks the times of that slot being available in the selected day. Then the user selects the time and confirms the booking, making him the owner of that space. 
 
 
 Feedback
 https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=sharing 
-
-Here we have two cases if the user wants to send it anonymous or public. In both cases the procedure works like in messaging requisition the public key of the person that wants to send feedback 
-
-
-
+Here we have two cases if the user wants to send it anonymous or public. In both cases the procedure works like in messaging requisition the public key of the person that wants to send feedback. Then it the system de-encrypts the message but if the feedback was send anonymously it will appear ?anonimous? to the other user.
 
 State Diagram
 Case student sends file
