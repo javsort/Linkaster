@@ -38,6 +38,7 @@ Constraints
 System Design and Architecture 
 System Design
 Design Patterns and Architecture
+Design Patterns
 UML Class Diagram
 Component Diagram
 System Architecture
@@ -169,59 +170,120 @@ From the architectures described, the following high-level component diagram was
 
 https://drive.google.com/file/d/1odZTdcW7gJUNxFq5uFWitMnfNHlG_mlq/view?usp=sharing 
 Design Patterns and Architecture
-UML Class Diagram
-Marlene
-Refine the created architecture by presenting Design time architecture to be modeled via UML class and component diagrams.
+Design Patterns
 
-https://lucid.app/lucidchart/e00b1124-b25e-4bc2-a4e7-db0ab8ae0551/edit?viewport_loc=-4112%2C2049%2C3392%2C1995%2CHWEp-vi-RSFO&invitationId=inv_3d0bf8da-719d-4214-9ba5-005e2ee71de5 
+UML Class Diagram
+https://drive.google.com/file/d/1WAS_DAfSp2KZCdGR41Y-7L-D-ovqnu2_/view (open in draw.io for best quality) 
+Full UML Class Diagram: 
+
+
+File Upload & Storage Service:
+
+
+Module Management Service:
+
+
+Feedback Service:
+
+
+User Management Service:
+
+
+Library Reservation Service:
+
+
+Notifications and Messaging Services:
+
+
+Timetable Service:
+
+Other Classes:
+
+
 Component Diagram
-Marlene
+This section intends to justify the choice for microservices, and give a wider description of the inner services within our modules. Following the core microservices structure of Controller -> Service -> Repository, we further distinguished differences between the services for better resource management and functionality. Through the next diagram it is also intended to display most interactions within the services and show how components are expected to interact.
+
+To gain a good understanding of our system, it is necessary to give this high-level overview, since also based on microservices usual structure, all communication between services is expected to be of a loose-coupling nature, and not expose internal objects other than the services who manage them. This is why, the following component diagram was brought up:
+
+
+https://drive.google.com/file/d/174GHoknSBu4yiTfKNKH852lsSnHDHFba/view?usp=sharing 
 System Architecture
 UML Sequence Diagram
 Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
 Marcos
 
+
+
+
+
+
+
+
+
+
+
+
 User Management: 
 https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=sharing 
+This is the securence diagram for the user management service, here you see the main 3 cases of this service: User registration, user log in and user customization. In the registration case the user inputs the required information and the system once it validates the information it creates a key pair for encryption. The logIn case only checks and confirms the data with the DB. The customization case lets the user to modify the screen (add dark mode or add optional information) and updates the user information in DB.
+
+
+
+
+
+
+
+
+
+
 
 Module management: 
 https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
 
+This is the sequence diagram of the Module Management Service, and has 4 cases: Creation of module, assignation of teacher, code generation and the student joining the module. The creation of the module is made by the administrative teacher, and the data is added managed by the service and it updates the DB. Once the module is created the administrative teacher can add the teacher to the module and then once the request is processed it updates the DB. After the teacher is assigned to a module, the module teacher can create a code (access code of the module) and once the request is processed it updates the DB. Finally, once the code module is created the student can input the code and the business logic processes the request and if correct it updates the DB. 
 
 
-File Upload & Storage (missing last case, need to watch video of public keys)
 
+
+File Upload & Storage
 https://drive.google.com/file/d/1mjO8DoAzUmWG3DQkH3J0oeo0iUf8mXcT/view?usp=sharing 
+
+This is the sequence diagram of the File and Storage Service, and has 3 cases: File upload, file download and share file. The file upload case, the user uploads a file to the storage and it saves the data in the DB. The download case, the user downloads the file from the file storage to the device. Share file case, the user sends the file with the public key of the user/users and sends file in the chat. 
+
+
+
+	
+
+
 
 Notification and Messaging
 
 https://drive.google.com/file/d/1SEN3NnAW5jGsDiCrB0-DDORNeJTbAGwK/view?usp=sharing 
 
+The sequence diagram of the notification and messaging service, here there are 5 cases: message send, search user, message receive, announcement received and update in timetable. For message send the UI requests the public key of the user that the user wants to send a message and then send the message. For the search user, the user inputs the letters of the name and continuously request that prompt to the DB to retrieve the options. The message receive once the user sends the message and is encrypted, the business logic de encrypts it to the user. The announcement case is that once the announcement is being posted to a module/club the ui retrieves the public keys of those people sends it and then is de-ecrypted by the privat ekey of each user to display in the UI. The notification of new event is when the user is added to a schedule in timetable updates the DB and sends notification. 
 
 Timetable
 https://drive.google.com/file/d/1Y6PX01lDG-x_wvGn3XbMtzN7dEJZ337I/view?usp=sharing 
 
+The timetable works exactly the same in the same cases, so when the student is joined to an event it automatically checks the data of that event and updates the timetable. Also the events need to be classified between mandatory or optional to representation in the UI.  
+
+
+
 
 Reservation
 https://drive.google.com/file/d/1ht1wtrFgYJ9BAlvY007ycZ03V-UZ2Awx/view?usp=sharing 
-
+	The reservation system works when the user selects the slot in library it checks the times of that slot being available in the selected day. Then the user selects the time and confirms the booking, making him the owner of that space. 
 
 
 Feedback
 https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=sharing 
-
-
-
-
-
-
+Here we have two cases if the user wants to send it anonymous or public. In both cases the procedure works like in messaging requisition the public key of the person that wants to send feedback. Then it the system de-encrypts the message but if the feedback was send anonymously it will appear ?anonimous? to the other user.
 
 State Diagram
 Case student sends file
 https://drive.google.com/file/d/1BGy3Bf_KE-y1f3Dz_fRly5Tb1NvvOjBW/view?usp=sharing 
 
-
-
+	The user wants to send a file to another user, so first the user needs to logIn to the application, after the log in it enters to the chet and selects add attachment. It opens the file storage which is managed by the file service, here it can see all the options selects the preferred file and submits. The next step is managed by the messaging service with the encryption process and once is sent the app sends a notification to the user. 
 
 
 
@@ -237,13 +299,10 @@ https://drive.google.com/file/d/1BGy3Bf_KE-y1f3Dz_fRly5Tb1NvvOjBW/view?usp=shari
 
 Case student joins module
 https://drive.google.com/file/d/1dZRJQBuqDdCRmI7gIOIJSXlDr_e6pd5V/view?usp=sharing 
+	The user wants to join a module, so first the user needs to logIn to the application, here there is a process that all the authentication is correct. Then it clicks on join module, it puts the code that the teacher gives and after processing it adds the user to the module. The timetable once is joined then updates the schedule of that student and the it sends the update to the notification service which then notifies the update to te user.
 
 
-
-
-
-
-
+	
 
 
 
@@ -254,6 +313,7 @@ https://drive.google.com/file/d/1dZRJQBuqDdCRmI7gIOIJSXlDr_e6pd5V/view?usp=shari
 
 Case student makes reservation
 https://drive.google.com/file/d/1hy_fdEXhsdNsRSYsKd9sFQ_CqGcBarLd/view?usp=sharing 
+	The user wants to book a space in the library, so first the user needs to logIn to the application. After that, the user selects space and time for the booking, the request is processed by the the reservation service and its approved. Then it sends the time and slot to the timetable service which after receiving it, updates the user schedule and sends the confirmation to the notification to generate a notification to the user.
 
 
 
