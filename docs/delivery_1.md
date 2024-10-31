@@ -76,7 +76,7 @@ The system shall allow students to join modules or club groups through unique co
 After a Student joins a module, the system shall automatically update its timetable with its corresponding schedule.
 Each module and group will maintain a list with all active students for auditing purposes.
 Timetables:
-The system shall support a timetable functionality for the students.
+The system shall support a timetable functionality for the students and teachers.
 Events shall be categorized on the user?s timetable based on whether they are mandatory or not.
 Push Notifications:
 The system should support real-time push notifications to students and teachers for announcements, deliveries, and other alerts. 
@@ -93,8 +93,6 @@ Users should be able to see all the ?saved? files in a different space.
 Reservation System:
 The system shall allow students to book study spaces in advance.
 When booking, the system shall display an up-to-date availability status of the study spaces.
-External API Integration:
-The system should support integration with external APIs for additional functionality. 
 Event Scheduling:
 Teachers and Club Students should be able to schedule events.
 Students should receive timely notifications about events. 
@@ -103,6 +101,10 @@ The system should allow students to provide feedback on modules directly to teac
 Profile Customization:
 The system should allow students and teachers to customize their profiles with personal information.
 The system shall ensure that personal information is stored safely and respects the GDPR?s guidelines.
+External API Integration:
+The system should support integration with external APIs for additional functionality. 
+The system should support authentication through an API such as OAuth
+The system should support One Drive file uploads through an API.
 
 Non-Functional Requirements
 Marcos
@@ -131,22 +133,6 @@ The system shall uphold its design to Nielsen?s 10 Usability Heuristics for User
 Constraints
 Javier
 Specify the relevant constraints such as GDPR compliance specific to data security and privacy
-Time: 
-The system?s overall development shall respect both the development team & course instructor?s deadlines, affecting depth of development and testing phases.
-Regulatory: 
-Since the system has academic purposes, it shall adhere to the GDPR?s integrity and confidentiality standards to securely store all users information.
-The GDPR?s generality may complicate development given the data protection prioritization.
-The system shall be transparent with users regarding what data will be processed.
-The system shall be GDPR compliant and provide its users with data subject rights.
-Hardware:
-Storage and computing power may be limited for the first instance of the application.
-Integration:
-The usage of external APIs for different services might bring up compatibility and reliability challenges.
-A proper and fast interaction between the different services should be prioritized for proper functionality, which could be resource intensive.
-Encryption:
-Even though encryption improves security standards, it also adds layers of authorization, which could lead to delays and longer authorization periods, possibly limiting the up-to-date features.
-Portability:
-Designing both a handheld & web version of the application might bring up some design challenges throughout development.
 Programming Language:
 The system?s back-end shall be supported by:
 Java JDK 21: for the overall back-end structure, this helps ensure proper segregation between services and their proper interaction. Furthermore, utilizing an Object Oriented design facilitates the management of different features such as user-authentication, role-based access, and more.
@@ -154,7 +140,25 @@ Maven: for compilation and dependencies management. Once integrated with Java, i
 Docker: for application deployment, service containerization and management. For deploying the application, Docker was chosen to enable the application deployments and handle the overall application?s service. Also, thanks to the benefits of containerization, whenever a service requires to go under a maintenance period, the team only requires to take down the affected service without affecting the rest of the application?s performance.
 SpringBoot: for overall development and configuration. Thanks to SpringBoot and the Spring Framework, we are able to ease the application?s configuration process and support our microservices design by allowing us to deploy each service separately or together for testing and deployments. 
 The system?s front-end shall be supported by:
-Flutter: There are several reasons why we are going to utilize flutter as the front end language for the application. First of all, it has cross platform capability meaning that with a single codebase can be run in multiple platforms. Also, this codebase is good for maintainability of the visual representation is easy to modify and to update. Finally, with google backing up this language and a growing community of user developers, flutter is a language that will give us scalability. 
+Flutter: There are several reasons why we are going to utilize flutter as the front end language for the application. First of all, it has cross platform capability meaning that with a single codebase can be run on multiple platforms. Also, this codebase is good for maintainability of the visual representation and is easy to modify and to update. Finally, with google backing up this language and a growing community of user developers, flutter is a language that will give us scalability. 
+Regulatory: 
+Since the system has academic purposes, it shall adhere to the GDPR?s integrity and confidentiality standards to securely store all users information.
+The GDPR?s generality may complicate development given the data protection prioritization.
+The system shall be transparent with users regarding what data will be processed.
+The system shall be GDPR compliant and provide its users with data subject rights.
+Time: 
+The system?s overall development shall respect both the development team & course instructor?s deadlines, affecting depth of development and testing phases.
+Hardware:
+Storage and computing power may be limited for the first instance of the application.
+Integration:
+A proper and fast interaction between the different services should be prioritized for proper functionality, which could be resource intensive.
+All services should be able to maintain proper interaction protocols for both inter-service requests and client-server requests.
+Encryption:
+Even though encryption improves security standards, it also adds layers of authorization, which could lead to delays and longer authorization periods, possibly limiting the up-to-date features.
+Portability:
+Designing both a handheld & web version of the application might bring up some design challenges throughout development.
+3rd Party Reliability:
+Using 3rd party APIs involves handling call failures and other API related issues from our application?s back-end, which might affect performance.
 Use Case
 To represent the our functional requirements, the following UML Use Case Diagram was brought up:
 
@@ -194,6 +198,8 @@ Model view controller?
 
 
 UML Class Diagram
+	This section is intended to provide the reader with an overview of how the L!nkaster code will be written. The application is written in an object-oriented language to allow us to utilize inheritance and polymorphism to create more scalable and efficient code. 
+	Note: for best image quality, please open the drive link in draw.io and use the tabs at the bottom to navigate between the different diagrams. 
 Full UML Class Diagram: 
 
 Figure 3 - UML Class Diagram
@@ -226,9 +232,12 @@ Figure 3.6 - Notifications and Messaging Service UML Class Diagram
 Timetable and Event Scheduling Service:
 
 Figure 3.7 Timetable Service UML Class Diagram
+API Handling:
+
+Figure 3.8 API Handling Service UML Class Diagram
 Model Classes:
 
-Figure 3.8 - UML Class Diagram for shared model classes across services
+Figure 3.9 - UML Class Diagram for shared model classes across services
 
 Component Diagram
 This section intends to justify the choice for microservices & service-oriented architecture, and give a wider description of the inner services within our modules. Following the core microservices structure of Controller -> Service -> Repository, we further distinguished differences within the services for better resource management and functionality. The following component diagram is intended to display most interactions within the services and show how components are expected to interact:
@@ -242,7 +251,7 @@ UML Sequence Diagram
 Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
 
 User Management Service: 
-This is the seqcurence diagram for the user management service showing, here you see the main 3 cases of this service: User registration, user log in, and user customization. In the registration case, the user inputs the required information and the system once it validates the information andit creates a key pair for encryption. The logiIn case only checks and confirms the data with the DB. The customization case lets the user to modify the screen (add dark mode or add optional information to their profile) and updates the user information in DB.
+This is the sequence diagram for the user management service showing the main 3 cases of this service: User registration, user login, and user customization. In the registration case, the user inputs the required information and the system validates the information and creates a key pair for encryption. The login case only checks and confirms the data with the DB. The customization case lets the user modify the screen (add dark mode or add optional information to their profile) and updates the user information in DB.
 
 
 
@@ -251,7 +260,7 @@ https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=shari
 
 
 Module Management Service: 
-This is the sequence diagram of the Module Management Service, and has 4 cases: Creation of module, assignation of teacher, code generation and the student joining the module. The creation of the module is carried outmade by the administrative teacher;, and the data is added to the DB and managed by the service and it updates the DB. Once the module is created the administrative teacher can add the teacher to the module and then once the request is processed and the DB is updatedit updates the DB. After the teacher is assigned to a module, the module teacher can create a code (access code of the module). O and once the request is processed it updates the DB. Finally, once the code module is created the student can input the code and the business logic processes the request and, if validcorrect, it updates the DB. 
+This is the sequence diagram of the Module Management Service, and has 4 cases: Creation of module, assignation of teacher, code generation and the student joining the module. The creation of the module is carried out by the administrative teacher; the data is added to the DB and managed by the service. Once the module is created the administrative teacher can add the teacher to the module and then the request is processed and the DB is updated. After the teacher is assigned to a module, the module teacher can create a code (access code of the module). Once the request is processed it updates the DB. Finally, once the code module is created the student can input the code and the business logic processes the request and, if valid, it updates the DB. 
 
 
 Figure 6 - Module Management Service Sequence Diagram
@@ -311,23 +320,17 @@ Case student makes reservation
 Figure 14 - State Diagram for ?Case Student Makes Reservation?
 https://drive.google.com/file/d/1hy_fdEXhsdNsRSYsKd9sFQ_CqGcBarLd/view?usp=sharing 
 
-
-Marcos needs to do 3 states of a task (like send file in chat, join module and library usage)
-
-Features:
-Services: Scheduling service, Notification Service and Messaging, private messaging, encryption service, Announcements Service.
-Module: Schedules, Subscription to schedule.
-Restriction of messages when in class
-Support of files such as pdf and images.
-Restriction of characters
-Profile creation
-Mandatory and optional schedules (classes and office hours eg)
-Settings
 Architecture Style
 Javier
 Architect the TutorLink app by applying the most suitable architecture style(s) and justify the rationale for the selection of your style. Please note, the app by-default follows a client-server based and layered organization so your selected style must be other than the generic client server and layered architecture.
 
-[Argument FOR microservices], hence the following services were defined:
+As mentioned above, for this project?s purpose, we intend to unify multiple platforms the intended end-user currently has to access. And the best way to handle heavy and diverse tasks such as the ones the user requires, is to set them up as services & containers, allowing us to handle each service?s resources more closely, make it easier to notice issues and allow us to have almost minimal downtime besides giving service maintenance. Furthermore, the separation between services allows us to have separate databases, and each service?s structure allows us to have a clear picture of what service can access what information. This only further enhances our project?s adherence with GDPR standards, keeping all sensitive information in a need-to-know access basis, and allows us to minimize access to sensitive data.
+
+Also, supported on the 3-tier web architecture, and the addition of a proxy, the overall security of the business logic layer and database layer is only enhanced thanks to clearly divided layers and access points. Allowing us to know exactly which paths are accessible, what is inside those modules and what information is being requested while still keeping the system safe from possible attacks.
+
+These features, supported on a proper REST implementation, should enable the system to have a centralized access, while still having a separate container for each service. It tightens access rules in between layers while still maintaining a loosely-coupled architecture. Traversing in and out of the layers may require a higher security prioritization, but once within each layer, it is simple to both perform each of the services? tasks while still allowing standardized communication between services. 
+
+After coming up with the architecture choices, the following services were defined:
 User Management Service
 Description:
 The user management service is in charge of handling all user access for both teachers and students, authentication, and role access control.
@@ -396,9 +399,13 @@ Responsibilities:
 Provide a feedback system for all students.
 Provide the option of anonymity for feedback submission.
 
-External API Integration Service 
-Description: Buenas tryout
+External API Handling Service 
+Description: 
+The External API Handling Service, as its name establishes, is to handle all 3rd party API calls the application will be performing. Not only does this service modularize the API accesses, but it also makes our application more resilient to failure. It enables us to handle all API failure, reliability issues and more concerns within one service, and avoids issues for the rest of the services. 
 Responsibilities:
+Handle all 3rd party API calls for all tasks.
+Handle authorization through the OAuth API.
+Handle all file uploads to OneDrive through Microsoft?s API.
 
 
 
