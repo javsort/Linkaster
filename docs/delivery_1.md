@@ -16,11 +16,12 @@ Tasks
 Marlene Berenger
 38880288
 Documented Requirements Specification
-UML Class and Component Diagrams
+UML Class Diagram
 Javier Ortega Mendoza
 38880237
 Constraints
 Design Architecture 
+Component Diagram
 Marcos Gonzalez Fernandez
 38883104
 Functional and Nonfunctional Requirements
@@ -56,11 +57,9 @@ To summarize, L!nkaster is a single platform that combines many different tools 
 Definitions and Acronyms 
 LUL: Lancaster University Leipzig
 DB: Database
+UI: User Interface
 Requirements and Constraints
 Functional Requirements
-Marcos 
-Elicit all the architecturally significant requirements (ASRs) for L!nkaster app. The ASRs must cover the entire scenario.
-
 Role-Based Access Control (RBAC):
 The system shall ensure role-based access for students and teachers.
 The information displayed and available actions shall be determined by roles and permissions.
@@ -107,7 +106,6 @@ The system should support authentication through an API such as OAuth
 The system should support One Drive file uploads through an API.
 
 Non-Functional Requirements
-Marcos
 Performance:
 The system should ensure that notifications are delivered within 1-5 seconds of being sent, even at peak usage.
 The system should have low latency for critical operations such as authentication, module joining, and notification delivery (response times under 500ms).
@@ -129,10 +127,7 @@ Availability:
 The system should guarantee high availability (99.9% uptime) to ensure access at all times, except during scheduled maintenance periods.
 Usability:
 The system shall uphold its design to Nielsen?s 10 Usability Heuristics for User Interface Design to ensure a user-friendly design.
-
 Constraints
-Javier
-Specify the relevant constraints such as GDPR compliance specific to data security and privacy
 Programming Language:
 The system?s back-end shall be supported by:
 Java JDK 21: for the overall back-end structure, this helps ensure proper segregation between services and their proper interaction. Furthermore, utilizing an Object Oriented design facilitates the management of different features such as user-authentication, role-based access, and more.
@@ -167,7 +162,6 @@ https://drive.google.com/file/d/1nIoyDVTovPqF6WSYSsHg3KB69YQ22P5V/view?usp=shari
 
 System Design and Architecture 
 System Design
-High-Level Architecture
 3-Tier Architecture: 
 Setting up the system?s architecture with the industry standard not only sets the application at a market-ready level, but it also ensures better security for our back-end while also allowing better scalability and manageability. The clear difference between the three layers allows for easier development, as one person can work on each layer separately. 
 
@@ -190,12 +184,16 @@ https://drive.google.com/file/d/1odZTdcW7gJUNxFq5uFWitMnfNHlG_mlq/view?usp=shari
 Design Patterns and Architecture
 Design Patterns
 Database Per Service Pattern
-Sidecar Pattern
-Role-Based Access Control (RBAC)
-Proxy 
-Adapter? 
-Model view controller?
+	To ensure that the services are loosely coupled, each service will have its own database. This is a common design pattern for microservices that allows databases to be altered with minimal effect on other databases. This pattern can clearly be recognized in the UML class diagram, which shows that each controller has a corresponding repository that the related subclasses communicate with.
 
+Sidecar Pattern
+	For classes with related functionalities, we used a sidecar pattern. This is a way to couple classes without them interfering with each other and while remaining loosely coupled. The authorization agent class is an example of this. Here, the authorization agent is the supporting feature (?sidecar?) while the user authenticator is the parent class. 
+
+Role-Based Access Control (RBAC)
+	One of L!nkaster?s key features is how the app accurately depicts the different types of people at LUL and their different access levels. In order to properly show that there are teachers and students but that both have subclasses with different access, we used a generic RBAC pattern. This enforces security in our system by ensuring students cannot interfere with modules or commit other authorized activities. 
+
+Proxy 
+	The proxy design pattern can be identified at the top of the component diagram (Figure 4) where the logic gateway contains a route forwarder proxy. This proxy allows us to control access to the different classes while using less resources. This pattern is particularly useful for L!nkaster because we have many different processes that do not need to communicate with all other classes. For example, the messaging services and module services are completely separate. Using a proxy helps us only use the resources needed for a specific action. 
 
 UML Class Diagram
 	This section is intended to provide the reader with an overview of how the L!nkaster code will be written. The application is written in an object-oriented language to allow us to utilize inheritance and polymorphism to create more scalable and efficient code. 
@@ -267,14 +265,14 @@ Figure 6 - Module Management Service Sequence Diagram
 https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
 
 Cabinet Service:
-This is the sequence diagram of the Cabinet (file and storage) Service, and has 3 cases: File upload, file download and share file. The file upload case, the user uploads a file to the storage and it saves the data in the DB. The download case, the user downloads the file from the file storage to the device. Share file case, the user sends the file with the public key of the user/users and sends file in the chat. 
+This is the sequence diagram of the Cabinet (file and storage) Service, and has 3 cases: File upload, file download and share file. In the file upload case, the user uploads a file to the storage and it saves the data in the DB. In the download case, the user downloads the file from the file storage to the device. In the share file case, the user sends the file with the public key of the user/users and sends the file in the chat. 
 
 
 Figure 7 - Cabinet Service Sequence Diagram
 https://drive.google.com/file/d/1mjO8DoAzUmWG3DQkH3J0oeo0iUf8mXcT/view?usp=sharing 
 
 Notification and Messaging Service: 
-The sequence diagram of the notification and messaging service, here there are 5 cases: message send, search user, message receive, announcement received and update in timetable. For message send the UI requests the public key of the user that the user wants to send a message and then send the message. For the search user, the user inputs the letters of the name and continuously request that prompt to the DB to retrieve the options. The message receive once the user sends the message and is encrypted, the business logic de encrypts it to the user. The announcement case is that once the announcement is being posted to a module/club the ui retrieves the public keys of those people sends it and then is de-ecrypted by the privat ekey of each user to display in the UI. The notification of new event is when the user is added to a schedule in timetable updates the DB and sends notification. 
+For the sequence diagram of the notification and messaging service, there are 5 cases: message send, search user, message receive, announcement received and update in timetable. For message send, the UI requests the public key of the user that the user wants to send a message and then sends the message. For search user, the user inputs the letters of the name and continuously requests that prompt to the DB to retrieve the options. For message receive, once the user sends the message and it is encrypted, the business logic decrypts it for the user. The announcement case is that once the announcement is being posted to a module/club the UI retrieves the public keys of those people, sends it and then is decrypted by the private key of each user to display in the UI. The notification of a new event is when the user is added to a schedule in timetable, updates the DB and sends a notification. 
 
 Figure 8 - Notification and Messaging Service Sequence Diagram
 https://drive.google.com/file/d/1SEN3NnAW5jGsDiCrB0-DDORNeJTbAGwK/view?usp=sharing 
@@ -303,25 +301,23 @@ Here we have two cases if the user wants to send it anonymous or public. In both
 Figure 11 - Feedback Service Sequence Diagram
 https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=sharing 
 State Diagram
-Case student sends file
-
+Case: student sends file
 	The user wants to send a file to another user, so first the user needs to logIn to the application, after the log in it enters to the chet and selects add attachment. It opens the file storage which is managed by the file service, here it can see all the options, selects the preferred file and submits. The next step is managed by the messaging service with the encryption process and once it is sent the app sends a notification to the user. 
 Figure 12 - State Diagram for ?Case Student Sends File?
 https://drive.google.com/file/d/1BGy3Bf_KE-y1f3Dz_fRly5Tb1NvvOjBW/view?usp=sharing 
 
-Case student joins module
+Case: student joins module
 	The user wants to join a module, so first the user needs to logIn to the application, here there is a process that all the authentication is correct. Then it clicks on join module, it puts the code that the teacher gives and after processing it adds the user to the module. The timetable once is joined then updates the schedule of that student and the it sends the update to the notification service which then notifies the update to the user.
 
 Figure 13 - State Diagram for ?Case Student Joins Module?
 https://drive.google.com/file/d/1dZRJQBuqDdCRmI7gIOIJSXlDr_e6pd5V/view?usp=sharing 
 
-Case student makes reservation
+Case: student makes reservation
 	The user wants to book a space in the library, so first the user needs to logIn to the application. After that, the user selects space and time for the booking, the request is processed by the reservation service and its approved. Then it sends the time and slot to the timetable service which after receiving it, updates the user schedule and sends the confirmation to the notification to generate a notification to the user.
 Figure 14 - State Diagram for ?Case Student Makes Reservation?
 https://drive.google.com/file/d/1hy_fdEXhsdNsRSYsKd9sFQ_CqGcBarLd/view?usp=sharing 
 
 Architecture Style
-Javier
 Architect the TutorLink app by applying the most suitable architecture style(s) and justify the rationale for the selection of your style. Please note, the app by-default follows a client-server based and layered organization so your selected style must be other than the generic client server and layered architecture.
 
 As mentioned above, for this project?s purpose, we intend to unify multiple platforms the intended end-user currently has to access. And the best way to handle heavy and diverse tasks such as the ones the user requires, is to set them up as services & containers, allowing us to handle each service?s resources more closely, make it easier to notice issues and allow us to have almost minimal downtime besides giving service maintenance. Furthermore, the separation between services allows us to have separate databases, and each service?s structure allows us to have a clear picture of what service can access what information. This only further enhances our project?s adherence with GDPR standards, keeping all sensitive information in a need-to-know access basis, and allows us to minimize access to sensitive data.
@@ -425,8 +421,6 @@ Appendix 4.1.4 - Announcements View Sketch
 https://www.canva.com/design/DAGUNfqutIU/EPfQvra8zaUDSQ9BF2qjdA/view?utm_content=DAGUNfqutIU&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel 
 
 Sources
-https://www.perforce.com/blog/alm/how-write-software-requirements-specification-srs-document 
-
 Spring. (n.d.). Spring Boot. VMware Tanzu. https://spring.io/projects/spring-boot 
 Katariya, J. (2024, June 14). Web application architecture: Everything you need to know. Moon Technolabs. https://www.moontechnolabs.com/blog/web-application-architecture/  
 Confluent. (n.d.). Event-driven architecture (EDA): A complete introduction. https://www.confluent.io/learn/event-driven-architecture/#:~:text=Event%2Ddriven%20architecture%20(EDA),to%20react%20in%20real%20time.  
@@ -434,4 +428,7 @@ Terra, J. (2024, July 23). What is Client-Server Architecture? Everything you sh
 Amazon Web Services. (n.d.). What is SOA (Service-Oriented Architecture)?. Amazon Web Services.  https://aws.amazon.com/what-is/service-oriented-architecture/?nc1=h_ls 
 Google Cloud. (n.d.). What is Microservices Architecture?. Google Cloud. https://cloud.google.com/learn/what-is-microservices-architecture?hl=en 
 AltexSoft (2022) Pros and cons of Flutter App Development, AltexSoft. Available at: https://www.altexsoft.com/blog/pros-and-cons-of-flutter-app-development/ (Accessed: 31 October 2024). 
- 
+ RobBagby. (n.d.). Sidecar pattern - Azure Architecture Center. Microsoft Learn. https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar 
+Lane, G. K. (2023, January 17). How to write an SRS Document (Software Requirements Specification Document). Perforce Software. https://www.perforce.com/blog/alm/how-write-software-requirements-specification-srs-document 
+What is Role-Based Access Control (RBAC)? Examples, Benefits, and More. (n.d.). Digital Guardian. https://www.digitalguardian.com/blog/what-role-based-access-control-rbac-examples-benefits-and-more 
+Refactoring.Guru. (2024, January 1). Proxy. https://refactoring.guru/design-patterns/proxy 
