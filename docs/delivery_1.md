@@ -65,6 +65,19 @@ Role-Based Access Control (RBAC):
 The system shall ensure role-based access for students and teachers.
 The information displayed and available actions shall be determined by roles and permissions.
 Administrative teachers should be able to create modules and assign module teachers to the specific module.
+Messaging Functionality:
+The system shall support a group messaging functionality between classmates.
+The system shall support private messaging between students. 
+The system shall ensure public-key encryption for all messages while also supporting safe storage for them.
+The system shall support a ?status? functionality to show if the student is occupied or not.
+The system shall support a search mechanism to initiate one-on-one chats.
+Module and Group Joining:
+The system shall allow students to join modules or club groups through unique codes.
+After a Student joins a module, the system shall automatically update its timetable with its corresponding schedule.
+Each module and group will maintain a list with all active students for auditing purposes.
+Timetables:
+The system shall support a timetable functionality for the students.
+Events shall be categorized on the user?s timetable based on whether they are mandatory or not.
 Push Notifications:
 The system should support real-time push notifications to students and teachers for announcements, deliveries, and other alerts. 
 The system should track students? timetables and silence notifications automatically during mandatory classes and library reservations.
@@ -77,27 +90,14 @@ File Uploads:
 The system should support file uploads for sharing in announcements and chats. 
 The system should ensure that uploaded files are safely stored on the database and are only accessible to users with authorization.
 Users should be able to see all the ?saved? files in a different space.
-Messaging Functionality:
-The system shall support a group messaging functionality between classmates.
-The system shall support private messaging between students. 
-The system shall ensure public-key encryption for all messages while also supporting safe storage for them.
-The system shall support a ?status? functionality to show if the student is occupied or not.
-The system shall support a search mechanism to initiate one-on-one chats.
-External API Integration:
-The system should support integration with external APIs for additional functionality. 
-Module and Group Joining:
-The system shall allow students to join modules or club groups through unique codes.
-After a Student joins a module, the system shall automatically update its timetable with its corresponding schedule.
-Each module and group will maintain a list with all active students for auditing purposes.
-Event Scheduling:
-Teachers and Club Students should be able to schedule events.
-Students should receive timely notifications about events. 
-Timetables:
-The system shall support a timetable functionality for the students.
-Events shall be categorized on the user?s timetable based on whether they are mandatory or not.
 Reservation System:
 The system shall allow students to book study spaces in advance.
 When booking, the system shall display an up-to-date availability status of the study spaces.
+External API Integration:
+The system should support integration with external APIs for additional functionality. 
+Event Scheduling:
+Teachers and Club Students should be able to schedule events.
+Students should receive timely notifications about events. 
 Feedback Mechanism:
 The system should allow students to provide feedback on modules directly to teachers or administrators, with an anonymous alternative.
 Profile Customization:
@@ -154,9 +154,11 @@ Maven: for compilation and dependencies management. Once integrated with Java, i
 Docker: for application deployment, service containerization and management. For deploying the application, Docker was chosen to enable the application deployments and handle the overall application?s service. Also, thanks to the benefits of containerization, whenever a service requires to go under a maintenance period, the team only requires to take down the affected service without affecting the rest of the application?s performance.
 SpringBoot: for overall development and configuration. Thanks to SpringBoot and the Spring Framework, we are able to ease the application?s configuration process and support our microservices design by allowing us to deploy each service separately or together for testing and deployments. 
 The system?s front-end shall be supported by:
-Flutter: 
-
+Flutter: There are several reasons why we are going to utilize flutter as the front end language for the application. First of all, it has cross platform capability meaning that with a single codebase can be run in multiple platforms. Also, this codebase is good for maintainability of the visual representation is easy to modify and to update. Finally, with google backing up this language and a growing community of user developers, flutter is a language that will give us scalability. 
 Use Case
+To represent the our functional requirements, the following UML Use Case Diagram was brought up:
+
+Figure 1 - UML Use Case Diagram
 https://drive.google.com/file/d/1nIoyDVTovPqF6WSYSsHg3KB69YQ22P5V/view?usp=sharing 
 
 System Design and Architecture 
@@ -172,13 +174,14 @@ Event-Driven Architecture:
 Since certain features from our services are expected to support real-time notifications or events, the application must be ready to handle and react to real-time requests from different services such as notifications, and ensure these are delivered in a timely manner.
 
 Service-Oriented Architecture:
-
+Developing our application based on segregated services not only benefits the development process by offering clearly divided services, but it also allows us to re-use their functionality throughout the entire application. Giving a separate space for each service to operate also makes the system more elastic, allowing longer and memory-demanding tasks to be managed by their corresponding services instead of affecting the overall performance. 
 
 Microservices Architecture:
+The design choice of developing the back-end with microservices only further enhances the modularity of the 3-layered architecture. Supported on the service-oriented architecture and containerization, it also allows for better resource management while maintaining a communication protocol from client to server while also for servers in between. 
 
+From the architecture choices described, the following high-level component diagram was outlined, which will be followed further in the report by a developed component diagram:
 
-From the architectures described, the following high-level component diagram was outlined, which will be followed further in the report by a developed component diagram:
-
+Figure 2 - High-Level Application Design
 https://drive.google.com/file/d/1odZTdcW7gJUNxFq5uFWitMnfNHlG_mlq/view?usp=sharing 
 Design Patterns and Architecture
 Design Patterns
@@ -191,148 +194,122 @@ Model view controller?
 
 
 UML Class Diagram
-https://drive.google.com/file/d/1WAS_DAfSp2KZCdGR41Y-7L-D-ovqnu2_/view (open in draw.io for best quality) 
 Full UML Class Diagram: 
 
+Figure 3 - UML Class Diagram
+https://drive.google.com/file/d/1WAS_DAfSp2KZCdGR41Y-7L-D-ovqnu2_/view
 
-File Upload & Storage Service:
+Cabinet Service:
 
+Figure 3.1 - Cabinet Service UML Class Diagram
 
 Module Management Service:
 
+Figure 3.2 - Module Manager Service UML Class Diagram
 
 Feedback Service:
 
+Figure 3.3 - Feedback Service UML Class Diagram
 
 User Management Service:
 
+Figure 3.4 - User Management Service
 
-Library Reservation Service:
+Reservation Service:
 
+Figure 3.5 - Reservation Service UML Class Diagram
 
-Notifications and Messaging Services:
+Notification and Messaging Service:
 
+Figure 3.6 - Notifications and Messaging Service UML Class Diagram
 
-Timetable Service:
+Timetable and Event Scheduling Service:
 
-Other Classes:
+Figure 3.7 Timetable Service UML Class Diagram
+Model Classes:
 
+Figure 3.8 - UML Class Diagram for shared model classes across services
 
 Component Diagram
-This section intends to justify the choice for microservices, and give a wider description of the inner services within our modules. Following the core microservices structure of Controller -> Service -> Repository, we further distinguished differences between the services for better resource management and functionality. Through the next diagram it is also intended to display most interactions within the services and show how components are expected to interact.
-
-To gain a good understanding of our system, it is necessary to give this high-level overview, since also based on microservices usual structure, all communication between services is expected to be of a loose-coupling nature, and not expose internal objects other than the services who manage them. ThereforeThis is why, the following component diagram was brought up:
+This section intends to justify the choice for microservices & service-oriented architecture, and give a wider description of the inner services within our modules. Following the core microservices structure of Controller -> Service -> Repository, we further distinguished differences within the services for better resource management and functionality. The following component diagram is intended to display most interactions within the services and show how components are expected to interact:
 
 
+Figure 4 - Application Component Diagram
 https://drive.google.com/file/d/174GHoknSBu4yiTfKNKH852lsSnHDHFba/view?usp=sharing 
+
 System Architecture
 UML Sequence Diagram
 Refine the created architecture by presenting Runtime architecture to be model via sequence and state diagrams.
-Marcos
 
-
-
-
-
-
-
-
-
-
-
-
-User Management: 
-https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=sharing 
+User Management Service: 
 This is the seqcurence diagram for the user management service showing, here you see the main 3 cases of this service: User registration, user log in, and user customization. In the registration case, the user inputs the required information and the system once it validates the information andit creates a key pair for encryption. The logiIn case only checks and confirms the data with the DB. The customization case lets the user to modify the screen (add dark mode or add optional information to their profile) and updates the user information in DB.
 
 
 
+Figure 5 - User Management Sequence Diagram
+https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=sharing 
 
 
-
-
-
-
-
-
-Module management: 
-https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
-
+Module Management Service: 
 This is the sequence diagram of the Module Management Service, and has 4 cases: Creation of module, assignation of teacher, code generation and the student joining the module. The creation of the module is carried outmade by the administrative teacher;, and the data is added to the DB and managed by the service and it updates the DB. Once the module is created the administrative teacher can add the teacher to the module and then once the request is processed and the DB is updatedit updates the DB. After the teacher is assigned to a module, the module teacher can create a code (access code of the module). O and once the request is processed it updates the DB. Finally, once the code module is created the student can input the code and the business logic processes the request and, if validcorrect, it updates the DB. 
 
 
+Figure 6 - Module Management Service Sequence Diagram
+https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
+
+Cabinet Service:
+This is the sequence diagram of the Cabinet (file and storage) Service, and has 3 cases: File upload, file download and share file. The file upload case, the user uploads a file to the storage and it saves the data in the DB. The download case, the user downloads the file from the file storage to the device. Share file case, the user sends the file with the public key of the user/users and sends file in the chat. 
 
 
-File Upload & Storage
+Figure 7 - Cabinet Service Sequence Diagram
 https://drive.google.com/file/d/1mjO8DoAzUmWG3DQkH3J0oeo0iUf8mXcT/view?usp=sharing 
 
-This is the sequence diagram of the File and Storage Service, and has 3 cases: File upload, file download and share file. The file upload case, the user uploads a file to the storage and it saves the data in the DB. The download case, the user downloads the file from the file storage to the device. Share file case, the user sends the file with the public key of the user/users and sends file in the chat. 
-
-
-
-	
-
-
-
-Notification and Messaging
-
-https://drive.google.com/file/d/1SEN3NnAW5jGsDiCrB0-DDORNeJTbAGwK/view?usp=sharing 
-
+Notification and Messaging Service: 
 The sequence diagram of the notification and messaging service, here there are 5 cases: message send, search user, message receive, announcement received and update in timetable. For message send the UI requests the public key of the user that the user wants to send a message and then send the message. For the search user, the user inputs the letters of the name and continuously request that prompt to the DB to retrieve the options. The message receive once the user sends the message and is encrypted, the business logic de encrypts it to the user. The announcement case is that once the announcement is being posted to a module/club the ui retrieves the public keys of those people sends it and then is de-ecrypted by the privat ekey of each user to display in the UI. The notification of new event is when the user is added to a schedule in timetable updates the DB and sends notification. 
 
-Timetable
+Figure 8 - Notification and Messaging Service Sequence Diagram
+https://drive.google.com/file/d/1SEN3NnAW5jGsDiCrB0-DDORNeJTbAGwK/view?usp=sharing 
+Timetable and Event Scheduling Service:
+The timetable works exactly the same in the same cases, so when the student is joined to an event it automatically checks the data of that event and updates the timetable. Also the events need to be classified between mandatory or optional representation in the UI.  
+
+
+Figure 9 - Timetable Service Sequence Diagram
 https://drive.google.com/file/d/1Y6PX01lDG-x_wvGn3XbMtzN7dEJZ337I/view?usp=sharing 
 
-The timetable works exactly the same in the same cases, so when the student is joined to an event it automatically checks the data of that event and updates the timetable. Also the events need to be classified between mandatory or optional to representation in the UI.  
 
 
 
 
-Reservation
-https://drive.google.com/file/d/1ht1wtrFgYJ9BAlvY007ycZ03V-UZ2Awx/view?usp=sharing 
+
+
+Reservation Service:
 	The reservation system works when the user selects the slot in library it checks the times of that slot being available in the selected day. Then the user selects the time and confirms the booking, making him the owner of that space. 
 
+Figure 10 - Reservation Service Sequence Diagram
+https://drive.google.com/file/d/1ht1wtrFgYJ9BAlvY007ycZ03V-UZ2Awx/view?usp=sharing 
 
-Feedback
-https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=sharing 
+Feedback Service: 
 Here we have two cases if the user wants to send it anonymous or public. In both cases the procedure works like in messaging requisition the public key of the person that wants to send feedback. Then it the system de-encrypts the message but if the feedback was send anonymously it will appear ?anonymous? to the other user.
 
+Figure 11 - Feedback Service Sequence Diagram
+https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=sharing 
 State Diagram
 Case student sends file
+
+	The user wants to send a file to another user, so first the user needs to logIn to the application, after the log in it enters to the chet and selects add attachment. It opens the file storage which is managed by the file service, here it can see all the options, selects the preferred file and submits. The next step is managed by the messaging service with the encryption process and once it is sent the app sends a notification to the user. 
+Figure 12 - State Diagram for ?Case Student Sends File?
 https://drive.google.com/file/d/1BGy3Bf_KE-y1f3Dz_fRly5Tb1NvvOjBW/view?usp=sharing 
 
-	The user wants to send a file to another user, so first the user needs to logIn to the application, after the log in it enters to the chet and selects add attachment. It opens the file storage which is managed by the file service, here it can see all the options selects the preferred file and submits. The next step is managed by the messaging service with the encryption process and once is sent the app sends a notification to the user. 
-
-
-
-
-
-
-
-
-
-
-
-
-
 Case student joins module
+	The user wants to join a module, so first the user needs to logIn to the application, here there is a process that all the authentication is correct. Then it clicks on join module, it puts the code that the teacher gives and after processing it adds the user to the module. The timetable once is joined then updates the schedule of that student and the it sends the update to the notification service which then notifies the update to the user.
+
+Figure 13 - State Diagram for ?Case Student Joins Module?
 https://drive.google.com/file/d/1dZRJQBuqDdCRmI7gIOIJSXlDr_e6pd5V/view?usp=sharing 
-	The user wants to join a module, so first the user needs to logIn to the application, here there is a process that all the authentication is correct. Then it clicks on join module, it puts the code that the teacher gives and after processing it adds the user to the module. The timetable once is joined then updates the schedule of that student and the it sends the update to the notification service which then notifies the update to te user.
-
-
-	
-
-
-
-
-
-
-
 
 Case student makes reservation
+	The user wants to book a space in the library, so first the user needs to logIn to the application. After that, the user selects space and time for the booking, the request is processed by the reservation service and its approved. Then it sends the time and slot to the timetable service which after receiving it, updates the user schedule and sends the confirmation to the notification to generate a notification to the user.
+Figure 14 - State Diagram for ?Case Student Makes Reservation?
 https://drive.google.com/file/d/1hy_fdEXhsdNsRSYsKd9sFQ_CqGcBarLd/view?usp=sharing 
-	The user wants to book a space in the library, so first the user needs to logIn to the application. After that, the user selects space and time for the booking, the request is processed by the the reservation service and its approved. Then it sends the time and slot to the timetable service which after receiving it, updates the user schedule and sends the confirmation to the notification to generate a notification to the user.
-
 
 
 Marcos needs to do 3 states of a task (like send file in chat, join module and library usage)
@@ -426,13 +403,20 @@ Responsibilities:
 
 
 Appendix
-General Sketches of the Software
+Initial Sketches of the Application
 Note: These sketches are to give a general understanding and overview of what the web version of the application will look like. The finished software will not look exactly the same. 
 
+Appendix 4.1.1 - Module Messaging View Sketch
 
 
+Appendix 4.1.2 - Private Messaging View Sketch
 
-Link: https://www.canva.com/design/DAGUNfqutIU/EPfQvra8zaUDSQ9BF2qjdA/view?utm_content=DAGUNfqutIU&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel 
+Appendix 4.1.3 - Timetable View Sketch
+
+
+Appendix 4.1.4 - Announcements View Sketch
+https://www.canva.com/design/DAGUNfqutIU/EPfQvra8zaUDSQ9BF2qjdA/view?utm_content=DAGUNfqutIU&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel 
+
 Sources
 https://www.perforce.com/blog/alm/how-write-software-requirements-specification-srs-document 
 
@@ -440,3 +424,7 @@ Spring. (n.d.). Spring Boot. VMware Tanzu. https://spring.io/projects/spring-boo
 Katariya, J. (2024, June 14). Web application architecture: Everything you need to know. Moon Technolabs. https://www.moontechnolabs.com/blog/web-application-architecture/  
 Confluent. (n.d.). Event-driven architecture (EDA): A complete introduction. https://www.confluent.io/learn/event-driven-architecture/#:~:text=Event%2Ddriven%20architecture%20(EDA),to%20react%20in%20real%20time.  
 Terra, J. (2024, July 23). What is Client-Server Architecture? Everything you should know. Simplilearn. https://www.simplilearn.com/what-is-client-server-architecture-article 
+Amazon Web Services. (n.d.). What is SOA (Service-Oriented Architecture)?. Amazon Web Services.  https://aws.amazon.com/what-is/service-oriented-architecture/?nc1=h_ls 
+Google Cloud. (n.d.). What is Microservices Architecture?. Google Cloud. https://cloud.google.com/learn/what-is-microservices-architecture?hl=en 
+AltexSoft (2022) Pros and cons of Flutter App Development, AltexSoft. Available at: https://www.altexsoft.com/blog/pros-and-cons-of-flutter-app-development/ (Accessed: 31 October 2024). 
+ 
