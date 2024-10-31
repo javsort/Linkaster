@@ -50,11 +50,12 @@ Sources
 
 Introduction
 Purpose
-	The purpose of L!nkaster is to provide students and educators at Lancaster University Leipzig with an app and website that they can use for all their university-related needs. LUL students are required to use a variety of tools, each specialized for a single task. Timetabler, for example, is a website that is used exclusively for students to view their schedule. Several of these tools, such as Moodle, require students to log in every time, some even requiring two-factor authentication. L!nkaster combines all relevant tools into one app and website so that students can access all their educational information in one place without the hassle of logging in to each one or installing multiple apps. 
+	The purpose of L!nkaster is to provide students and educators at Lancaster University Leipzig with an app and website that they can use for all their university-related needs. LUL students are required to use a variety of tools, each specialized for a single task. Timetabler, for example, is a website that is used exclusively for students to view their schedule. Several of these tools, such as Moodle, require students to log in every time, some even requiring two-factor authentication. L!nkaster combines all relevant tools into one app and website so that students can access their day-to-day educational information in one place without the hassle of logging in to each one or installing multiple apps. 
 Students and instructors can easily communicate with each other through L!nkaster without needing to exchange personal information (account creation simply requires an LUL email address). Instructors can use this to notify students about canceling class, a new assignment being posted, grades being released, and other academic announcements. Furthermore, each module automatically generates a group chat with enrolled students to encourage students to communicate and provides them with a space to ask questions, share notes, and generally form connections. 
 To summarize, L!nkaster is a single platform that combines many different tools into one and is specifically customized to LUL. It promotes communication and teamwork between classmates and is overall an efficient alternative to the many different tools LUL currently uses. 
 Definitions and Acronyms 
 LUL: Lancaster University Leipzig
+DB: Database
 Requirements and Constraints
 Functional Requirements
 Marcos 
@@ -65,8 +66,8 @@ The system shall ensure role-based access for students and teachers.
 The information displayed and available actions shall be determined by roles and permissions.
 Administrative teachers should be able to create modules and assign module teachers to the specific module.
 Push Notifications:
-The system should support real-time push notifications for announcements, deliveries, and other alerts to students and teachers. 
-The system should track students? timetables and silence notifications automatically during classes.
+The system should support real-time push notifications to students and teachers for announcements, deliveries, and other alerts. 
+The system should track students? timetables and silence notifications automatically during mandatory classes and library reservations.
 Notifications and Announcements:
 Teachers should be able to schedule announcements for future dates.
 The system shall ensure timely delivery of notifications.
@@ -75,15 +76,15 @@ The notification categories shall ensure proper notification filtering.
 File Uploads:
 The system should support file uploads for sharing in announcements and chats. 
 The system should ensure that uploaded files are safely stored on the database and are only accessible to users with authorization.
-Users should be able to see all the ?downloaded? files in a different space.
+Users should be able to see all the ?saved? files in a different space.
 Messaging Functionality:
-The system shall support messaging functionality between classmates and other students.
+The system shall support a group messaging functionality between classmates.
 The system shall support private messaging between students. 
 The system shall ensure public-key encryption for all messages while also supporting safe storage for them.
 The system shall support a ?status? functionality to show if the student is occupied or not.
 The system shall support a search mechanism to initiate one-on-one chats.
 External API Integration:
-The system should support integration with external APIs for extra functionality 
+The system should support integration with external APIs for additional functionality. 
 Module and Group Joining:
 The system shall allow students to join modules or club groups through unique codes.
 After a Student joins a module, the system shall automatically update its timetable with its corresponding schedule.
@@ -93,15 +94,15 @@ Teachers and Club Students should be able to schedule events.
 Students should receive timely notifications about events. 
 Timetables:
 The system shall support a timetable functionality for the students.
-Events shall be categorized on the user?s timetable based on their priority and whether they are mandatory or not.
+Events shall be categorized on the user?s timetable based on whether they are mandatory or not.
 Reservation System:
 The system shall allow students to book study spaces in advance.
-Whenever booking, the system shall display up-to-date status on the study spaces reservation status.
+When booking, the system shall display an up-to-date availability status of the study spaces.
 Feedback Mechanism:
 The system should allow students to provide feedback on modules directly to teachers or administrators, with an anonymous alternative.
 Profile Customization:
 The system should allow students and teachers to customize their profiles with personal information.
-The system shall ensure that personal information is stored safely and respects GDPR?s guidelines.
+The system shall ensure that personal information is stored safely and respects the GDPR?s guidelines.
 
 Non-Functional Requirements
 Marcos
@@ -109,21 +110,21 @@ Performance:
 The system should ensure that notifications are delivered within 1-5 seconds of being sent, even at peak usage.
 The system should have low latency for critical operations such as authentication, module joining, and notification delivery (response times under 500ms).
 Scalability:
-The system shall support itself in its architecture design for future development and the addition of more services.
+The system?s architectural design shall support future development and the addition of more services.
 The system should support high throughput in its notification services, ensuring it can handle sending a large number of push notifications simultaneously without bottlenecks.
 The system should be able to handle an extensive amount of active users.
 Portability:
-The system should support various platforms, including web browsers, iOS, and Android devices, ensuring cross-platform portability.
+The system should support various platforms, including web browsers, iOS, and Android devices, to ensure cross-platform portability.
 Reliability:
-The system should be fault-tolerant, ensuring that if one component fails, the system continues to operate without losing data or functionality besides the affected service.
+The system should be fault-tolerant, ensuring that if one component fails, the system continues to operate without losing data or functionality outside of the affected service.
 Maintainability:
-Only the services needed to be maintained will be taken down for a maintenance period.
+Only the services needing to be maintained will be taken down during a maintenance period.
 The system should include automated backup processes and quick data recovery mechanisms to ensure data integrity in the event of an outage or system failure.
 Security:
 The system should prioritize data encryption (both at rest and in transit) for all sensitive information.
 The system shall make use of public-key encryption for higher security.
 Availability:
-The system should guarantee high availability (99.9% uptime) to ensure access at all times, except during scheduled maintenance periods
+The system should guarantee high availability (99.9% uptime) to ensure access at all times, except during scheduled maintenance periods.
 Usability:
 The system shall uphold its design to Nielsen?s 10 Usability Heuristics for User Interface Design to ensure a user-friendly design.
 
@@ -133,9 +134,9 @@ Specify the relevant constraints such as GDPR compliance specific to data securi
 Time: 
 The system?s overall development shall respect both the development team & course instructor?s deadlines, affecting depth of development and testing phases.
 Regulatory: 
-Since the system has academic purposes, it shall adhere to GDPR?s integrity and confidentiality standards to securely store all users information.
-GDPR?s generality may complicate development given the data protection prioritization.
-The system shall be transparent with users regarding what data will be processed while also minimizing it.
+Since the system has academic purposes, it shall adhere to the GDPR?s integrity and confidentiality standards to securely store all users information.
+The GDPR?s generality may complicate development given the data protection prioritization.
+The system shall be transparent with users regarding what data will be processed.
 The system shall be GDPR compliant and provide its users with data subject rights.
 Hardware:
 Storage and computing power may be limited for the first instance of the application.
@@ -143,17 +144,17 @@ Integration:
 The usage of external APIs for different services might bring up compatibility and reliability challenges.
 A proper and fast interaction between the different services should be prioritized for proper functionality, which could be resource intensive.
 Encryption:
-Even though encryption improves security standards, it also adds layers of authorization, which could lead to delays and longer authorization periods, possibly limiting the up?to-date features.
+Even though encryption improves security standards, it also adds layers of authorization, which could lead to delays and longer authorization periods, possibly limiting the up-to-date features.
 Portability:
 Designing both a handheld & web version of the application might bring up some design challenges throughout development.
 Programming Language:
 The system?s back-end shall be supported by:
-Java JDK 21: for the overall back-end structure, it helps ensure proper segregation between services and their proper interaction. While also, utilizing an Object Oriented design facilitates the management of different features such as user-authentication, role-based access, and more.
-Maven: for compilation and dependencies management. Once integrated with Java, it enables the system 
-Docker: 
-SpringBoot: 
-The system?s front-end shall be built mainly in Flutter, and supported by:
-
+Java JDK 21: for the overall back-end structure, this helps ensure proper segregation between services and their proper interaction. Furthermore, utilizing an Object Oriented design facilitates the management of different features such as user-authentication, role-based access, and more.
+Maven: for compilation and dependencies management. Once integrated with Java, it provides the necessary infrastructure to ease the process of developing an internet-based application. Thanks to the usage of different dependencies and plugins, the team can focus on method implementation and development while avoiding to write boilerplate code and other features are provided.
+Docker: for application deployment, service containerization and management. For deploying the application, Docker was chosen to enable the application deployments and handle the overall application?s service. Also, thanks to the benefits of containerization, whenever a service requires to go under a maintenance period, the team only requires to take down the affected service without affecting the rest of the application?s performance.
+SpringBoot: for overall development and configuration. Thanks to SpringBoot and the Spring Framework, we are able to ease the application?s configuration process and support our microservices design by allowing us to deploy each service separately or together for testing and deployments. 
+The system?s front-end shall be supported by:
+Flutter: 
 
 Use Case
 https://drive.google.com/file/d/1nIoyDVTovPqF6WSYSsHg3KB69YQ22P5V/view?usp=sharing 
@@ -161,16 +162,33 @@ https://drive.google.com/file/d/1nIoyDVTovPqF6WSYSsHg3KB69YQ22P5V/view?usp=shari
 System Design and Architecture 
 System Design
 High-Level Architecture
-Layered Architecture
-Client-Server Architecture
-Event-Driven Architecture
-Service-Oriented Architecture
-Microservices Architecture
+3-Tier Architecture: 
+Setting up the system?s architecture with the industry standard not only sets the application at a market-ready level, but it also ensures better security for our back-end while also allowing better scalability and manageability. The clear difference between the three layers allows for easier development, as one person can work on each layer separately. 
+
+Client-Server Architecture: 
+This architecture enables us to establish a modern framework for the application?s design. Having the standard client-server requests, the separation between our front-end (client?s side) from our back-end (server) allows the application to process all user requests through implemented REST APIs.
+
+Event-Driven Architecture:
+Since certain features from our services are expected to support real-time notifications or events, the application must be ready to handle and react to real-time requests from different services such as notifications, and ensure these are delivered in a timely manner.
+
+Service-Oriented Architecture:
+
+
+Microservices Architecture:
+
+
 From the architectures described, the following high-level component diagram was outlined, which will be followed further in the report by a developed component diagram:
 
 https://drive.google.com/file/d/1odZTdcW7gJUNxFq5uFWitMnfNHlG_mlq/view?usp=sharing 
 Design Patterns and Architecture
 Design Patterns
+Database Per Service Pattern
+Sidecar Pattern
+Role-Based Access Control (RBAC)
+Proxy 
+Adapter? 
+Model view controller?
+
 
 UML Class Diagram
 https://drive.google.com/file/d/1WAS_DAfSp2KZCdGR41Y-7L-D-ovqnu2_/view (open in draw.io for best quality) 
@@ -203,7 +221,7 @@ Other Classes:
 Component Diagram
 This section intends to justify the choice for microservices, and give a wider description of the inner services within our modules. Following the core microservices structure of Controller -> Service -> Repository, we further distinguished differences between the services for better resource management and functionality. Through the next diagram it is also intended to display most interactions within the services and show how components are expected to interact.
 
-To gain a good understanding of our system, it is necessary to give this high-level overview, since also based on microservices usual structure, all communication between services is expected to be of a loose-coupling nature, and not expose internal objects other than the services who manage them. This is why, the following component diagram was brought up:
+To gain a good understanding of our system, it is necessary to give this high-level overview, since also based on microservices usual structure, all communication between services is expected to be of a loose-coupling nature, and not expose internal objects other than the services who manage them. ThereforeThis is why, the following component diagram was brought up:
 
 
 https://drive.google.com/file/d/174GHoknSBu4yiTfKNKH852lsSnHDHFba/view?usp=sharing 
@@ -225,7 +243,7 @@ Marcos
 
 User Management: 
 https://drive.google.com/file/d/1iDWba4AtqoJEj5BGBRkQaGF-Q6mDXWD1/view?usp=sharing 
-This is the securence diagram for the user management service, here you see the main 3 cases of this service: User registration, user log in and user customization. In the registration case the user inputs the required information and the system once it validates the information it creates a key pair for encryption. The logIn case only checks and confirms the data with the DB. The customization case lets the user to modify the screen (add dark mode or add optional information) and updates the user information in DB.
+This is the seqcurence diagram for the user management service showing, here you see the main 3 cases of this service: User registration, user log in, and user customization. In the registration case, the user inputs the required information and the system once it validates the information andit creates a key pair for encryption. The logiIn case only checks and confirms the data with the DB. The customization case lets the user to modify the screen (add dark mode or add optional information to their profile) and updates the user information in DB.
 
 
 
@@ -240,7 +258,7 @@ This is the securence diagram for the user management service, here you see the 
 Module management: 
 https://drive.google.com/file/d/13jR028Oe_bKQ_YG6zUXWYvQA4v1vjxFn/view?usp=sharing
 
-This is the sequence diagram of the Module Management Service, and has 4 cases: Creation of module, assignation of teacher, code generation and the student joining the module. The creation of the module is made by the administrative teacher, and the data is added managed by the service and it updates the DB. Once the module is created the administrative teacher can add the teacher to the module and then once the request is processed it updates the DB. After the teacher is assigned to a module, the module teacher can create a code (access code of the module) and once the request is processed it updates the DB. Finally, once the code module is created the student can input the code and the business logic processes the request and if correct it updates the DB. 
+This is the sequence diagram of the Module Management Service, and has 4 cases: Creation of module, assignation of teacher, code generation and the student joining the module. The creation of the module is carried outmade by the administrative teacher;, and the data is added to the DB and managed by the service and it updates the DB. Once the module is created the administrative teacher can add the teacher to the module and then once the request is processed and the DB is updatedit updates the DB. After the teacher is assigned to a module, the module teacher can create a code (access code of the module). O and once the request is processed it updates the DB. Finally, once the code module is created the student can input the code and the business logic processes the request and, if validcorrect, it updates the DB. 
 
 
 
@@ -277,7 +295,7 @@ https://drive.google.com/file/d/1ht1wtrFgYJ9BAlvY007ycZ03V-UZ2Awx/view?usp=shari
 
 Feedback
 https://drive.google.com/file/d/12b7BkOLyyGgfTJwBSFXP0sDsJ59byM_H/view?usp=sharing 
-Here we have two cases if the user wants to send it anonymous or public. In both cases the procedure works like in messaging requisition the public key of the person that wants to send feedback. Then it the system de-encrypts the message but if the feedback was send anonymously it will appear ?anonimous? to the other user.
+Here we have two cases if the user wants to send it anonymous or public. In both cases the procedure works like in messaging requisition the public key of the person that wants to send feedback. Then it the system de-encrypts the message but if the feedback was send anonymously it will appear ?anonymous? to the other user.
 
 State Diagram
 Case student sends file
@@ -417,3 +435,8 @@ Note: These sketches are to give a general understanding and overview of what th
 Link: https://www.canva.com/design/DAGUNfqutIU/EPfQvra8zaUDSQ9BF2qjdA/view?utm_content=DAGUNfqutIU&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel 
 Sources
 https://www.perforce.com/blog/alm/how-write-software-requirements-specification-srs-document 
+
+Spring. (n.d.). Spring Boot. VMware Tanzu. https://spring.io/projects/spring-boot 
+Katariya, J. (2024, June 14). Web application architecture: Everything you need to know. Moon Technolabs. https://www.moontechnolabs.com/blog/web-application-architecture/  
+Confluent. (n.d.). Event-driven architecture (EDA): A complete introduction. https://www.confluent.io/learn/event-driven-architecture/#:~:text=Event%2Ddriven%20architecture%20(EDA),to%20react%20in%20real%20time.  
+Terra, J. (2024, July 23). What is Client-Server Architecture? Everything you should know. Simplilearn. https://www.simplilearn.com/what-is-client-server-architecture-article 
