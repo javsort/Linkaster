@@ -17,6 +17,9 @@
         <module>services/messageHandler</module>
     </modules>
 
-    <dependencies>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+
+        </dependencies>
+    </dependencyManagement>
 </project>
