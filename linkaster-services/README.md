@@ -37,3 +37,47 @@ Result should look like this:
 [INFO] ------------------------------------------------------------------------
 
 ```
+
+# Managing dependencies
+If all the implementation is valid in terms of java (meaning no exceptions or missing behaviour etc), the application should easily retrieve all depenendencies by using:
+`.\mvnw clean install` 
+- **!** - You can also use `.\mvnw clean install -X` for full de-bugging information.
+- **!** - Don't worry if your IDE doesn't recognize the dependencies, it's a common issue with maven projects. Just make sure the project compiles and runs without any issues.
+
+## Dependencies
+All generalized dependencies (used throughout the entire project) are all declared under the `linkaster-services/pom.xml` file.
+In the generalized dependencies, these are all declared with their current version being used through the entire project.
+
+Now, this does not mean they are already implemented in each service, these still need to be re-declared under the respective `pom.xml` files for each service. **WITHOUT** declaring the version
+
+This is one example, which is the case for most dependencies, but not all:
+For the time being, and already tested with `.\mvnw clean install -X`, please use `services/cabinetService/pom.xml` as a reference if you change any pom.xml file.
+- Main `pom.xml` file:
+```
+...
+
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>dependency.group.id</groupId>
+      <artifactId>dependency-artifact-id</artifactId>
+      <version>3.0.0</version>                        -> VERSION IS ONLY DECLARED HERE
+    </dependency>
+    
+    ....
+  </dependencies>
+</dependencyManagement>
+...
+```
+
+- Any services' `services/<any-service>/pom.xml` file
+```
+<dependencies>
+  <dependency>
+    <groupId>dependency.group.id</groupId>
+    <artifactId>dependency-artifact-id</artifactId>
+  </dependency>
+      
+  ....
+</dependencies>
+```
