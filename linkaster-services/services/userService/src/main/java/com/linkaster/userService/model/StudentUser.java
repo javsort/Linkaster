@@ -5,7 +5,7 @@ import java.util.Map;
 
 @Entity
 @Table(name = "students")
-public class Student extends User {
+public class StudentUser extends User {
 
     @Column(name = "studentId", unique = true)
     private String studentId;
@@ -20,7 +20,5 @@ public class Student extends User {
     private Map<String, String> socialMedia;
 
     @Column(name = "modules")
-    private Map<String, String> modules;
-
-
+    private Map<Integer, String> modules;
 }

@@ -39,7 +39,7 @@ public class User {
     private String email;
 
     @Column(name="role")
-    private String role;
+    private Role role;
 
     @Column(name="keyPair")
     private KeyPair keyPair;

@@ -1,8 +1,14 @@
 
 package com.linkaster.userService.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import com.linkaster.userService.model.User;
 
@@ -10,22 +16,28 @@ public interface APIUserController {
     @GetMapping("")
     public String home();
 
-    @GetMapping("/createUser")
-    public String createUser();
+    @PostMapping("/createUser")
+    @ResponseStatus(HttpStatus.OK)
+    public String createUser(@ModelAttribute User userInfo);
 
-    @GetMapping("/deleteUser")
-    public void deleteUser();
+    @DeleteMapping("/deleteUser")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser(@RequestBody User userToDel);
 
-    @GetMapping("/updateUser")
-    public boolean updateUser();
+    @PostMapping("/updateUser")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean updateUser(@RequestBody User userToUpdate);
 
-    @GetMapping("/getUser")
-    public User getUser();
+    @GetMapping("/getUser/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public User getUser(@PathVariable Long id);
 
     @GetMapping("/getAllUsers")
+    @ResponseStatus(HttpStatus.OK)
     public User[] getAllUsers();
 
     @GetMapping("/getUsersByRole/{role}")
+    @ResponseStatus(HttpStatus.OK)
     public User[] getUsersByRole(@PathVariable String role);
 
     

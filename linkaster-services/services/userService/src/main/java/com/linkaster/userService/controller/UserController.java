@@ -33,44 +33,40 @@ public class UserController implements APIUserController {
 
     }
 
-    @ResponseStatus(HttpStatus.OK)
     public String home() {
         return "Welcome to the User Service!";
     }
 
     
-    @ResponseStatus(HttpStatus.OK)
-    public String createUser(){
+    public String createUser(User userInfo){
+        userHandlerService.createUser(userInfo);
         return "User created successfully!";
     }
 
     
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteUser(){
-
+    public void deleteUser(User userToDel){
+        userHandlerService.deleteUser(userToDel);
     }
 
     
-    @ResponseStatus(HttpStatus.OK)
-    public boolean updateUser(){
-
-        return true;
+    public boolean updateUser(User userToUpdate){
+        boolean result = userHandlerService.updateUser(userToUpdate);
+        return result;
     }
 
     
-    @ResponseStatus(HttpStatus.OK)
-    public User getUser(){
-        return new User();
+    public User getUser(Long id){
+
+        return userHandlerService.getUser(id);
+
+        return ;
     }
 
     
-    @ResponseStatus(HttpStatus.OK)
     public User[] getAllUsers(){
         return new User[0];
     }
 
-    
-    @ResponseStatus(HttpStatus.OK)
     public User[] getUsersByRole(String role){
         return new User[0];
     }
