@@ -41,7 +41,6 @@ public class UserController implements APIUserController {
     
     @ResponseStatus(HttpStatus.OK)
     public String createUser(){
-
         return "User created successfully!";
     }
 
