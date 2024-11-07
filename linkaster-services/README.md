@@ -1,3 +1,17 @@
+# How to run:
+Everything done to build this project, should be run through the `./run.bat` script, which is capable of doing the following tasks instead of calling the maven wrapper each time:
+
+```
+Usage: run.bat [command]
+Commands:
+   build      - Clean and build the project
+   buildWlogs - Clean and build the project with full logs
+   validate   - Validate the project
+   test       - Run all tests
+   clean      - Clean the project
+   install    - Install all modules locally
+```
+
 # Current Status of services
 - Service List:
   - CabinetService
