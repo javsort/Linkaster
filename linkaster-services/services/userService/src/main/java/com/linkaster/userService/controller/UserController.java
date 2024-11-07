@@ -1,9 +1,9 @@
 package com.linkaster.userService.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.userService.model.User;
@@ -50,25 +50,21 @@ public class UserController implements APIUserController {
 
     
     public boolean updateUser(User userToUpdate){
-        boolean result = userHandlerService.updateUser(userToUpdate);
-        return result;
+        return userHandlerService.updateUser(userToUpdate);
     }
 
     
     public User getUser(Long id){
-
         return userHandlerService.getUser(id);
-
-        return ;
     }
 
     
-    public User[] getAllUsers(){
-        return new User[0];
+    public List<User> getAllUsers(){
+        return userHandlerService.getAllUsers();
     }
 
-    public User[] getUsersByRole(String role){
-        return new User[0];
+    public List<User> getUsersByRole(String role){
+        return userHandlerService.getUsersByRole(role);
     }
 
 }

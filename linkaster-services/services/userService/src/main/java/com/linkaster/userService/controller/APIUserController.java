@@ -1,6 +1,8 @@
 
 package com.linkaster.userService.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,11 +36,11 @@ public interface APIUserController {
 
     @GetMapping("/getAllUsers")
     @ResponseStatus(HttpStatus.OK)
-    public User[] getAllUsers();
+    public List<User> getAllUsers();
 
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)
-    public User[] getUsersByRole(@PathVariable String role);
+    public List<User> getUsersByRole(@PathVariable String role);
 
     
 }
