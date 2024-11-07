@@ -17,3 +17,17 @@ buildNumber.properties
 .classpath
 
 .idea/
+
+
+/linkaster-services/services/cabinetService/cabinetService.iml
+/linkaster-services/services/feedbackService/feedbackService.iml
+/linkaster-services/services/messageHandler/messageHandler.iml
+/linkaster-services/services/moduleManager/moduleManager.iml
+/linkaster-services/services/notifHandler/notifHandler.iml
+/linkaster-services/services/reserveService/reserveService.iml
+/linkaster-services/services/timetableService/timetableService.iml
+/linkaster-services/services/userService/userService.iml
+
+
+linkaster-services\services\timetableService\timetableService.iml
+linkaster-services/linkaster-services.iml
