@@ -7,6 +7,7 @@ set MVN_COMMAND=mvn
 if "%1"=="" (
     echo Usage: build-services.bat [service-name]
     echo Available services:
+    echo    logicGateway                - Build the Logic Gateway Service
     echo    userService                 - Build the User Management Service
     echo    moduleManager               - Build the Module Management Service
     echo    cabinetService              - Build the Cabinet Service
@@ -22,6 +23,7 @@ if "%1"=="" (
 :: Set the module name based on the input argument
 set MODULE_NAME=
 
+if /i "%1"=="logicGateway" set MODULE_NAME=services/logicGateway
 if /i "%1"=="userService" set MODULE_NAME=services/userService
 if /i "%1"=="moduleManager" set MODULE_NAME=services/moduleManager
 if /i "%1"=="cabinetService" set MODULE_NAME=services/cabinetService
