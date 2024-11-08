@@ -39,10 +39,16 @@ public class UserHandlerService {
             return false;
         }
 
+        // Assign role
+
+
         // Generate Key Set!!!!
 
-        // After validation, create user
+        User newUser = new User();
+        /* After validation, create user
         User newUser = new User(userInfo.getId(), userInfo.getUsername(), userInfo.getPassword(), userInfo.getEmail(), userInfo.getRole(), userInfo.getKeyPair(), userInfo.getPrivateKey(), userInfo.getPublicKey());
+        newUser.setUsername();
+        */
 
         userRepository.save(newUser);
 
@@ -83,7 +89,7 @@ public class UserHandlerService {
             user.setUsername(userToUpdate.getUsername());
             user.setPassword(userToUpdate.getPassword());
             user.setEmail(userToUpdate.getEmail());
-            user.setRole(userToUpdate.getRole());
+            //user.setRole(userToUpdate.getRole());
             user.setKeyPair(userToUpdate.getKeyPair());
             user.setPrivateKey(userToUpdate.getPrivateKey());
             user.setPublicKey(userToUpdate.getPublicKey());
