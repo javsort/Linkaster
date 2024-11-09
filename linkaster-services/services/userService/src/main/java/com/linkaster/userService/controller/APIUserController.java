@@ -4,13 +4,13 @@ package com.linkaster.userService.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import com.linkaster.userService.model.User;
 
@@ -18,9 +18,9 @@ public interface APIUserController {
     @GetMapping("")
     public String home();
 
-    @PostMapping("/createUser")
+    @PostMapping("/createUser/{roleName}")
     @ResponseStatus(HttpStatus.OK)
-    public String createUser(@ModelAttribute User userInfo);
+    public String createUser(@ModelAttribute User userInfo, @PathVariable String role);
 
     @DeleteMapping("/deleteUser")
     @ResponseStatus(HttpStatus.OK)
@@ -40,7 +40,6 @@ public interface APIUserController {
 
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getUsersByRole(@PathVariable String role);
-
+    public List<User> getUsersByRole( @PathVariable String role);
     
 }

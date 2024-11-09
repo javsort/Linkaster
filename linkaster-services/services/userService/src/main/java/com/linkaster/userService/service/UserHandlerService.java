@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.userService.model.Role;
 import com.linkaster.userService.model.User;
+import com.linkaster.userService.repository.RoleRepository;
 import com.linkaster.userService.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -19,38 +21,45 @@ public class UserHandlerService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     // Does need user
-    public boolean createUser(User userInfo) {
+    public boolean createUser(User userInfo, String roleName) {
         log.info("Creating user... for:" + userInfo.getId());
 
         // Check if user already exists
-        Object user = userRepository.findById(userInfo.getId());
-        
-        if (user != null) {
+        if (userRepository.existsById(userInfo.getId())) {
             log.error("User already exists");
             return false;
         }
 
         // Then check if the e-mail is valid
-        String emailToCheck = userInfo.getEmail();
-
-        if (isEmailValid(emailToCheck)) {
+        if (isEmailValid(userInfo.getEmail())) {
             log.error("Invalid email");
             return false;
         }
 
         // Assign role
-
-
-        // Generate Key Set!!!!
+        Role toAssign = roleRepository.findByRole(roleName);
+        if(toAssign == null) {
+            log.error("Role does not exist in DB");
+            return false;
+        }
 
         User newUser = new User();
+        newUser.setUsername(userInfo.getUsername());
+        newUser.setPassword(userInfo.getPassword());
+        newUser.setEmail(userInfo.getEmail());
+        newUser.setRole(toAssign);
+
+        userRepository.save(newUser);
+    
+        // Generate Key Set!!!!
         /* After validation, create user
         User newUser = new User(userInfo.getId(), userInfo.getUsername(), userInfo.getPassword(), userInfo.getEmail(), userInfo.getRole(), userInfo.getKeyPair(), userInfo.getPrivateKey(), userInfo.getPublicKey());
         newUser.setUsername();
         */
-
-        userRepository.save(newUser);
 
         return true;
     }
@@ -62,12 +71,13 @@ public class UserHandlerService {
             // Now check if its a lancaster.ac.uk email
             String domain =  email.substring(email.indexOf('@') + 1);
 
-            if (domain.equals("lancaster.ac.uk")) {
+            // if all is valid, then continue
+            if(domain.equals("lancaster.ac.uk")) {
                 return true;
-            } else {
-                return false;
-            }   
-        } else { return false; }
+            }
+        }
+
+        return false;
     }
 
     
@@ -89,7 +99,7 @@ public class UserHandlerService {
             user.setUsername(userToUpdate.getUsername());
             user.setPassword(userToUpdate.getPassword());
             user.setEmail(userToUpdate.getEmail());
-            //user.setRole(userToUpdate.getRole());
+            user.setRole(userToUpdate.getRole());
             user.setKeyPair(userToUpdate.getKeyPair());
             user.setPrivateKey(userToUpdate.getPrivateKey());
             user.setPublicKey(userToUpdate.getPublicKey());

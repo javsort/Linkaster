@@ -3,8 +3,6 @@ package com.linkaster.userService.model;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.hibernate.annotations.ManyToAny;
 
@@ -17,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,12 +45,8 @@ public class User {
     private String email;
 
     @ManyToAny(fetch= FetchType.EAGER)
-    @JoinTable(
-        name= "roles",
-        joinColumns= @JoinColumn(name= "user_id"),
-        inverseJoinColumns= @JoinColumn(name= "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
+    @JoinColumn(name= "role_id")
+    private Role role;
 
     @Column(name="keyPair")
     private KeyPair keyPair;
