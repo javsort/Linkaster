@@ -5,17 +5,17 @@ set MVN_COMMAND=mvn
 
 :: Check if a module name is provided
 if "%1"=="" (
-    echo Usage: build_services.bat [service-name]
+    echo Usage: run_services.bat [service-name]
     echo Available services:
-    echo    logicGateway                - Build the Logic Gateway Service
-    echo    userService                 - Build the User Management Service
-    echo    moduleManager               - Build the Module Management Service
-    echo    cabinetService              - Build the Cabinet Service
-    echo    notifHandler                - Build the Notification Service
-    echo    timetableService            - Build the Timetable Service
-    echo    reserveService              - Build the Reservation Service
-    echo    feedbackService             - Build the Feedback Service
-    echo    messageHandler              - Build the Message Handler Service
+    echo    logicGateway                - Run the Logic Gateway Service
+    echo    userService                 - Run the User Management Service
+    echo    moduleManager               - Run the Module Management Service
+    echo    cabinetService              - Run the Cabinet Service
+    echo    notifHandler                - Run the Notification Service
+    echo    timetableService            - Run the Timetable Service
+    echo    reserveService              - Run the Reservation Service
+    echo    feedbackService             - Run the Feedback Service
+    echo    messageHandler              - Run the Message Handler Service
     echo.
     exit /b
 )
@@ -40,5 +40,6 @@ if "%MODULE_NAME%"=="" (
 )
 
 :: Run tests for the specified module
-%MVN_COMMAND% -pl %MODULE_NAME% clean install
+java -jar /%MODULE_NAME%/target/%MODULE_NAME%-1.0-SNAPSHOT.jar
+
 endlocal

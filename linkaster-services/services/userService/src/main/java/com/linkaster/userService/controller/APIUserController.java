@@ -4,6 +4,7 @@ package com.linkaster.userService.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,14 +31,17 @@ public interface APIUserController {
     @ResponseStatus(HttpStatus.OK)
     public boolean updateUser(@RequestBody User userToUpdate);
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUser/{id}")
     @ResponseStatus(HttpStatus.OK)
     public User getUser(@PathVariable Long id);
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAllUsers")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers();
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getUsersByRole( @PathVariable String role);
