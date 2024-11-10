@@ -1,8 +1,6 @@
 package com.linkaster.userService.model;
 
 import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 import org.hibernate.annotations.ManyToAny;
 
@@ -50,10 +48,4 @@ public class User {
 
     @Column(name="keyPair")
     private KeyPair keyPair;
-
-    @Column(name="privateKey")
-    private PrivateKey privateKey;
-
-    @Column(name="publicKey")
-    private PublicKey publicKey;
 }

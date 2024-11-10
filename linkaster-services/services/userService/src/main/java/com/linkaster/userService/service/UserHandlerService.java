@@ -1,5 +1,6 @@
 package com.linkaster.userService.service;
 
+import java.security.KeyPair;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import com.linkaster.userService.model.Role;
 import com.linkaster.userService.model.User;
 import com.linkaster.userService.repository.RoleRepository;
 import com.linkaster.userService.repository.UserRepository;
+import com.linkaster.userService.util.JwtUtil;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -53,14 +55,21 @@ public class UserHandlerService {
         newUser.setEmail(userInfo.getEmail());
         newUser.setRole(toAssign);
 
+        // Generate Key Set -> through jwt
+        try {
+            JwtUtil jwtUtil = new JwtUtil();
+            KeyPair keypair = jwtUtil.keyGenerator();
+
+            newUser.setKeyPair(keypair);
+            log.info("Key pair generated successfully for user: " + newUser.getId());
+
+        } catch (Exception e) {
+            log.error("Error generating key pair");
+            return false;
+        }
+        
         userRepository.save(newUser);
     
-        // Generate Key Set!!!!
-        /* After validation, create user
-        User newUser = new User(userInfo.getId(), userInfo.getUsername(), userInfo.getPassword(), userInfo.getEmail(), userInfo.getRole(), userInfo.getKeyPair(), userInfo.getPrivateKey(), userInfo.getPublicKey());
-        newUser.setUsername();
-        */
-
         return true;
     }
 
@@ -101,8 +110,6 @@ public class UserHandlerService {
             user.setEmail(userToUpdate.getEmail());
             user.setRole(userToUpdate.getRole());
             user.setKeyPair(userToUpdate.getKeyPair());
-            user.setPrivateKey(userToUpdate.getPrivateKey());
-            user.setPublicKey(userToUpdate.getPublicKey());
 
             userRepository.save(user);
 

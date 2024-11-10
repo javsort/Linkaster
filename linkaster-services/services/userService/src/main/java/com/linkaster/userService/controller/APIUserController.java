@@ -36,12 +36,12 @@ public interface APIUserController {
     @ResponseStatus(HttpStatus.OK)
     public User getUser(@PathVariable Long id);
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAllUsers")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers();
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getUsersByRole( @PathVariable String role);

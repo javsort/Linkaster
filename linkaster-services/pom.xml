@@ -62,6 +62,13 @@
                 <version>1.18.34</version>
             </dependency>
 
+            <!-- JWT for user authentication / authorization -->
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>4.4.0</version>
+            </dependency>
+
             <!-- Test Dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>

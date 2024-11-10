@@ -1,4 +1,4 @@
-package com.linkaster.userService.config;
+/*package com.linkaster.userService.config;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -26,3 +26,4 @@ public class SecurityConfig {
     }
     
 }
+*/
