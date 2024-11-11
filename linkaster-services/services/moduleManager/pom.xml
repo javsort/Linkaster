@@ -39,7 +39,6 @@
       <optional>true</optional>
     </dependency>
 
-    
     <!-- JWT for user authentication / authorization -->
     <dependency>
       <groupId>com.auth0</groupId>
