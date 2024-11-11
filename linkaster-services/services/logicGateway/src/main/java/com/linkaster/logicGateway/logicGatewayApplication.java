@@ -11,4 +11,5 @@ public class logicGatewayApplication
     {
         SpringApplication.run(logicGatewayApplication.class, args);
     }
+    
 }

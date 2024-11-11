@@ -1,9 +1,11 @@
 package com.linkaster.userService.service;
 
 import java.security.KeyPair;
+import java.security.SecureRandom;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.userService.model.Role;
@@ -49,9 +51,16 @@ public class UserHandlerService {
             return false;
         }
 
+        // Encrypt password
+        int encryptionStrength = 10;
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(encryptionStrength, new SecureRandom());
+
+        String encryptedPassword = bCryptPasswordEncoder.encode(userInfo.getPassword());
+
         User newUser = new User();
         newUser.setUsername(userInfo.getUsername());
-        newUser.setPassword(userInfo.getPassword());
+        newUser.setPassword(encryptedPassword);
         newUser.setEmail(userInfo.getEmail());
         newUser.setRole(toAssign);
 
