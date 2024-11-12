@@ -20,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController implements APIUserController {
 
     private final UserHandlerService userHandlerService;
-    private final UserAuthenticatorService userAuthenticatorService;
-    private final UserCustomizerService userCustomizerService;
-    private final AuthorizationAgentService authorizationAgentService;
+    private final UserAuthenticatorService userAuthenticatorService;        // To implement (?)
+    private final UserCustomizerService userCustomizerService;              // To implement (?)
+    private final AuthorizationAgentService authorizationAgentService;      // To implement (?)
 
     @Autowired
     public UserController(UserHandlerService userHandlerService, UserAuthenticatorService userAuthenticatorService, UserCustomizerService userCustomizerService, AuthorizationAgentService authorizationAgentService) {

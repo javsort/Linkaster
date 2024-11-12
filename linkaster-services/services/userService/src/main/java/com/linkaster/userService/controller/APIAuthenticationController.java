@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface APIAuthenticationController {
     
     @PostMapping("/authenticate")
-    public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password);
+    public ResponseEntity<?> authenticate(@RequestParam String username, @RequestParam String password);
 }

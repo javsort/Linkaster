@@ -9,28 +9,34 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.linkaster.userService.dto.AuthUser;
 import com.linkaster.userService.service.UserAuthenticatorService;
 
 @RestController
 @RequestMapping("/api/auth")
-public class UserAuthenticatorController implements APIAuthenticationController {
+public class AuthenticationController implements APIAuthenticationController {
 
 
     private final UserAuthenticatorService userAuthenticatorService;
 
     @Autowired
-    public UserAuthenticatorController(UserAuthenticatorService userAuthenticatorService){
+    public AuthenticationController(UserAuthenticatorService userAuthenticatorService){
         this.userAuthenticatorService = userAuthenticatorService;
     }
 
+    // Pinged by the Gateway to authenticate a user
     @Override
-    public ResponseEntity<?> login(String username, String password){
+    public ResponseEntity<?> authenticate(String username, String password){
 
         if(userAuthenticatorService.authenticateUser(username, password)){
             Map<String, String> response = new HashMap<>();
 
+            AuthUser authenticatedUser = userAuthenticatorService.getAuthenticatedUser(username);
+
             response.put("message", "User authenticated");
-            response.put("role", userAuthenticatorService.getUserRole(username));
+            response.put("id", authenticatedUser.getId().toString());
+            response.put("username", authenticatedUser.getUsername());
+            response.put("role", authenticatedUser.getRole());
             return ResponseEntity.ok(response);
         }
 

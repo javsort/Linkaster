@@ -39,7 +39,7 @@ public class GatewayController implements APIGatewayController {
             return ResponseEntity.ok(Map.of("token", token));
 
         } catch (Exception e) {
-            log.error("Error while authenticating user", e);
+            log.error("Error while authenticating user: '" + username + "'. Exception string: " + e);
             return ResponseEntity.status(401).body("Invalid credentials");
             
         }
