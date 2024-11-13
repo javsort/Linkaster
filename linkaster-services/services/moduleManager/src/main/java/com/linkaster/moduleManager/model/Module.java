@@ -1,5 +1,6 @@
 package com.linkaster.moduleManager.model;
 
+import java.sql.Date;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
@@ -30,6 +31,18 @@ public class Module {
 
     @Column(name = "studentId")
     private long[] studentId;
+
+    @Column(name = "room")
+    private String room;
+
+    @Column(name = "scheduleDay")
+    private Date[] scheduleDay;
+
+    @Column(name = "beginTime")
+    private int[] beginTime;
+
+    @Column(name = "endTime")
+    private int[] endTime;
 
     @Column(name = "announcement")
     private String[] announcement;
