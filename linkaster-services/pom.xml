@@ -14,6 +14,7 @@
     </properties>
 
     <modules>
+        <module>services/logicGateway</module>
         <module>services/userService</module>
         <module>services/moduleManager</module>
         <module>services/cabinetService</module>
@@ -39,10 +40,17 @@
                 <version>${springboot.version}</version>
             </dependency>
 
+            <!-- Security dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
                 <version>${springboot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>6.3.4</version>
             </dependency>
 
             <!-- MySQL Dependency -->
@@ -53,18 +61,19 @@
                 <scope>runtime</scope>
             </dependency>
 
-            <!-- Swagger for API Documentation
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-            </dependency> -->
-
             <!-- Lombok for Cleaner Code -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <optional>true</optional>
                 <version>1.18.34</version>
+            </dependency>
+
+            <!-- JWT for user authentication / authorization -->
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>4.4.0</version>
             </dependency>
 
             <!-- Test Dependencies -->
@@ -92,6 +101,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${springboot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
