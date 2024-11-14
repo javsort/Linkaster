@@ -1,0 +1,29 @@
+version: '3.8'
+name: 'linkaster'
+
+services:
+  logic-gateway:
+    build:
+      context: ../linkaster-services/services/logicGateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+
+  user-service:
+    build:
+      context: ../linkaster-services/services/userService
+    ports:
+      - "8081:8081"
+
+  linkaster-MySQL:
+    container_name: "Linkaster-SQL"
+    image: "mysql:latest"
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    restart: always
+    environment:
+      - MYSQL_DATABASE=linkaster
+      - MYSQL_ROOT_PASSWORD=password

@@ -1,8 +1,9 @@
 package com.linkaster.userService.dto;
 
 
+
 public class UserLogin {
-    private String username;
+    private String email;
     private String password;
 }
 
