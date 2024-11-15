@@ -1,49 +1,37 @@
 import 'package:flutter/material.dart';
 import '../widget/user_status.dart';
 
-class ProfilePage extends StatefulWidget {
+class TeacherProfile extends StatefulWidget {
+  final String id;
+  final String email;
   final String name;
   final String surname;
-  final String studentID;
-  final String studyYear;
-  final String program;
-  final String email;
-  final String avatar;
   final UserStatus status;
-  // Optional fields
-  final String? instagram;
   final String? linkedin;
-  final String? phone;
+  final String? github;
 
-  const ProfilePage({
+  const TeacherProfile({
     Key? key,
+    required this.id,
+    required this.email,
     required this.name,
     required this.surname,
-    required this.studentID,
-    required this.studyYear,
-    required this.program,
-    required this.email,
     required this.status,
-    this.avatar = 'https://example.com/default-avatar.jpg',
-    this.instagram,
     this.linkedin,
-    this.phone,
+    this.github,
   }) : super(key: key);
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _TeacherProfilePageState createState() => _TeacherProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _TeacherProfilePageState extends State<TeacherProfile> {
+  late TextEditingController idController;
+  late TextEditingController emailController;
   late TextEditingController nameController;
   late TextEditingController surnameController;
-  late TextEditingController studentIDController;
-  late TextEditingController studyYearController;
-  late TextEditingController programController;
-  late TextEditingController emailController;
-  late TextEditingController instagramController;
   late TextEditingController linkedinController;
-  late TextEditingController phoneController;
+  late TextEditingController githubController;
   late UserStatus currentStatus;
 
   bool isEditing = false;
@@ -56,37 +44,23 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void initializeControllers() {
+    idController = TextEditingController(text: widget.id);
+    emailController = TextEditingController(text: widget.email);
     nameController = TextEditingController(text: widget.name);
     surnameController = TextEditingController(text: widget.surname);
-    studentIDController = TextEditingController(text: widget.studentID);
-    studyYearController = TextEditingController(text: widget.studyYear);
-    programController = TextEditingController(text: widget.program);
-    emailController = TextEditingController(text: widget.email);
-    instagramController = TextEditingController(text: widget.instagram ?? '');
     linkedinController = TextEditingController(text: widget.linkedin ?? '');
-    phoneController = TextEditingController(text: widget.phone ?? '');
+    githubController = TextEditingController(text: widget.github ?? '');
   }
 
   @override
   void dispose() {
+    idController.dispose();
+    emailController.dispose();
     nameController.dispose();
     surnameController.dispose();
-    studentIDController.dispose();
-    studyYearController.dispose();
-    programController.dispose();
-    emailController.dispose();
-    instagramController.dispose();
     linkedinController.dispose();
-    phoneController.dispose();
+    githubController.dispose();
     super.dispose();
-  }
-
-  void _toggleStatus() {
-    setState(() {
-      currentStatus = currentStatus == UserStatus.available
-          ? UserStatus.busy
-          : UserStatus.available;
-    });
   }
 
   Widget _buildSectionTitle(String title) {
@@ -159,201 +133,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildAvatarSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.white,
-            Theme.of(context).primaryColor.withOpacity(0.2),
-          ],
-        ),
-      ),
-      child: Column(
-        children: [
-          SizedBox(height: 20),
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.white,
-                child: CircleAvatar(
-                  radius: 57,
-                  backgroundImage: NetworkImage(widget.avatar),
-                ),
-              ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: GestureDetector(
-                  onTap: isEditing ? _toggleStatus : null,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                        ),
-                      ],
-                    ),
-                    padding: EdgeInsets.all(3),
-                    child: StatusIndicator(
-                      status: currentStatus,
-                      size: 20,
-                      withAnimation: !isEditing,
-                    ),
-                  ),
-                ),
-              ),
-              if (isEditing)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 18,
-                    child: IconButton(
-                      icon: Icon(Icons.camera_alt,
-                          size: 18, color: Theme.of(context).primaryColor),
-                      onPressed: () {
-                        // TODO: Implement image picker
-                      },
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          SizedBox(height: 16),
-          Text(
-            "${nameController.text} ${surnameController.text}",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-          Text(
-            programController.text,
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-          SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Student Profile'),
-        actions: [
-          IconButton(
-            icon: Icon(isEditing ? Icons.save : Icons.edit),
-            onPressed: _toggleEdit,
-          ),
-        ],
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildAvatarSection(),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Academic Information'),
-                  _buildInfoTile(
-                    label: 'Student ID',
-                    controller: studentIDController,
-                    icon: Icons.badge,
-                  ),
-                  _buildInfoTile(
-                    label: 'Year of Study',
-                    controller: studyYearController,
-                    icon: Icons.school,
-                  ),
-                  _buildInfoTile(
-                    label: 'Email',
-                    controller: emailController,
-                    icon: Icons.email,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  _buildSectionTitle('Contact Information'),
-                  _buildInfoTile(
-                    label: 'Phone',
-                    controller: phoneController,
-                    icon: Icons.phone,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  _buildSectionTitle('Social Media'),
-                  _buildInfoTile(
-                    label: 'Instagram',
-                    controller: instagramController,
-                    icon: Icons.camera_alt,
-                    isLink: true,
-                  ),
-                  _buildInfoTile(
-                    label: 'LinkedIn',
-                    controller: linkedinController,
-                    icon: Icons.business,
-                    isLink: true,
-                  ),
-                ],
-              ),
-            ),
-            if (isEditing)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          isEditing = false;
-                          initializeControllers();
-                          currentStatus = widget.status;
-                        });
-                      },
-                      icon: Icon(Icons.close),
-                      label: Text('Cancel'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      ),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: _toggleEdit,
-                      icon: Icon(Icons.check),
-                      label: Text('Save Changes'),
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _toggleEdit() {
     setState(() {
       isEditing = !isEditing;
@@ -366,5 +145,99 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       }
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Teacher Profile'),
+        actions: [
+          IconButton(
+            icon: Icon(isEditing ? Icons.save : Icons.edit),
+            onPressed: _toggleEdit,
+          ),
+        ],
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionTitle('Teacher Information'),
+              _buildInfoTile(
+                label: 'Teacher ID',
+                controller: idController,
+                icon: Icons.badge,
+              ),
+              _buildInfoTile(
+                label: 'Email',
+                controller: emailController,
+                icon: Icons.email,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              _buildInfoTile(
+                label: 'Name',
+                controller: nameController,
+                icon: Icons.person,
+              ),
+              _buildInfoTile(
+                label: 'Surname',
+                controller: surnameController,
+                icon: Icons.person_outline,
+              ),
+              _buildSectionTitle('Social Media'),
+              _buildInfoTile(
+                label: 'LinkedIn',
+                controller: linkedinController,
+                icon: Icons.business,
+                isLink: true,
+              ),
+              _buildInfoTile(
+                label: 'GitHub',
+                controller: githubController,
+                icon: Icons.code,
+                isLink: true,
+              ),
+              if (isEditing)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            isEditing = false;
+                            initializeControllers();
+                          });
+                        },
+                        icon: Icon(Icons.close),
+                        label: Text('Cancel'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: _toggleEdit,
+                        icon: Icon(Icons.check),
+                        label: Text('Save Changes'),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
