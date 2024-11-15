@@ -2,6 +2,7 @@ package com.linkaster.logicGateway.filter;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,38 +16,61 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Value;
 
+/*
+ * This class is a filter that intercepts all requests and checks for a valid JWT token.
+ */
 @Component
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
+    // Secret key for JWT verification -> defined at application.properties or docker-compose
     @Value("${jwt.secret}")
     private String secret;
 
+    // Filter method
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        
+        // Public endpoints
+        if (request.getRequestURI().equals("/api/login") || request.getRequestURI().equals("/api/status") || request.getRequestURI().equals("/auth/login")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        // For all authenticated accesses
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")){
+            // Extract token from header
             String token = authHeader.substring(7);
+
+            // Verify token
             try {
                 JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).build();
                 DecodedJWT decodedToken = verifier.verify(token);
 
-                // add claims to the req attributes (opt, but would be [id, username, role])
+                // Add claims to the req attributes (opt, but would be [id, username, role])
                 request.setAttribute("id", decodedToken.getClaim("id").asString());
                 request.setAttribute("username", decodedToken.getClaim("username").asString());
                 request.setAttribute("role", decodedToken.getClaim("role").asString());
+
             } catch (JWTVerificationException e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token at the request");
                 return;
             }
+
+        // If token is missing    
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");
+
+            log.error("Missing token, unauthorized access for: '" + request.getRequestURI() + "'");
             return;
         }
         
+        // Continue with the request
         filterChain.doFilter(request, response);
     }
 }

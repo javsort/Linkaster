@@ -1,0 +1,51 @@
+name: 'linkaster'
+
+services:
+  logic-gateway:
+    build:
+      context: ../linkaster-services/services/logicGateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+    environment:
+      - JWT_SECRET=linkaster
+      - SERVER_PORT=8080
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+  user-service:
+    build:
+      context: ../linkaster-services/services/userService
+    ports:
+      - "8081:8081"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8081
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+  linkaster-MySQL:
+    container_name: "Linkaster-SQL"
+    image: "mysql:latest"
+    ports:
+      - "3306:3306"
+    networks:
+    - linkaster-network
+    expose:
+      - "3306"
+    restart: always
+    environment:
+      - MYSQL_DATABASE=linkaster
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=linkaster
+      - MYSQL_PASSWORD=password
+
+networks:
+  linkaster-network:
+    driver: bridge
