@@ -16,10 +16,17 @@ public class JoinCodeManagerService {
     @Autowired
     private ModuleRepository moduleRepository;
 
-    public String generateJoinCode(long moduleId) {
-        log.info("Generating join code for module {}", moduleId);
-        // Logic to generate a join code for a module
-        return ""; // Replace with actual implementation
+    public String[] getAllCodes() {
+        log.info("Getting all join codes");
+        // Logic to get all join codes
+        return new String[0]; // Replace with actual implementation
+    }   
+
+
+    public String getModuleByCode(String code) {
+        log.info("Getting join code by ID: {}", code);
+        // Logic to get a join code by ID
+        return "Join code"; // Replace with actual implementation
     }
 
     public boolean validateJoinCode(String joinCode) {

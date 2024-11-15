@@ -40,10 +40,15 @@ public class ModuleController {
         return "Welcome to the Module Service!";
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    public String status() {
+        return "Module Service is up and running!";
+    }
+
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public Module createModule(@RequestBody Module module) {
-        return moduleHandlerService.createModule(module);
+        return moduleManagerService.createModule(module);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -55,7 +60,7 @@ public class ModuleController {
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Module updateModule(@PathVariable long id, @RequestBody Module module) {
-        return moduleHandlerService.updateModule(id, module);
+        return moduleManagerService.updateModule(id, module);
     }
 
     @GetMapping("/all")
@@ -76,31 +81,10 @@ public class ModuleController {
         return moduleHandlerService.assignTeacher(id, teacherId);
     }
 
-    @GetMapping("/joinCode/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public String generateJoinCode(@PathVariable long id) {
-        return joinCodeManagerService.generateJoinCode(id);
-    }
 
-    @GetMapping("/audit/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Long> auditStudentRegistrations(@PathVariable long id) {
-        return auditManagerService.auditStudentRegistrations(id);
-    }
 
-    @PostMapping("/updateSchedule/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Module updateSchedule(@PathVariable long id, @RequestBody Module module) {
-        Module updatedModule = moduleHandlerService.updateSchedule(id, module);
-        timetableIntegratorService.updateTimetable(updatedModule);
-        return updatedModule;
-    }
 
-    @GetMapping("/generateReport")
-    @ResponseStatus(HttpStatus.OK)
-    public void generateReport() {
-        moduleManagerService.generateReport();
-    }
+  
 
     @GetMapping("/studentsByModule/{moduleId}")
     @ResponseStatus(HttpStatus.OK)

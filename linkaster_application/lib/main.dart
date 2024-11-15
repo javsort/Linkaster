@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import './screens/home_screen.dart';
+import './screens/logIn_page.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(LinkasterApp()));
@@ -23,7 +23,7 @@ class _LinkasterAppState extends State<LinkasterApp> {
           primary: Color.fromARGB(255, 253, 9, 9),
         ),
       ),
-      home: LinkasterHome(),
+      home: LoginPage(),
     );
   }
 }

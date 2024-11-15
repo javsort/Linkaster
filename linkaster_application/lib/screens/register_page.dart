@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart'; // Import login page
-import 'register_teacher_page.dart'; // Import teacher registration page
+import '../screensTeacher/teacher_register_page.dart'; // Import teacher registration page
 
 class RegisterPage extends StatefulWidget {
   @override

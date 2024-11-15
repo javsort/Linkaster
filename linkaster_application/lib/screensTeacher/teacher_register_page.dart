@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import the login page to navigate after successful registration
+import './teacher_logIn_page.dart'; // Import the login page
+import '../screens/register_page.dart'; // Import the student registration page
 
 class TeacherRegistrationPage extends StatefulWidget {
   @override
@@ -83,6 +84,24 @@ class _TeacherRegistrationPageState extends State<TeacherRegistrationPage> {
                       'Already have an account? Login',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  TextButton(
+                    onPressed: () {
+                      // Navigate to the Student Registration page
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                      );
+                    },
+                    child: Text(
+                      'Are you a student?',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        fontSize: 16.0,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),

@@ -18,14 +18,34 @@ public class AuditManagerService {
     @Autowired
     private ModuleRepository moduleRepository;
 
-    public List<Long> auditStudentRegistrations(long moduleId) {
-        log.info("Auditing student registrations for module {}", moduleId);
-        // Logic to audit student registrations for a module
-        return null; // Replace with actual implementation
+    public String[] getAllAudit() {
+        log.info("Getting all audit records");
+        // Logic to get all audit records
+        return new String[0]; // Replace with actual implementation
     }
 
-    public void performModuleAudit(long moduleId) {
-        log.info("Performing comprehensive audit for module {}", moduleId);
-        // Logic to perform a comprehensive audit on a module
+    public String getAuditById(long id) {
+        log.info("Getting audit record by ID: {}", id);
+        // Logic to get an audit record by ID
+        return "Audit record"; // Replace with actual implementation
     }
+
+    public String addAudit() {
+        log.info("Adding audit record");
+        // Logic to add an audit student to module
+        return "Audit record added"; // Replace with actual implementation
+    }
+
+    public String deleteAudit(long id) {
+        log.info("Deleting audit record by ID: {}", id);
+        // Logic to delete an audit student of module
+        return "Audit record deleted"; // Replace with actual implementation
+    }
+
+    public String updateAudit(long id) {
+        log.info("Updating audit record by ID: {}", id);
+        // Logic to update an audit student of module
+        return "Audit record updated"; // Replace with actual implementation
+    }
+
 }

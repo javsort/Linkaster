@@ -19,11 +19,10 @@ public class TimetableIntegratorService {
 
     public void updateTimetable(Module module) {
         log.info("Updating timetable for module {}", module);
-        // Logic to update the timetable service with the module's schedule
+        // Once the module is created or updated, send time, date, moduleName, and room to the timetable service
+
+
     }
 
-    public void synchronizeTimetables() {
-        log.info("Synchronizing timetables across all modules");
-        // Logic to synchronize timetables across all modules
-    }
+    
 }
