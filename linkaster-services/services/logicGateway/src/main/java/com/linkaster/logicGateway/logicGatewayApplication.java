@@ -17,3 +17,5 @@ public class logicGatewayApplication
     }
     
 }
+
+// Comment to test branch protection
