@@ -15,32 +15,42 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.linkaster.userService.model.User;
 
+/*
+ * This interface defines the API endpoints for the User Controller.
+ */
 public interface APIUserController {
+    // Home endpoint
     @GetMapping("")
     public String home();
 
+    // CreateUser endpoint
     @PostMapping("/createUser/{roleName}")
     @ResponseStatus(HttpStatus.OK)
     public String createUser(@ModelAttribute User userInfo, @PathVariable String role);
 
+    // DeleteUser endpoint
     @DeleteMapping("/deleteUser")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteUser(@RequestBody User userToDel);
+    public void deleteUser(@PathVariable long user_id);
 
+    // UpdateUser endpoint
     @PostMapping("/updateUser")
     @ResponseStatus(HttpStatus.OK)
     public boolean updateUser(@RequestBody User userToUpdate);
 
+    // GetUser endpoint
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUser/{id}")
     @ResponseStatus(HttpStatus.OK)
     public User getUser(@PathVariable Long id);
 
+    // GetAllUsers endpoint
     //@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAllUsers")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers();
 
+    // GetUsersByRole endpoint
     //@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)

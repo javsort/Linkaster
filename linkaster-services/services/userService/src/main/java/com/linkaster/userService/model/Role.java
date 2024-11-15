@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+
+/*
+ * This is the Role Model class. Determines every role in the system.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter

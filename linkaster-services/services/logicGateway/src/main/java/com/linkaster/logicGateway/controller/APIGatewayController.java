@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/*
+ * This interface defines the API endpoints for the Gateway Controller.
+ */
 public interface APIGatewayController {
     @GetMapping("")
     public String home();
