@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.logicGateway.service.GatewayAuthService;
@@ -13,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/api")
 @Slf4j
 public class GatewayController implements APIGatewayController {
 
@@ -31,7 +32,7 @@ public class GatewayController implements APIGatewayController {
     }
 
     @Override
-    public ResponseEntity<?> login(String username, String password){
+    public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {  
 
         try {
             String token = gatewayAuthService.authenticateAndGenerateToken(username, password);

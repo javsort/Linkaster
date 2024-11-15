@@ -1,7 +1,12 @@
 package com.linkaster.userService.model;
 
-import jakarta.persistence.*;
-import java.util.Map;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "students")
@@ -15,10 +20,8 @@ public class StudentUser extends User {
 
     @Column(name = "year")
     private Integer year;
-
-    @Column(name = "socialMedia")
-    private Map<String, String> socialMedia;
-
+    
+    @ElementCollection(fetch= FetchType.EAGER)
     @Column(name = "modules")
-    private Map<Integer, String> modules;
+    private List<Long> registered_modules;
 }

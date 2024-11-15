@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.linkaster.userService.dto.AuthUser;
 import com.linkaster.userService.service.UserAuthenticatorService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
+@Slf4j
 @RequestMapping("/api/auth")
 public class AuthenticationController implements APIAuthenticationController {
 
@@ -27,6 +30,7 @@ public class AuthenticationController implements APIAuthenticationController {
     // Pinged by the Gateway to authenticate a user
     @Override
     public ResponseEntity<?> authenticate(String username, String password){
+        log.info("Received ping to authenticate user: " + username);
 
         if(userAuthenticatorService.authenticateUser(username, password)){
             Map<String, String> response = new HashMap<>();

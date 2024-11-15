@@ -13,8 +13,11 @@ import org.springframework.web.client.RestTemplate;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 @Service
+@Slf4j
 public class GatewayAuthService {
 
     // Private key for JWT signing
@@ -26,12 +29,13 @@ public class GatewayAuthService {
     public String authenticateAndGenerateToken(String username, String password) {
 
         // Call User Authenticator Service for auth process
-        String pathToAuth = "/api/auth/authenticate";
+        String pathToAuth = "http://user-service:8081/api/auth/authenticate";
 
         HttpEntity<Map<String, String>> request = new HttpEntity<>(Map.of("username", username, "password", password));
         
         // Send request to UserAuthenticatorService
         ResponseEntity<Map> response = restTemplate.exchange(pathToAuth, HttpMethod.POST, request, Map.class);
+        log.info("Response from userAuthenticator: " + response.getBody());
 
         if (response.getStatusCode().is2xxSuccessful()) {
             // Get AuthUser info from response

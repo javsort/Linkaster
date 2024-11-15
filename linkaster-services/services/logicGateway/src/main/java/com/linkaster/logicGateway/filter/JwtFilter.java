@@ -2,6 +2,7 @@ package com.linkaster.logicGateway.filter;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,10 +16,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     @Value("${jwt.secret}")
@@ -26,6 +27,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        
+        // Public endpoints
+        if (request.getRequestURI().equals("/api/login") || request.getRequestURI().equals("/api/status") || request.getRequestURI().equals("/auth/login")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        // For all authenticated accesses
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")){
@@ -44,6 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");
+            log.error("Missing token, unauthorized access for: '" + request.getRequestURI() + "'");
             return;
         }
         
