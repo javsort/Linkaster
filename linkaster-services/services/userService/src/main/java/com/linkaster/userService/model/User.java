@@ -18,6 +18,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*
+ * This is the User entity class. It represents a user in the system.
+ * It is an abstract class that is extended by the Student and Teacher classes.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -42,7 +46,7 @@ public class User {
     private String email;
 
     @ManyToOne(fetch= FetchType.EAGER)
-    @JoinColumn(name= "role_id")
+    @JoinColumn(name="role_id")
     private Role role;
 
     @Column(name="keyPair")

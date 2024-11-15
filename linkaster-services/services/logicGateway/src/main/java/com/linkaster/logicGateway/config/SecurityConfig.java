@@ -14,19 +14,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.linkaster.logicGateway.filter.JwtFilter;
 
+/*
+ * This class configures the security of the application.
+ * It allows login without authentication and requires authentication for all other requests.
+ * It also disables CSRF and sets the session creation policy to STATELESS.
+*/
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // Filter for JWT token verification
     @Autowired
     private JwtFilter jwtFilter;
 
+    // Security filter chain configuration
     @Bean
     protected SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers("/api/login", "/api/status","/auth/login").permitAll() // Allow login without authentication
-                .anyRequest().authenticated() // All other requests require authentication
+                .anyRequest().authenticated()                                                       // All other requests require authentication
             )
             .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

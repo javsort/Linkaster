@@ -12,26 +12,35 @@ import lombok.extern.slf4j.Slf4j;
 
 
 // Proving who you are - Authentication
+
+/*
+ * This class is responsible for authenticating users.
+ * ONLY CLASS with no authorization required. Directly pinged by logicGateway to verify user credentials.
+ */
 @Service
 @Transactional
 @Slf4j
 public class UserAuthenticatorService {
 
+    // Repository for User
     @Autowired
     private UserRepository userRepository;
 
+    private final String log_header = "UserAuthenticatorService: ";
+
     // Authenticate user -> Check if user exists and if password is correct
     public boolean authenticateUser(String username, String password) {
-        log.info("Authenticating user: " + username);
+        log.info(log_header + "Authenticating user: " + username);
+
         // Check if user exists
         if (userRepository.findByUsername(username) == null) {
-            log.error("The user: '" + username + "' does not exist");
+            log.error(log_header + "The user: '" + username + "' does not exist");
             return false;
         }
 
         // Check if password is correct
         if (!userRepository.findByUsername(username).getPassword().equals(password)) {
-            log.error("Incorrect password for user: '" + username + "'");
+            log.error(log_header + "Incorrect password for user: '" + username + "'");
             return false;
         }
 

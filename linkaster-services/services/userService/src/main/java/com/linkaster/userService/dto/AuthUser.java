@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-// This is a user that has been authenticated -> Necessary info for JWT
+// This is a user that has been authenticated -> Necessary info for JWT 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

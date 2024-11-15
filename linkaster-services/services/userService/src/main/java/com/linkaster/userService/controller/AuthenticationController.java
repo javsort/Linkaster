@@ -14,24 +14,35 @@ import com.linkaster.userService.service.UserAuthenticatorService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/*
+ * This class is the controller for the UserAuthenticator service.
+ * It handles all incoming requests to the service and authenticates users.
+ * Called directly by logicGateway to verify user credentials
+ */
 @RestController
 @Slf4j
 @RequestMapping("/api/auth")
 public class AuthenticationController implements APIAuthenticationController {
 
-
+    // Service for authenticating users
     private final UserAuthenticatorService userAuthenticatorService;
 
+    
+    private final String log_header = "AuthenticationController: ";
+
+    // Constructor
     @Autowired
     public AuthenticationController(UserAuthenticatorService userAuthenticatorService){
         this.userAuthenticatorService = userAuthenticatorService;
     }
 
     // Pinged by the Gateway to authenticate a user
+    // Returns a response entity with the user's id, username, and role
     @Override
     public ResponseEntity<?> authenticate(String username, String password){
-        log.info("Received ping to authenticate user: " + username);
+        log.info(log_header + "Received ping to authenticate user: " + username);
 
+        // Authenticate user
         if(userAuthenticatorService.authenticateUser(username, password)){
             Map<String, String> response = new HashMap<>();
 
@@ -41,11 +52,12 @@ public class AuthenticationController implements APIAuthenticationController {
             response.put("id", authenticatedUser.getId().toString());
             response.put("username", authenticatedUser.getUsername());
             response.put("role", authenticatedUser.getRole());
+
+            log.info(log_header + "User: '" + username + "' authenticated");
             return ResponseEntity.ok(response);
         }
 
-
-
+        // if authentication fails, return unauthorized
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 }
