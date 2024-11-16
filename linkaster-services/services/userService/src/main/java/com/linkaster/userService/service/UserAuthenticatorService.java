@@ -1,6 +1,8 @@
 package com.linkaster.userService.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.userService.dto.AuthUser;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 @Slf4j
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class UserAuthenticatorService {
 
     // Repository for User
@@ -29,18 +32,18 @@ public class UserAuthenticatorService {
     private final String log_header = "UserAuthenticatorService: ";
 
     // Authenticate user -> Check if user exists and if password is correct
-    public boolean authenticateUser(String username, String password) {
-        log.info(log_header + "Authenticating user: " + username);
+    public boolean authenticateUser(String userEmail, String password) {
+        log.info(log_header + "Authenticating user: " + userEmail);
 
         // Check if user exists
-        if (userRepository.findByUsername(username) == null) {
-            log.error(log_header + "The user: '" + username + "' does not exist");
+        if (userRepository.findByEmail(userEmail) == null) {
+            log.error(log_header + "The user: '" + userEmail + "' does not exist");
             return false;
         }
 
         // Check if password is correct
-        if (!userRepository.findByUsername(username).getPassword().equals(password)) {
-            log.error(log_header + "Incorrect password for user: '" + username + "'");
+        if (!userRepository.findByEmail(userEmail).getPassword().equals(password)) {
+            log.error(log_header + "Incorrect password for user: '" + userEmail + "'");
             return false;
         }
 
@@ -48,10 +51,10 @@ public class UserAuthenticatorService {
     }
 
     // Slightly different to the one found in user handler. User handler is for admin tasks, this for retrieving necessary info for JWT token
-    public AuthUser getAuthenticatedUser(String username) {
-        log.info("Getting user: " + username);
+    public AuthUser getAuthenticatedUser(String userEmail) {
+        log.info("Getting user: " + userEmail);
 
-        User toGet = userRepository.findByUsername(username);
+        User toGet = userRepository.findByEmail(userEmail);
 
         return new AuthUser(toGet.getId(), toGet.getUsername(), toGet.getRole().getRole());
 

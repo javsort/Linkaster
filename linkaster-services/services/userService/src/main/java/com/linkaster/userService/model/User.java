@@ -1,7 +1,5 @@
 package com.linkaster.userService.model;
 
-import java.security.KeyPair;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -49,6 +47,6 @@ public class User {
     @JoinColumn(name="role_id")
     private Role role;
 
-    @Column(name="keyPair")
+    @Column(name="key_pair")
     private KeyPair keyPair;
 }
