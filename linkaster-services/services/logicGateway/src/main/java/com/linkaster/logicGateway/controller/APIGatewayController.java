@@ -20,5 +20,5 @@ public interface APIGatewayController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password);
+    public ResponseEntity<?> login(@RequestParam String userEmail, @RequestParam String password);
 }

@@ -38,15 +38,19 @@ public class GatewayController implements APIGatewayController {
 
     // Login endpoint
     @Override
-    public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {  
+    public ResponseEntity<?> login(@RequestParam String userEmail, @RequestParam String password) {  
 
+        log.info("Received login request for user: " + userEmail + " with password: " + password);
         try {
-            String token = gatewayAuthService.authenticateAndGenerateToken(username, password);
+            log.info("Authenticating user: " + userEmail + ", calling GatewayAuthService");
 
+            String token = gatewayAuthService.authenticateAndGenerateToken(userEmail, password);
+
+            log.info("User: '" + userEmail + "' authenticated, returning token");
             return ResponseEntity.ok(Map.of("token", token));
 
         } catch (Exception e) {
-            log.error("Error while authenticating user: '" + username + "'. Exception string: " + e);
+            log.error("Error while authenticating user: '" + userEmail + "'. Exception string: " + e);
             return ResponseEntity.status(401).body("Invalid credentials");
             
         }
