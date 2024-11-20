@@ -20,10 +20,24 @@ logging:
       springframework: DEBUG
       springframework.security: ${LOGGING_LEVEL_SPRING_SECURITY:DEBUG}
       springframework.web: ${LOGGING_LEVEL_SPRING_WEB:DEBUG}
-
-server:
-  port: ${SERVER_PORT:8080}
+      springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:DEBUG}
 
 user:
   service:
     url: ${USER_SERVICE_URL:http://localhost:8081}
+
+# Set up connections to other services:
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: ${USER_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - RemoveRequestHeader=Cookie # Optional: Remove sensitive headers if not needed
+            - AddRequestHeader=Authorization, "#{request.headers.Authorization}" # Forward Authorization header
