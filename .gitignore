@@ -17,7 +17,9 @@ buildNumber.properties
 .classpath
 
 .idea/
+/linkaster-services/services/logicGateway/src/resources/.LCKapplication.yml~
 
+/.vscode
 
 /linkaster-services/services/cabinetService/cabinetService.iml
 /linkaster-services/services/feedbackService/feedbackService.iml
