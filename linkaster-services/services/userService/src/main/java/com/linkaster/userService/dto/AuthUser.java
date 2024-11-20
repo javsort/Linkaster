@@ -13,7 +13,7 @@ public class AuthUser {
     
     private Long id;
 
-    private String username;
+    private String userEmail;
 
     private String role; 
 }
