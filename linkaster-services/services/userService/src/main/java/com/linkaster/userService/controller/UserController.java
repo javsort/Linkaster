@@ -72,6 +72,7 @@ public class UserController implements APIUserController {
     // GetAllUsers endpoint
     @Override
     public List<User> getAllUsers(){
+        log.info("UserHandler: Getting all users...");
         return userHandlerService.getAllUsers();
     }
 

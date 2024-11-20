@@ -45,7 +45,7 @@ public interface APIUserController {
     public User getUser(@PathVariable Long id);
 
     // GetAllUsers endpoint
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAllUsers")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers();
