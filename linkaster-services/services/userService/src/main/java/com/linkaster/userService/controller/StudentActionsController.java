@@ -25,11 +25,16 @@ public class StudentActionsController implements APIUserActionsController {
         return "Student registration successful!";
     }
 
+    @Override
+    public String getProfile() {
+        return "Student profile retrieved!";
+    }
 
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/joinModule/{module_code}")
     public String joinModule(@PathVariable("module_code") String module_code){
         return "Student joined module!";
     }
+
     
 }

@@ -21,5 +21,11 @@ public class TeacherActionsController implements APIUserActionsController {
     public String register(UserRegistration userInfo, String role) {
         return "Teacher registration successful!";
     }
+
+    @Override
+    public String getProfile() {
+
+        return "Module created successfully!";
+    }
     
 }
