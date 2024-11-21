@@ -12,6 +12,7 @@ import com.linkaster.userService.dto.UserLogin;
 public interface APIAuthenticationController {
     
     // Authenticate endpoint -> pinged by logicGateway
-    @PostMapping("/authenticate")
+    @PostMapping("/{user_type}/login")
     public ResponseEntity<?> authenticate(@RequestBody UserLogin loginRequest);
+    
 }

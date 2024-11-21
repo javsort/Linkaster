@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
  * This class represents a student user.
  * It extends the User class.
  *
+*/
 @Entity
 @Table(name = "students")
 public class StudentUser extends User {
@@ -29,4 +30,3 @@ public class StudentUser extends User {
     @Column(name = "modules")
     private List<Long> registered_modules;
 }
-*/

@@ -39,5 +39,5 @@ spring:
           predicates:
             - Path=/api/user/**
           filters:
-            - RemoveRequestHeader=Cookie # Optional: Remove sensitive headers if not needed
+            - PreserveHostHeader # Optional: Remove sensitive headers if not needed
             - AddRequestHeader=Authorization, "#{request.headers.Authorization}" # Forward Authorization header

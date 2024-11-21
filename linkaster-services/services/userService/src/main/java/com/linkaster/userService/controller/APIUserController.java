@@ -51,7 +51,7 @@ public interface APIUserController {
     public List<User> getAllUsers();
 
     // GetUsersByRole endpoint
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getUsersByRole( @PathVariable String role);
