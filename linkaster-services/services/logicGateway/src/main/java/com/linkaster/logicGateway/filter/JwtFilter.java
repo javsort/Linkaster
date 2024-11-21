@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
-    // Secret key for JWT verification -> defined at application.properties or docker-compose
+    // Secret key for JWT verification -> defined at application.yml or docker-compose
     @Value("${jwt.secret}")
     private String secret;
 
@@ -84,7 +84,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userEmail, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                
+
                 log.info("UsernamePasswordAuthenticationToken set: " + authentication);
 
             } catch (JWTVerificationException e) {
