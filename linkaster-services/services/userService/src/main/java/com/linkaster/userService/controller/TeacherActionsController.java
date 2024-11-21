@@ -1,8 +1,13 @@
 package com.linkaster.userService.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.linkaster.userService.dto.AssignTeacher;
 import com.linkaster.userService.dto.UserRegistration;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +31,12 @@ public class TeacherActionsController implements APIUserActionsController {
     public String getProfile() {
 
         return "Module created successfully!";
+    }
+
+    @PreAuthorize("hasRole('ADMINTEACHER')")
+    @PostMapping("/assignTeacher")
+    public String assignTeachToClass(@RequestBody AssignTeacher assignedTeacher){
+        return "Assigned Teacher successfully";
     }
     
 }
