@@ -3,7 +3,9 @@ Welcome to devOps folder! Here is where everything is built, contained and run.
 
 There are **3** different ways to build the system, each has its own `./bat` & `./sh` files to run it, along with some other helping scripts for the backend.
 
-* All scripts should be run from the `/scripts` folder.
+
+> ⚠️ **ATTENTION!**
+> All scripts should be run from the `/scripts` folder.
 
 
 ## The 3 different setups:
@@ -84,8 +86,8 @@ There are **3** different ways to build the system, each has its own `./bat` & `
     ```
 
 ## Other Files & Folders
-### The [`/sql`](./sql/) folder:
+### - The [`/sql`](./sql/) folder:
 The initial database files for the back-end are set up here. **PLEASE DON'T TOUCH**.
 
-### [`.env`] file:
+### - The [`.env`](./.env) file:
 In this .env file, the environment variables shared across services are set up. **PLEASE DON'T TOUCH**.
