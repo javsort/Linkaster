@@ -3,13 +3,20 @@ package com.linkaster.logicGateway.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.linkaster.logicGateway.service.GatewayAuthService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -21,6 +28,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api")
 @Slf4j
 public class GatewayController implements APIGatewayController {
+
+    // INIT: Endpoints
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${user.service.url:http://localhost:8081}")
+    private String userServiceUrl;
+
+    // END: Endpoints
 
     // Service for authenticating users and generating JWT tokens
     @Autowired
@@ -56,5 +72,26 @@ public class GatewayController implements APIGatewayController {
         }
     }
 
+    @GetMapping("/user/**")
+    public ResponseEntity<?> forwardToUserService(HttpServletRequest request) {
+
+        log.info("Forwarding request to userService: " + request.getRequestURI());
+        String targetUrl = userServiceUrl + request.getRequestURI();
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", request.getHeader("Authorization"));
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        // Forward the request
+        ResponseEntity<String> response = restTemplate.exchange(
+            targetUrl,
+            HttpMethod.valueOf(request.getMethod()),
+            entity,
+            String.class
+        );
+
+        return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+    }
 
 }

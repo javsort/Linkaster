@@ -1,8 +1,6 @@
 package com.linkaster.userService.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.userService.dto.AuthUser;
@@ -22,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 @Slf4j
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+//@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class UserAuthenticatorService {
 
     // Repository for User
