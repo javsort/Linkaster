@@ -1,0 +1,11 @@
+name: 'linkaster-front-only'
+
+services:
+  # Front-end service
+  flutter-web:
+    build: 
+      context: ../linkaster_application
+      dockerfile: Dockerfile
+    ports:
+      - "8077:80"
+    restart: unless-stopped

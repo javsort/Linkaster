@@ -19,27 +19,27 @@ fi
 
 case "$1" in
     build)
-        cd ../linkaster-services || exit 1
+        cd ../../linkaster-services || exit 1
         $MVN_COMMAND clean install
         ;;
     buildWlogs)
-        cd ../linkaster-services || exit 1
+        cd ../../linkaster-services || exit 1
         $MVN_COMMAND clean install -X
         ;;
     package)
-        cd ../linkaster-services || exit 1
+        cd ../../linkaster-services || exit 1
         $MVN_COMMAND clean package
         ;;
     validate)
-        cd ../linkaster-services || exit 1
+        cd ../../linkaster-services || exit 1
         $MVN_COMMAND validate
         ;;
     test)
-        cd ../linkaster-services || exit 1
+        cd ../../linkaster-services || exit 1
         $MVN_COMMAND test
         ;;
     clean)
-        cd ../linkaster-services || exit 1
+        cd ../../linkaster-services || exit 1
         $MVN_COMMAND clean
         ;;
     help)

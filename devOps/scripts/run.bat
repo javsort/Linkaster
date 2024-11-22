@@ -18,27 +18,27 @@ if "%1"=="" (
 )
 
 if "%1"=="build" (
-    cd ../linkaster-services
+    cd ../../linkaster-services
     call mvnw.cmd clean install
 
 ) else if "%1"=="buildWlogs" (
-    cd ../linkaster-services
+    cd ../../linkaster-services
     call mvnw.cmd clean install -X
 
 ) else if "%1"=="package" (
-    cd ../linkaster-services
+    cd ../../linkaster-services
     call mvnw.cmd clean package
 
 ) else if "%1"=="validate" (
-    cd ../linkaster-services
+    cd ../../linkaster-services
     call mvnw.cmd validate
 
 ) else if "%1"=="test" (
-    cd ../linkaster-services
+    cd ../../linkaster-services
     call mvnw.cmd test
 
 ) else if "%1"=="clean" (
-    cd ../linkaster-services
+    cd ../../linkaster-services
     call mvnw.cmd clean
 
 ) else if "%1"=="help" (
