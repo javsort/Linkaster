@@ -5,15 +5,15 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// DTO for user login -> what the user sends to the server
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class UserLogin {
-    private String userEmail;
-    private String password;
-    
+public class ProfileInfo {
+    private String name;
+    private String surname;
+    private String year;
+    private String program;
+    private String email;
+       
 }
-

@@ -1,5 +1,5 @@
 # Use official Flutter image
-FROM dart:stable
+FROM dart:stable AS build
 
 # Allow Flutter to run as root
 ENV FLUTTER_ALLOW_ROOT="true"
@@ -27,14 +27,26 @@ COPY . .
 # Enable web support
 RUN flutter doctor -v && flutter config --enable-web
 
+# Clean the project (ensure a clean build)
+RUN flutter clean
+
+# Upgrade dependencies to the latest compatible versions
+RUN flutter pub upgrade
+
 # Get dependencies
 RUN flutter pub get
 
 # Build for web
-RUN flutter build web
+RUN flutter build web --release
+
+# Build on nginx image
+FROM nginx:stable-alpine
+
+# Copy the build output to serve
+COPY --from=build /app/build/web /usr/share/nginx/html
 
 # Expose the Flutter development server port
 EXPOSE 8077
 
 # Run Flutter's development server
-CMD ["flutter", "run", "-d", "web-server", "--web-port", "8077", "--web-hostname", "localhost"]
+CMD ["nginx", "-g", "daemon off;"]

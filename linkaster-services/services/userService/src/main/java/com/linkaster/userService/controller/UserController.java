@@ -23,8 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController implements APIUserController {
 
     // Services for handling user operations
-    private final UserHandlerService userHandlerService;
-    private final UserAuthenticatorService userAuthenticatorService;        // To implement (?)
+    private final UserHandlerService userHandlerService;       // To implement (?)
     //private final UserCustomizerService userCustomizerService;              // To implement (?)
     //private final AuthorizationAgentService authorizationAgentService;      // To implement (?)
 
@@ -32,7 +31,6 @@ public class UserController implements APIUserController {
     @Autowired
     public UserController(UserHandlerService userHandlerService, UserAuthenticatorService userAuthenticatorService/*UserCustomizerService userCustomizerService, AuthorizationAgentService authorizationAgentService*/) {
         this.userHandlerService = userHandlerService;
-        this.userAuthenticatorService = userAuthenticatorService;
         //this.userCustomizerService = userCustomizerService;
         //this.authorizationAgentService = authorizationAgentService;
 
@@ -72,6 +70,7 @@ public class UserController implements APIUserController {
     // GetAllUsers endpoint
     @Override
     public List<User> getAllUsers(){
+        log.info("UserHandler: Getting all users...");
         return userHandlerService.getAllUsers();
     }
 

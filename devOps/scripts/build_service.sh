@@ -44,5 +44,5 @@ esac
 
 # Build the service
 echo "Building $1..."
-cd ../linkaster-services || exit 1
+cd ../../linkaster-services || exit 1
 $MVN_COMMAND -pl "$SERVICE_NAME" clean install

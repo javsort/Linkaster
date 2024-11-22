@@ -5,3 +5,17 @@ build/
 .vscode/
 *.iml
 *.lock
+
+node_modules
+.git
+build
+.dart_tool
+.DS_Store
+*.lock
+context.tar
+.dart_tool/
+linux/flutter/ephemeral/
+macos/Flutter/ephemeral/
+windows/flutter/ephemeral/
+pubspec.lock
+
