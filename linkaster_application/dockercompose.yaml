@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  flutter-web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8077:8077"
+    volumes:
+      - .:/app
+    restart: unless-stopped

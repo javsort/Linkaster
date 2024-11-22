@@ -9,7 +9,7 @@ import 'settings_page.dart';
 import 'feedback_page.dart';
 import 'timetable_page.dart';
 import 'files_page.dart';
-import 'login_page.dart'; // Import your LoginPage
+import 'logIn_page.dart'; // Import your LoginPage
 
 class LinkasterHome extends StatefulWidget {
   @override

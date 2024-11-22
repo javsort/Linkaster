@@ -13,3 +13,9 @@ To run the application you must be in the 'linkaster_application' folder
 And then to run it 'flutter run'
 
 It wil ask you to select the device, and select 2 with chrome or 3 with edge other options ask for installation of other resources
+
+# Dockerize
+ --Build the Docker image
+docker build -t flutter-web .
+or 
+docker-compose up --build
