@@ -1,6 +1,7 @@
 name: 'linkaster-backend'
 
 services:
+  # Link for logic gateway service: http://logic-gateway:8080/
   logic-gateway:
     build:
       context: ../linkaster-services/services/logicGateway
@@ -9,9 +10,8 @@ services:
     depends_on:
       - user-service
     environment:
-      - JWT_SECRET=linkaster
-      - USER_SERVICE_URL=http://user-service:8081
       - SERVER_PORT=8080
+      - USER_SERVICE_URL=http://user-service:8081
     env_file:
       - .env
     networks:

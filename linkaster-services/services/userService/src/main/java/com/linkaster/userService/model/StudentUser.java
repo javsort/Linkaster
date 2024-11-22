@@ -1,4 +1,4 @@
-package com.linkaster.userService.model;
+/*package com.linkaster.userService.model;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
  * This class represents a student user.
  * It extends the User class.
  *
+*
 @Entity
 @Table(name = "students")
 public class StudentUser extends User {

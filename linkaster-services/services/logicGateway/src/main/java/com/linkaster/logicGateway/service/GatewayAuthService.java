@@ -39,7 +39,7 @@ public class GatewayAuthService {
     public String authenticateAndGenerateToken(String userEmail, String password) {
 
         // Call User Authenticator Service for auth process
-        String pathToAuth = userServiceUrl + "/api/auth/authenticate";
+        String pathToAuth = userServiceUrl + "/api/auth/login";
         
         log.info("Authenticating user: '" + userEmail + "', calling userAuthenticator service to: " + pathToAuth);
 
@@ -61,7 +61,7 @@ public class GatewayAuthService {
                 // Get AuthUser info from response
                 String resp_role = (String) response.getBody().get("role");
                 String resp_id = (String) response.getBody().get("id");
-                String resp_username = (String) response.getBody().get("username");
+                String resp_userEmail = (String) response.getBody().get("userEmail");
 
 
                 // Generate JWT with the data from the response
@@ -82,9 +82,9 @@ public class GatewayAuthService {
                 */
                 return JWT.create()
                         .withIssuer("auth0")
-                        .withSubject(resp_username)
+                        .withSubject(resp_userEmail)
                         .withClaim("role", resp_role)
-                        .withClaim("username", resp_username)
+                        .withClaim("userEmail", resp_userEmail)
                         .withClaim("id", resp_id)
                         .withIssuedAt(new Date(System.currentTimeMillis()))             // Current time
                         .withExpiresAt(new Date(System.currentTimeMillis() + 360000))   // to 1 hour
@@ -94,7 +94,7 @@ public class GatewayAuthService {
                 throw new RuntimeException("The user requested access with invalid credentials. Response body: '" + response.getBody() + "'");
             }
         
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.err.println("Error during call to user-service: " + e.getMessage());
             e.printStackTrace(); // Add stack trace for detailed debugging
             throw e;

@@ -92,7 +92,7 @@ public class UserHandlerService {
 
     // Check if email is valid
     private boolean isEmailValid(String email) {
-
+        log.info("Checking if email is valid..." + email);
         // Verify if the email is part of @lancaster.ac.uk
         if (email == null) { return false; } 
         else if (email.contains("@")) {
@@ -156,6 +156,7 @@ public class UserHandlerService {
 
     // Get all users
     public List<User> getAllUsers(){
+        log.info("UserHandler Service: Getting all users...");
         return userRepository.findAll();
     }
 
