@@ -39,7 +39,7 @@ public class GatewayAuthService {
     public String authenticateAndGenerateToken(String userEmail, String password) {
 
         // Call User Authenticator Service for auth process
-        String pathToAuth = userServiceUrl + "/api/auth/authenticate";
+        String pathToAuth = userServiceUrl + "/api/auth/login";
         
         log.info("Authenticating user: '" + userEmail + "', calling userAuthenticator service to: " + pathToAuth);
 
@@ -94,7 +94,7 @@ public class GatewayAuthService {
                 throw new RuntimeException("The user requested access with invalid credentials. Response body: '" + response.getBody() + "'");
             }
         
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.err.println("Error during call to user-service: " + e.getMessage());
             e.printStackTrace(); // Add stack trace for detailed debugging
             throw e;

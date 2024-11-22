@@ -53,21 +53,6 @@
                 <version>6.3.4</version>
             </dependency>
 
-            <!-- For logic Gateway -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-context</artifactId>
-                <version>4.1.4</version>
-            </dependency>
-
-            <!-- Still not sure if will be used
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-oauth2</artifactId>
-                <version>2.2.5.RELEASE</version>
-            </dependency>
-            -->
-
             <!-- MySQL Dependency -->
             <dependency>
                 <groupId>com.mysql</groupId>

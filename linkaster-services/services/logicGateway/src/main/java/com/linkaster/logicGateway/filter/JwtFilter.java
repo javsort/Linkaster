@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
         // Public endpoints
-        if (request.getRequestURI().equals("/api/login") || request.getRequestURI().equals("/api/status") || request.getRequestURI().equals("/auth/login")){
+        if (request.getRequestURI().equals("/api/login") || request.getRequestURI().equals("/api/status") || request.getRequestURI().equals("/api/auth/login")){
             log.info("Public endpoint accessed, no token required");
             filterChain.doFilter(request, response);
             return;
@@ -86,6 +86,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 log.info("UsernamePasswordAuthenticationToken set: " + authentication);
+                log.info("Forwarding request to: " + request.getRequestURI());
 
             } catch (JWTVerificationException e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token at the request");
@@ -105,6 +106,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
             return;
         }
+        
+        log.info("Request forwarded to: " + request.getAttribute("forwarded-uri"));
         
         // Continue with the request
         filterChain.doFilter(request, response);

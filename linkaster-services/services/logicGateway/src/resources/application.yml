@@ -38,6 +38,8 @@ spring:
           uri: ${USER_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/user/**
+            - Path=/api/user/getAllUsers
+            - Path=/api/auth/**
+          
           filters:
-            - PreserveHostHeader # Optional: Remove sensitive headers if not needed
             - AddRequestHeader=Authorization, "#{request.headers.Authorization}" # Forward Authorization header
