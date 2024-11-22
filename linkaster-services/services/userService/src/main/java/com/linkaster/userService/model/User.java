@@ -18,6 +18,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.security.KeyPair;
+
 /*
  * This is the User entity class. It represents a user in the system.
  * It is an abstract class that is extended by the Student and Teacher classes.

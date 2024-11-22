@@ -46,6 +46,6 @@ if "%SERVICE_NAME%"=="" (
 
 :: Build the service
 echo Building %1...
-cd ../linkaster-services
+cd ../../linkaster-services
 %MVN_COMMAND% -pl %SERVICE_NAME% clean install
 endlocal

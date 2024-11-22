@@ -1,7 +1,16 @@
-name: 'linkaster'
+name: 'linkaster_application'
 
 services:
-  # Link for logic gateway service: http://logic-gateway:8080/
+  # Front-end service
+  flutter-web:
+    build: 
+      context: ../linkaster_application
+      dockerfile: Dockerfile
+    ports:
+      - "8077:80"
+    restart: unless-stopped
+
+  # Back-end services
   logic-gateway:
     build:
       context: ../linkaster-services/services/logicGateway
@@ -10,8 +19,9 @@ services:
     depends_on:
       - user-service
     environment:
-      - SERVER_PORT=8080
+      - JWT_SECRET=linkaster
       - USER_SERVICE_URL=http://user-service:8081
+      - SERVER_PORT=8080
     env_file:
       - .env
     networks:

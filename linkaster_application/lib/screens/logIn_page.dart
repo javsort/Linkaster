@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import './home_screen.dart';
 import 'register_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final bool isLoading = false;
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool isLoading = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -137,5 +149,70 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _handleLogin(BuildContext context) async {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter your email and password'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final success =
+        await loginUser(emailController.text, passwordController.text);
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (success) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LinkasterHome()),
+        (route) => false,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Invalid email or password'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<bool> loginUser(String email, String password) async {
+    final url = Uri.parse('http://logic-gateway:8080/api/student/login');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Assuming the backend returns a token or some success message
+        final responseData = jsonDecode(response.body);
+        print('Login successful: ${responseData['token']}');
+        return true;
+      } else {
+        print('Login failed: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error logging in: $e');
+      return false;
+    }
   }
 }
