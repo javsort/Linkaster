@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import login page
+import 'logIn_page.dart'; // Import login page
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../screensTeacher/teacher_register_page.dart'; // Import teacher registration page
 
 class RegisterPage extends StatefulWidget {
@@ -270,5 +272,32 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
     }
+  }
+
+  Future<bool> registerUser(
+    String name,
+    String surname,
+    String id,
+    String email,
+    String password,
+    String program,
+    String year,
+  ) async {
+    final url = Uri.parse('http://logic-gatewaye:8080//createStudent');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'name': name,
+        'surname': surname,
+        'studentId': id,
+        'email': email,
+        'password': password,
+        'studyProg': program,
+        'year': year,
+      }),
+    );
+
+    return response.statusCode == 200;
   }
 }

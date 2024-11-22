@@ -7,7 +7,7 @@ import 'teacher_profile_page.dart';
 import 'teacher_settings_page.dart';
 import 'teacher_timetable_page.dart';
 import 'teacher_files_page.dart';
-import 'teacher_login_page.dart'; // Import your LoginPage
+import 'teacher_logIn_page.dart'; // Import your LoginPage
 
 class LinkasterHome extends StatefulWidget {
   @override
