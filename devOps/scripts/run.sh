@@ -6,6 +6,7 @@ MVN_COMMAND="./mvnw"
 if [ -z "$1" ]; then
     echo "Usage: ./run.sh [command]"
     echo "Use this script for [command] the project!"
+    echo
     echo "Available commands:"
     echo "    build      - Clean install and build the project"
     echo "    buildWlogs - Clean install and build with full logging"
@@ -14,6 +15,7 @@ if [ -z "$1" ]; then
     echo "    test       - Run all tests"
     echo "    clean      - Clean the project"
     echo "    help       - Show usage"
+    echo
     exit 1
 fi
 
@@ -45,6 +47,7 @@ case "$1" in
     help)
         echo "Usage: ./run.sh [command]"
         echo "Use this script for [command] the project!"
+        echo
         echo "Available commands:"
         echo "    build      - Clean install and build the project"
         echo "    buildWlogs - Clean install and build with full logging"
@@ -53,6 +56,7 @@ case "$1" in
         echo "    test       - Run all tests"
         echo "    clean      - Clean the project"
         echo "    help       - Show usage"
+        echo
         ;;
     *)
         echo "Invalid command"
