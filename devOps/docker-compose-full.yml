@@ -9,6 +9,10 @@ services:
     ports:
       - "8077:80"
     restart: unless-stopped
+    environment:
+      - BACKEND_GATEWAY_URL=http://logic-gateway:8080
+    networks:
+      - linkaster-network
 
   # Back-end services
   logic-gateway:
