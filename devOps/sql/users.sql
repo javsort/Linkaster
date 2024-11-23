@@ -17,3 +17,41 @@ VALUES ('admin', 'lastname', 'admin_password', 'admin@example.com', 'ADMIN', NUL
        ('teacher','lastname', 'teacher_password', 'teacher@example.com', 'TEACHER', NULL),
        ('adminteacher','lastname', 'adminteacher_password', 'adminteacher@example.com', 'ADMINTEACHER', NULL);
 
+CREATE TABLE students (
+    id BIGINT PRIMARY KEY, -- This matches the "id" in the users table
+    student_id VARCHAR(255) UNIQUE,
+    course VARCHAR(255),
+    year INT,
+    modules JSON,
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+INSERT INTO students (id, student_id, course, year, modules)
+VALUES (2, '123456', 'Computer Science', 1, NULL);
+
+
+CREATE TABLE teachers (
+    id BIGINT PRIMARY KEY, -- This matches the "id" in the users table
+    modules JSON,
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+INSERT INTO teachers (id, modules)
+VALUES (3, NULL);
+
+
+-- Current modules addition (NOT FINAL -> missing to join the services)
+CREATE TABLE teacher_user_modules (
+    teacher_user_id BIGINT NOT NULL, -- Foreign key to teachers table
+    module_name VARCHAR(255) NOT NULL, -- Individual module name
+    PRIMARY KEY (teacher_user_id, module_name),
+    FOREIGN KEY (teacher_user_id) REFERENCES teachers(id) ON DELETE CASCADE
+);
+
+-- Current modules addition (NOT FINAL -> missing to join the services)
+CREATE TABLE student_user_registered_modules  (
+    student_user_id BIGINT NOT NULL, -- Foreign key to teachers table
+    module_name VARCHAR(255) NOT NULL, -- Individual module name
+    PRIMARY KEY (student_user_id, module_name),
+    FOREIGN KEY (student_user_id) REFERENCES students(id) ON DELETE CASCADE
+);
