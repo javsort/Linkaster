@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../widget/user_status.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'announcement_page.dart';
+import 'package:http/http.dart' as http;
 import 'chat_selection_page.dart';
 import 'library_page.dart';
 import 'profile_page.dart';
 import 'settings_page.dart';
 import 'feedback_page.dart';
 import 'timetable_page.dart';
-import 'files_page.dart';
 import 'logIn_page.dart'; // Import your LoginPage
 
 class LinkasterHome extends StatefulWidget {
@@ -51,12 +51,6 @@ class LinkasterHomeState extends State<LinkasterHome> {
       case 'Settings':
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => SettingsPage()));
-        break;
-      case 'Files':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => FilesPage()),
-        );
         break;
       case 'Feedback':
         Navigator.push(
@@ -189,7 +183,7 @@ class LinkasterHomeState extends State<LinkasterHome> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     Navigator.pop(context);
                   },
                   child: Text('Cancel'),
@@ -263,6 +257,21 @@ class LinkasterHomeState extends State<LinkasterHome> {
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
+            icon: Text('Status', style: TextStyle(color: Colors.white)),
+            onPressed: () async {
+              // Fetch user status
+              final response =
+                  await http.get(Uri.parse('http://localhost:8080/api/status'));
+              if (response.statusCode == 200) {
+                print('Status: ${response.body}');
+              } else {
+                print('Failed to fetch status');
+              }
+            },
+          ),
+
+          SizedBox(width: 10), // Add space between Moodle and next buttons
+          IconButton(
             icon: Text('Moodle', style: TextStyle(color: Colors.white)),
             onPressed: _launchMoodle,
           ),
@@ -283,7 +292,6 @@ class LinkasterHomeState extends State<LinkasterHome> {
             onSelected: _onMenuOptionSelected,
             itemBuilder: (BuildContext context) => [
               PopupMenuItem(value: 'Settings', child: Text('Settings')),
-              PopupMenuItem(value: 'Files', child: Text('Files')),
               PopupMenuItem(value: 'Feedback', child: Text('Feedback')),
               PopupMenuItem(value: 'Logout', child: Text('Logout')),
             ],
