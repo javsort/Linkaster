@@ -30,8 +30,12 @@ public class JwtReqFilter extends OncePerRequestFilter {
 
         // Allow access to authentication service
         String path = request.getRequestURI();
-        if(path.equals("/api/auth/login")){
-            filterChain.doFilter(request, response);
+        if(path.equals("/api/{user_type}/login") 
+            || path.equals("/api/auth/admin/login")
+            || path.equals("/api/auth/student/login")
+            || path.equals("/api/auth/teacher/login")){
+            
+                filterChain.doFilter(request, response);
             return;
         }
 

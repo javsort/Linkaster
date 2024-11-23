@@ -66,7 +66,8 @@ public class UserHandlerService {
 
         // Create new user
         User newUser = new User();
-        newUser.setUsername(userInfo.getUsername());
+        newUser.setFirstName(userInfo.getFirstName());
+        newUser.setLastName(userInfo.getLastName());
         newUser.setPassword(encryptedPassword);
         newUser.setEmail(userInfo.getEmail());
         newUser.setRole(toAssign);
@@ -125,7 +126,8 @@ public class UserHandlerService {
         if (user != null) {
             log.info("User found with id: '" + user.getId() + "'. Updating now...");
             
-            user.setUsername(userToUpdate.getUsername());
+            user.setFirstName(userToUpdate.getFirstName());
+            user.setLastName(userToUpdate.getLastName());
             user.setPassword(userToUpdate.getPassword());
             user.setEmail(userToUpdate.getEmail());
             user.setRole(userToUpdate.getRole());

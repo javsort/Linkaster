@@ -9,11 +9,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.linkaster.logicGateway.dto.UserLogin;
 import com.linkaster.logicGateway.service.GatewayAuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,13 +56,16 @@ public class GatewayController implements APIGatewayController {
 
     // Login endpoint
     @Override
-    public ResponseEntity<?> login(@RequestParam String userEmail, @RequestParam String password) {  
+    public ResponseEntity<?> login(@RequestBody UserLogin loginRequest, @PathVariable("user_type") String userType) {  
+
+        String userEmail = loginRequest.getUserEmail();
+        String password = loginRequest.getPassword();
 
         log.info("Received login request for user: " + userEmail + " with password: " + password);
         try {
             log.info("Authenticating user: " + userEmail + ", calling GatewayAuthService");
 
-            String token = gatewayAuthService.authenticateAndGenerateToken(userEmail, password);
+            String token = gatewayAuthService.authenticateAndGenerateToken(loginRequest, userType);
 
             log.info("User: '" + userEmail + "' authenticated, returning token");
             return ResponseEntity.ok(Map.of("token", token));

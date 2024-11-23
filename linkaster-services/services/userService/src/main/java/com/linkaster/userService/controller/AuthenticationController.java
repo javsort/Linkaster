@@ -40,12 +40,11 @@ public class AuthenticationController implements APIAuthenticationController {
     // Pinged by the Gateway to authenticate a user
     // Returns a response entity with the user's id, userEmail, and role
     @Override
-    public ResponseEntity<?> authenticate(UserLogin loginRequest){
-
+    public ResponseEntity<?> authenticate(UserLogin loginRequest, String user_type) {
         String userEmail = loginRequest.getUserEmail();
         String password = loginRequest.getPassword();
 
-        log.info(log_header + "Received ping to authenticate user: " + userEmail);
+        log.info(log_header + "Received ping to authenticate the " + user_type + ": " + userEmail);
 
         // Authenticate user
         if(userAuthenticatorService.authenticateUser(userEmail, password)){

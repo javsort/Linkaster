@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -39,20 +40,34 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // Log the request
-        log.info("Request: " + request.getRequestURI() + " Method: " + request.getMethod());
-        log.info("Authorization Header: '" + request.getHeader("Authorization") + "'");
+        // Wrap the request to read the body multiple times
+        ContentCachingRequestWrapper requestWrap = new ContentCachingRequestWrapper(request);
 
+        // Log the request
+        log.info("Request: " + requestWrap.getRequestURI() + " Method: " + requestWrap.getMethod());
+        log.info("Authorization Header: '" + requestWrap.getHeader("Authorization") + "'");
+        
+        // And its body
+        if(requestWrap.getContentAsByteArray().length > 0){
+            String reqBody = new String(requestWrap.getContentAsByteArray(), requestWrap.getCharacterEncoding());
+            log.info("Request body: " + reqBody);
+
+        }
 
         // Public endpoints
-        if (request.getRequestURI().equals("/api/login") || request.getRequestURI().equals("/api/status") || request.getRequestURI().equals("/api/auth/login")){
+        if (requestWrap.getRequestURI().equals("/api/login") 
+            || requestWrap.getRequestURI().equals("/api/status") 
+            || requestWrap.getRequestURI().equals("/api/auth/{user_type}/login")
+            || requestWrap.getRequestURI().equals("/api/auth/admin/login")
+            || requestWrap.getRequestURI().equals("/api/auth/student/login")
+            || requestWrap.getRequestURI().equals("/api/auth/teacher/login")){
             log.info("Public endpoint accessed, no token required");
             filterChain.doFilter(request, response);
             return;
         }
         
         // For all authenticated accesses
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = requestWrap.getHeader("Authorization");
 
         log.info("About to verify access token: " + authHeader);
         if (authHeader != null && authHeader.startsWith("Bearer ")){

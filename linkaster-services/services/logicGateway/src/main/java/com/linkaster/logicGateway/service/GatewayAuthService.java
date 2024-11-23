@@ -36,14 +36,17 @@ public class GatewayAuthService {
     
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public String authenticateAndGenerateToken(String userEmail, String password) {
+    public String authenticateAndGenerateToken(UserLogin incRequest, String userType) {
+
+        String userEmail = incRequest.getUserEmail();
+        String password = incRequest.getPassword();
 
         // Call User Authenticator Service for auth process
-        String pathToAuth = userServiceUrl + "/api/auth/login";
+        String pathToAuth = userServiceUrl + "/api/auth/"+ userType + "/login";
         
         log.info("Authenticating user: '" + userEmail + "', calling userAuthenticator service to: " + pathToAuth);
 
-        // Create UserLogin dto
+        // Create UserLogin dto to send back
         UserLogin loginRequest = new UserLogin(userEmail, password);
 
         // Create HTTP Req

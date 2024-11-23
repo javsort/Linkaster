@@ -18,8 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.security.KeyPair;
-
 /*
  * This is the User entity class. It represents a user in the system.
  * It is an abstract class that is extended by the Student and Teacher classes.
@@ -38,8 +36,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name= "username", unique= true, nullable= false)
-    private String username;
+    @Column(name= "first_name", unique= true, nullable= false)
+    private String firstName;
+
+    @Column(name= "last_name", unique= true, nullable= false)
+    private String lastName;
 
     @Column(name= "password")
     private String password;
@@ -48,7 +49,7 @@ public class User {
     private String email;
 
     @ManyToOne(fetch= FetchType.EAGER)
-    @JoinColumn(name="role_id")
+    @JoinColumn(name="role", referencedColumnName="role")
     private Role role;
 
     @Column(name="key_pair")

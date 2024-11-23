@@ -1,6 +1,7 @@
 package com.linkaster.userService.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -12,8 +13,8 @@ import com.linkaster.userService.dto.UserLogin;
 public interface APIAuthenticationController {
     
     // Authenticate endpoint -> pinged by logicGateway
-    //@PostMapping("/{user_type}/login")
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody UserLogin loginRequest);
+    //@PostMapping("/login")
+    @PostMapping("/{user_type}/login")
+    public ResponseEntity<?> authenticate(@RequestBody UserLogin loginRequest, @PathVariable("user_type") String user_type);
 
 }

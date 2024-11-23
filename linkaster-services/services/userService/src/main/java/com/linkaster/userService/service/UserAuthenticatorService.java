@@ -54,7 +54,7 @@ public class UserAuthenticatorService {
 
         User toGet = userRepository.findByEmail(userEmail);
 
-        return new AuthUser(toGet.getId(), toGet.getUsername(), toGet.getRole().getRole());
+        return new AuthUser(toGet.getId(), toGet.getEmail(), toGet.getRole().getRole());
 
     }
     
