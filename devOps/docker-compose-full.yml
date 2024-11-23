@@ -7,7 +7,7 @@ services:
       context: ../linkaster_application
       dockerfile: Dockerfile
     ports:
-      - "8077:80"
+      - "8077:77"
     restart: unless-stopped
     environment:
       - BACKEND_GATEWAY_URL=http://logic-gateway:8080
