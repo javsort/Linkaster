@@ -283,7 +283,7 @@ class _RegisterPageState extends State<RegisterPage> {
     String program,
     String year,
   ) async {
-    final url = Uri.parse('http://logic-gateway:8080/createStudent');
+    final url = Uri.parse('http://localhost:8080/api/auth/student/register');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -295,6 +295,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'password': password,
         'studyProg': program,
         'year': year,
+        'subject': "",
       }),
     );
 
