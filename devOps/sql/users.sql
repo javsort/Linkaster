@@ -32,12 +32,13 @@ VALUES (2, '123456', 'Computer Science', 1, NULL);
 
 CREATE TABLE teachers (
     id BIGINT PRIMARY KEY, -- This matches the "id" in the users table
+    subject VARCHAR(255),
     modules JSON,
     FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-INSERT INTO teachers (id, modules)
-VALUES (3, NULL);
+INSERT INTO teachers (id, subject, modules)
+VALUES (3, "Digital Systems", NULL);
 
 
 -- Current modules addition (NOT FINAL -> missing to join the services)

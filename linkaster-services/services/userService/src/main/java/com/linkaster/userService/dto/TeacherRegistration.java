@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class TeacherRegistration extends UserRegistration {
-
-    private String teacherId;  
+    
+    private String subject;
 }

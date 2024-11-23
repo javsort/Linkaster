@@ -1,4 +1,4 @@
-package com.linkaster.userService.dto;
+package com.linkaster.logicGateway.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class UserRegistration {
     // Student only fields
     private String studentId;
     private Integer year;
-    private String studyProg;
+    private String course;
 
     // Teacher only fields
     private String subject;

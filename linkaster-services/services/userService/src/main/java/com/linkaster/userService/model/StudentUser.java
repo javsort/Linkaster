@@ -9,6 +9,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /*
  * This class represents a student user.
@@ -16,6 +20,10 @@ import jakarta.persistence.Table;
  *
 */
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
+@Builder
 @Table(name = "students")
 public class StudentUser extends User {
 

@@ -60,7 +60,10 @@ public class JwtFilter extends OncePerRequestFilter {
             || requestWrap.getRequestURI().equals("/api/auth/{user_type}/login")
             || requestWrap.getRequestURI().equals("/api/auth/admin/login")
             || requestWrap.getRequestURI().equals("/api/auth/student/login")
-            || requestWrap.getRequestURI().equals("/api/auth/teacher/login")){
+            || requestWrap.getRequestURI().equals("/api/auth/teacher/login")
+            || requestWrap.getRequestURI().equals("/api/auth/admin/register")
+            || requestWrap.getRequestURI().equals("/api/auth/student/register")
+            || requestWrap.getRequestURI().equals("/api/auth/teacher/register")){
             log.info("Public endpoint accessed, no token required");
             filterChain.doFilter(request, response);
             return;

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.linkaster.logicGateway.dto.UserLogin;
+import com.linkaster.logicGateway.dto.UserRegistration;
 
 /*
  * This interface defines the API endpoints for the Gateway Controller.
@@ -24,4 +25,9 @@ public interface APIGatewayController {
     @PostMapping("/auth/{user_type}/login")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> login(@RequestBody UserLogin loginRequest, @PathVariable("user_type") String user_type);
+
+    @PostMapping("/auth/{user_type}/register")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> register(@RequestBody UserRegistration regRequest, @PathVariable("user_type") String user_type);
+
 }

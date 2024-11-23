@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.linkaster.logicGateway.dto.UserLogin;
+import com.linkaster.logicGateway.dto.UserRegistration;
 import com.linkaster.logicGateway.service.GatewayAuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -72,6 +73,28 @@ public class GatewayController implements APIGatewayController {
 
         } catch (Exception e) {
             log.error("Error while authenticating user: '" + userEmail + "'. Exception string: " + e);
+            return ResponseEntity.status(401).body("Invalid credentials");
+            
+        }
+    }
+
+    // Register User
+    @Override
+    public ResponseEntity<?> register(@RequestBody UserRegistration regRequest, @PathVariable("user_type") String userType) {
+        String userEmail = regRequest.getUserEmail();
+        String password = regRequest.getPassword();
+
+        log.info("Received registration request for user: " + userEmail + " with password: " + password);
+        try {
+            log.info("Registering user: " + userEmail + ", calling GatewayAuthService");
+
+            String token = gatewayAuthService.registerAndGenerateToken(regRequest, userType);
+
+            log.info("User: '" + userEmail + "' registered, returning token");
+            return ResponseEntity.ok(Map.of("token", token));
+
+        } catch (Exception e) {
+            log.error("Error while registering user: '" + userEmail + "'. Exception string: " + e);
             return ResponseEntity.status(401).body("Invalid credentials");
             
         }

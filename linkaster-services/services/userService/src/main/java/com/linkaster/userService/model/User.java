@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /*
  * This is the User entity class. It represents a user in the system.
@@ -24,6 +25,7 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Setter
 @Getter
 @Entity

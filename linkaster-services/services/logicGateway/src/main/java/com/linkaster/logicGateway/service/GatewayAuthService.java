@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.linkaster.logicGateway.dto.UserLogin;
+import com.linkaster.logicGateway.dto.UserRegistration;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -101,8 +102,90 @@ public class GatewayAuthService {
             System.err.println("Error during call to user-service: " + e.getMessage());
             e.printStackTrace(); // Add stack trace for detailed debugging
             throw e;
+        }   
+    }
+
+    public String registerAndGenerateToken(UserRegistration regRequest, String userType) throws Exception {
+        String userEmail = regRequest.getUserEmail();
+        String password = regRequest.getPassword();
+
+        // Validate required fields
+        if (userEmail == null || userEmail.isEmpty()) {
+            log.error("User email is missing");
+            throw new IllegalArgumentException("User email is required");
+        }
+        if (password == null || password.isEmpty()) {
+            log.error("Password is missing");
+            throw new IllegalArgumentException("Password is required");
         }
 
+        // Call User Authenticator Service for auth process
+        String pathToRegister = userServiceUrl + "/api/auth/"+ userType + "/register";
         
+        log.info("Registering user: '" + userEmail + "', calling userAuthenticator service to: " + pathToRegister);
+
+        // Create UserRegistration dto to send back
+        UserRegistration toRegister = new UserRegistration(
+            regRequest.getName(),
+            regRequest.getSurname(),
+            regRequest.getUserEmail(),
+            regRequest.getPassword(),
+            regRequest.getStudentId(),
+            regRequest.getYear(),
+            regRequest.getCourse(),
+            regRequest.getSubject()
+        );
+
+        // Create HTTP Req
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<UserRegistration> request = new HttpEntity<>(toRegister, headers);
+        
+        try {
+            System.out.println("Making request to: " + pathToRegister);
+            ResponseEntity<Map> response = restTemplate.exchange(pathToRegister, HttpMethod.POST, request, Map.class);
+            System.out.println("Response from user-service: " + response.getBody());
+            
+            // If the response is successful, generate JWT
+            if (response.getStatusCode().is2xxSuccessful()) {
+                // Get AuthUser info from response
+                String resp_role = (String) response.getBody().get("role");
+                String resp_id = (String) response.getBody().get("id");
+                String resp_userEmail = (String) response.getBody().get("userEmail");
+
+                // Generate JWT with the data from the response
+                /*
+                * JWT Structure: Header: { 
+                *     "alg": "HS256", 
+                *     "typ": "JWT" 
+                * } 
+                * Payload: { 
+                *     "iss": "auth0", 
+                *     "sub": "username", 
+                *     "role": "role", 
+                *     "id": "id", 
+                *     "username": "username", 
+                *     "iat": current time, 
+                *     "exp": current time + 1 hour 
+                * }
+                */
+                return JWT.create()
+                        .withIssuer("auth0")
+                        .withSubject(resp_userEmail)
+                        .withClaim("role", resp_role)
+                        .withClaim("userEmail", resp_userEmail)
+                        .withClaim("id", resp_id)
+                        .withIssuedAt(new Date(System.currentTimeMillis()))             // Current time
+                        .withExpiresAt(new Date(System.currentTimeMillis() + 360000))   // to 1 hour
+                        .sign(Algorithm.HMAC256(jwtSecret));  
+            }
+            else {
+                throw new RuntimeException("The user requested access with invalid credentials. Response body: '" + response.getBody() + "'");
+            }
+        } catch (RuntimeException e) {
+            System.err.println("Error during call to user-service: " + e.getMessage());
+            e.printStackTrace(); // Add stack trace for detailed debugging
+            throw e;
+        }
     }
 }
