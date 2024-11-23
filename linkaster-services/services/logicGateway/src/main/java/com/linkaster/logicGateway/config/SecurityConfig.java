@@ -52,7 +52,7 @@ public class SecurityConfig {
     /*@Bean
     protected SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            .cors(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))                      // Enable CORS
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers("/api/login", "/api/status","/auth/login").permitAll() // Allow login without authentication
@@ -67,8 +67,8 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Use the CorsConfigurationSource bean                                      // Disable CSRF and CORS
+        http.csrf(AbstractHttpConfigurer::disable)                                                  // Disable CSRF
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))                      // Enable CORS
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests((authorize) -> authorize
                 .anyRequest().permitAll() // Allow login without authentication
