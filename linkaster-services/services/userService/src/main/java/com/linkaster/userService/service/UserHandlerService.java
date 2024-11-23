@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.userService.dto.TeacherDTO;
 import com.linkaster.userService.model.Role;
 import com.linkaster.userService.model.User;
 import com.linkaster.userService.repository.RoleRepository;
+import com.linkaster.userService.repository.StudentRepository;
 import com.linkaster.userService.repository.UserRepository;
 import com.linkaster.userService.util.KeyMaster;
 
@@ -30,6 +32,10 @@ public class UserHandlerService {
     // Repositories for User and Role
     @Autowired
     private UserRepository userRepository;
+
+    
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -66,7 +72,8 @@ public class UserHandlerService {
 
         // Create new user
         User newUser = new User();
-        newUser.setUsername(userInfo.getUsername());
+        newUser.setFirstName(userInfo.getFirstName());
+        newUser.setLastName(userInfo.getLastName());
         newUser.setPassword(encryptedPassword);
         newUser.setEmail(userInfo.getEmail());
         newUser.setRole(toAssign);
@@ -125,7 +132,8 @@ public class UserHandlerService {
         if (user != null) {
             log.info("User found with id: '" + user.getId() + "'. Updating now...");
             
-            user.setUsername(userToUpdate.getUsername());
+            user.setFirstName(userToUpdate.getFirstName());
+            user.setLastName(userToUpdate.getLastName());
             user.setPassword(userToUpdate.getPassword());
             user.setEmail(userToUpdate.getEmail());
             user.setRole(userToUpdate.getRole());
@@ -164,4 +172,25 @@ public class UserHandlerService {
     public List<User> getUsersByRole(String role){
         return userRepository.findByRole(role);
     }
+
+
+    /*
+     * STUDENT Only Operations
+     */
+    // Get student's teachers based on student ID
+    public List<TeacherDTO> getStudentTeachers(String email) {
+        User student = studentRepository.findByEmail(email);
+
+        // Curr debugging
+        TeacherDTO teacher = new TeacherDTO();
+        List<TeacherDTO> teachers = List.of(teacher);
+
+        return teachers;
+    }
+
+
+     
+    /*
+     * TEACHER Only Operations
+     */
 }

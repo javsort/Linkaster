@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.userService.dto.AuthUser;
 import com.linkaster.userService.dto.UserLogin;
+import com.linkaster.userService.dto.UserRegistration;
 import com.linkaster.userService.service.UserAuthenticatorService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +41,11 @@ public class AuthenticationController implements APIAuthenticationController {
     // Pinged by the Gateway to authenticate a user
     // Returns a response entity with the user's id, userEmail, and role
     @Override
-    public ResponseEntity<?> authenticate(UserLogin loginRequest){
-
+    public ResponseEntity<?> authenticate(UserLogin loginRequest, String user_type) {
         String userEmail = loginRequest.getUserEmail();
         String password = loginRequest.getPassword();
 
-        log.info(log_header + "Received ping to authenticate user: " + userEmail);
+        log.info(log_header + "Received ping to authenticate the " + user_type + ": " + userEmail);
 
         // Authenticate user
         if(userAuthenticatorService.authenticateUser(userEmail, password)){
@@ -64,5 +64,32 @@ public class AuthenticationController implements APIAuthenticationController {
 
         // if authentication fails, return unauthorized
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    }
+
+    // Pinged by the Gateway to register a user
+    // Returns a response entity with the user's id, userEmail, and role
+    @Override
+    public ResponseEntity<?> register(UserRegistration regRequest, String user_type) {
+        String userEmail = regRequest.getUserEmail();
+
+        log.info(log_header + "Received ping to register the " + user_type + ": " + userEmail);
+
+        // Register user
+        if(userAuthenticatorService.registerUser(regRequest, user_type)){
+            Map<String, String> response = new HashMap<>();
+
+            AuthUser registeredUser = userAuthenticatorService.getAuthenticatedUser(userEmail);
+
+            response.put("message", "User registered");
+            response.put("id", registeredUser.getId().toString());
+            response.put("userEmail", registeredUser.getUserEmail());
+            response.put("role", registeredUser.getRole());
+
+            log.info(log_header + "User: '" + userEmail + "' registered");
+            return ResponseEntity.ok(response);
+        }
+
+        // if registration fails, return bad request
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
     }
 }

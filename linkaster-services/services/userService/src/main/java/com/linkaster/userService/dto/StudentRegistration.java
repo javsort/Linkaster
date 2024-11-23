@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 public class StudentRegistration extends UserRegistration {
     private String studentId;
     
-    private String year;
+    private Integer year;
 
     private String studyProg;
+
+    
 }
