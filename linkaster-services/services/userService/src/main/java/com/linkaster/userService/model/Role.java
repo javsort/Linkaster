@@ -23,13 +23,13 @@ import lombok.Setter;
 @Entity
 @Table(name = "roles")
 public class Role {
-
+    
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "role")
+    @Column(name = "role", unique = true, nullable = false)
     private String role;
 
     @Column(name = "description")

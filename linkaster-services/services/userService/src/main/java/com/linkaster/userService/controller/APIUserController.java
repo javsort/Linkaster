@@ -24,6 +24,7 @@ public interface APIUserController {
     public String home();
 
     // CreateUser endpoint
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/createUser/{roleName}")
     @ResponseStatus(HttpStatus.OK)
     public String createUser(@ModelAttribute User userInfo, @PathVariable String role);
