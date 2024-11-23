@@ -14,6 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.linkaster.logicGateway.filter.JwtFilter;
 
@@ -49,6 +52,7 @@ public class SecurityConfig {
     /*@Bean
     protected SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))                      // Enable CORS
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers("/api/login", "/api/status","/auth/login").permitAll() // Allow login without authentication
@@ -63,7 +67,8 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)                                                  // Disable CSRF
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))                      // Enable CORS
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests((authorize) -> authorize
                 .anyRequest().permitAll() // Allow login without authentication
@@ -73,6 +78,22 @@ public class SecurityConfig {
             );
 
         return http.build();
+    }
+
+    // Enable CORS
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://flutter-web:8077");
+        configuration.addAllowedOrigin("http://localhost:8077");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 
