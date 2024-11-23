@@ -8,8 +8,6 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:password}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
   jpa:
-    show:
-      sql: true
     hibernate:
       ddl-auto: update
     properties:
@@ -24,5 +22,10 @@ logging:
       springframework.web: ${LOGGING_LEVEL_SPRING_WEB:DEBUG}
       springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:DEBUG}
 
+user:
+  service:
+    url: ${USER_SERVICE_URL:http://localhost:8081}
+
+# Set up connections to other services:
 server:
-  port: ${SERVER_PORT:8081}
+  port: ${SERVER_PORT:8089}

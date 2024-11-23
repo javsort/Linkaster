@@ -1,18 +1,20 @@
 package com.linkaster.userService.service;
 
 import java.security.KeyPair;
-import java.security.SecureRandom;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.userService.dto.TeacherDTO;
+import com.linkaster.userService.dto.UserRegistration;
 import com.linkaster.userService.model.Role;
+import com.linkaster.userService.model.StudentUser;
+import com.linkaster.userService.model.TeacherUser;
 import com.linkaster.userService.model.User;
 import com.linkaster.userService.repository.RoleRepository;
 import com.linkaster.userService.repository.StudentRepository;
+import com.linkaster.userService.repository.TeacherRepository;
 import com.linkaster.userService.repository.UserRepository;
 import com.linkaster.userService.util.KeyMaster;
 
@@ -32,88 +34,129 @@ public class UserHandlerService {
     // Repositories for User and Role
     @Autowired
     private UserRepository userRepository;
-
-    
     @Autowired
     private StudentRepository studentRepository;
-
+    @Autowired
+    private TeacherRepository teacherRepository;
     @Autowired
     private RoleRepository roleRepository;
 
-    // Create a new user
-    public boolean createUser(User userInfo, String roleName) {
-        log.info("Creating user... for:" + userInfo.getId());
+    // Autowired components:
+    @Autowired
+    private KeyMaster keyMaster;
+
+    
+    private final String log_header = "UserHandlerService --- ";
+
+    // Create a new user -> ADMIN VERSION (skips email verif and such)
+    public boolean createUser(UserRegistration regRequest, String role) {
+        String userEmail = regRequest.getUserEmail();
+
+        log.info(log_header + "Creating user... for:" + userEmail);
 
         // Check if user already exists
-        if (userRepository.existsById(userInfo.getId())) {
-            log.error("User already exists");
-            return false;
-        }
-
-        // Then check if the e-mail is valid
-        if (isEmailValid(userInfo.getEmail())) {
-            log.error("Invalid email");
+        if (userRepository.findByEmail(userEmail) != null) {
+            log.error(log_header + "The user: '" + userEmail + "' already exists");
             return false;
         }
 
         // Assign role
-        Role toAssign = roleRepository.findByRole(roleName);
+        Role toAssign = roleRepository.findByRole(role);
         if(toAssign == null) {
             log.error("Role does not exist in DB");
             return false;
         }
 
-        // Encrypt password
-        int encryptionStrength = 10;
-
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(encryptionStrength, new SecureRandom());
-
-        String encryptedPassword = bCryptPasswordEncoder.encode(userInfo.getPassword());
-
         // Create new user
-        User newUser = new User();
-        newUser.setFirstName(userInfo.getFirstName());
-        newUser.setLastName(userInfo.getLastName());
-        newUser.setPassword(encryptedPassword);
-        newUser.setEmail(userInfo.getEmail());
-        newUser.setRole(toAssign);
+        User newUser;        
+        
+        String firstName = regRequest.getName();
+        String lastName = regRequest.getSurname();
+        String email = regRequest.getUserEmail();
 
-        // Generate Key Set -> through keyMaster
+        // Hash password through keyMaster
+        String password = keyMaster.receivePasswordToHash(regRequest.getPassword());
+
+        // Generate key pair -> values to fill
+        KeyPair keyPair;
+        String publicKey;
+        String privateKey;
+
         try {
-            KeyMaster KeyMaster = new KeyMaster();
-            KeyPair keypair = KeyMaster.keyGenerator();
-
-            newUser.setKeyPair(keypair);
-            log.info("Key pair generated successfully for user: " + newUser.getId());
-
+            keyPair = keyMaster.keyGenerator();
+            
+            privateKey = keyMaster.encodePrivate(keyPair.getPrivate());
+            publicKey = keyMaster.encodePublic(keyPair.getPublic());
         } catch (Exception e) {
-            log.error("Error generating key pair");
+            log.error(log_header + "Error generating key pair");
             return false;
+        }
+
+        if(publicKey.length() < 1 || privateKey.length() < 1) {
+            log.error(log_header + "Encoded keys are empty");
+            return false;
+        }
+
+        // Create new user based on the path role
+        switch (role) {
+            case "student":
+                {
+                    log.info("Registering student with email: " + email);
+                    
+                    // Get student pertinent fields:
+                    Role studentRole = roleRepository.findByRole("student");
+                    String studentId = regRequest.getStudentId();
+                    String course = regRequest.getStudyProg();
+                    Integer year = regRequest.getYear();
+                    List<String> modules = null;
+                    newUser = StudentUser.builder()
+                            .firstName(firstName)
+                            .lastName(lastName)
+                            .password(password)
+                            .email(email)
+                            .role(studentRole)
+                            .publicKey(publicKey)
+                            .privateKey(privateKey)
+                            .studentId(studentId)
+                            .course(course)
+                            .year(year)
+                            .registeredModules(modules)
+                            .build();
+
+                    studentRepository.save((StudentUser) newUser);
+                    break;
+                }
+            case "teacher":
+                {
+                    log.info("Registering teacher with email: " + email);
+                    // Get teacher pertinent fields:
+                    Role teacherRole = roleRepository.findByRole("teacher");
+                    List<String> modules = null;
+                    newUser = TeacherUser.builder()
+                            .firstName(firstName)
+                            .lastName(lastName)
+                            .password(password)
+                            .email(email)
+                            .role(teacherRole)
+                            .publicKey(publicKey)
+                            .privateKey(privateKey)
+                            .teachingModules(modules)
+                            .build();
+
+                    teacherRepository.save((TeacherUser) newUser);
+                    break;
+                }
+
+            
+            default:
+                log.error(log_header + "Invalid role: " + role);
+                return false;
         }
         
         // Once all is set, save the user
         userRepository.save(newUser);
     
         return true;
-    }
-
-    // Check if email is valid
-    private boolean isEmailValid(String email) {
-        log.info("Checking if email is valid..." + email);
-        // Verify if the email is part of @lancaster.ac.uk
-        if (email == null) { return false; } 
-        else if (email.contains("@")) {
-            // Now check if its a lancaster.ac.uk email
-            String domain =  email.substring(email.indexOf('@') + 1);
-
-            // if all is valid, then continue
-            if(domain.equals("lancaster.ac.uk")) {
-
-                return true;
-            }
-        }
-
-        return false;
     }
 
     
@@ -137,7 +180,6 @@ public class UserHandlerService {
             user.setPassword(userToUpdate.getPassword());
             user.setEmail(userToUpdate.getEmail());
             user.setRole(userToUpdate.getRole());
-            user.setKeyPair(userToUpdate.getKeyPair());
 
             userRepository.save(user);
 

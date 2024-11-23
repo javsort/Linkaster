@@ -23,6 +23,7 @@
         <module>services/reserveService</module>
         <module>services/feedbackService</module>
         <module>services/messageHandler</module>
+        <!-- <module>services/unifiedService</module> -->
     </modules>
 
     <dependencyManagement>

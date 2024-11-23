@@ -33,6 +33,7 @@ buildNumber.properties
 /linkaster-services/services/userService/userService.iml
 
 
+/linkaster-services/unifiedService/
 linkaster-services\services\timetableService\timetableService.iml
 linkaster-services/linkaster-services.iml
 

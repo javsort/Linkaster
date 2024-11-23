@@ -16,9 +16,9 @@ import com.linkaster.userService.service.UserHandlerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
 @Slf4j
-@RequestMapping("/api/student")
+@RestController
+@RequestMapping("/api/student")    // This is the base path for the student actions -> EXCLUSIVE TO THIS CLASS SET (TeacherActionsController & StudentActionsController)
 public class StudentActionsController implements APIUserActionsController {
 
     private final UserHandlerService userHandlerService;

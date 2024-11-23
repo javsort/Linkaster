@@ -6,16 +6,17 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     role VARCHAR(255),
-    key_pair BLOB,
+    public_key LONGTEXT,
+    private_key LONGTEXT,
     FOREIGN KEY (role) REFERENCES roles(role) ON DELETE SET NULL
 );
 
 -- Insert an admin user
-INSERT INTO users (first_name, last_name, password, email, role, key_pair)
-VALUES ('admin', 'lastname', 'admin_password', 'admin@example.com', 'ADMIN', NULL), 
-       ('student','lastname', 'student_password', 'student@example.com', 'STUDENT', NULL),
-       ('teacher','lastname', 'teacher_password', 'teacher@example.com', 'TEACHER', NULL),
-       ('adminteacher','lastname', 'adminteacher_password', 'adminteacher@example.com', 'ADMINTEACHER', NULL);
+INSERT INTO users (first_name, last_name, password, email, role, public_key, private_key)
+VALUES ('admin', 'lastname', 'admin_password', 'admin@example.com', 'ADMIN', NULL, NULL), 
+       ('student','lastname', 'student_password', 'student@example.com', 'STUDENT', NULL, NULL),
+       ('teacher','lastname', 'teacher_password', 'teacher@example.com', 'TEACHER', NULL, NULL),
+       ('adminteacher','lastname', 'adminteacher_password', 'adminteacher@example.com', 'ADMINTEACHER', NULL, NULL);
 
 CREATE TABLE students (
     id BIGINT PRIMARY KEY, -- This matches the "id" in the users table

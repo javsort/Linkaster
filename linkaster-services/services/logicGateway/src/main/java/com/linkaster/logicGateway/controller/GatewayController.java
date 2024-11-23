@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
  * It handles all incoming requests to the gateway.
  */
 @RestController
-@RequestMapping("/api")
 @Slf4j
 public class GatewayController implements APIGatewayController {
 
@@ -36,7 +34,7 @@ public class GatewayController implements APIGatewayController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${user.service.url:http://localhost:8081}")
+    @Value("${address.user.url}")
     private String userServiceUrl;
 
     // END: Endpoints

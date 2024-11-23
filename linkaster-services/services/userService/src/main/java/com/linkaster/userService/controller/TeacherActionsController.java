@@ -1,7 +1,6 @@
 package com.linkaster.userService.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +11,9 @@ import com.linkaster.userService.dto.UserRegistration;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
 @Slf4j
-@RequestMapping("/api/teacher")
+@RestController
+@RequestMapping("/api/teacher")     // This is the base path for the teacher actions -> EXCLUSIVE TO THIS CLASS SET (TeacherActionsController & StudentActionsController)
 public class TeacherActionsController implements APIUserActionsController {
     
     @Override

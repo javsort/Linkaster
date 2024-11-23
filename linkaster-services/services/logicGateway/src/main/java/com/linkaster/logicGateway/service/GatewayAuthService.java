@@ -32,7 +32,7 @@ public class GatewayAuthService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${user.service.url}")
+    @Value("${address.user.url}")
     private String userServiceUrl;
     
     private final RestTemplate restTemplate = new RestTemplate();

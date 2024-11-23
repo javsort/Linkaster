@@ -23,8 +23,6 @@ services:
     depends_on:
       - user-service
     environment:
-      - JWT_SECRET=linkaster
-      - USER_SERVICE_URL=http://user-service:8081
       - SERVER_PORT=8080
     env_file:
       - .env
