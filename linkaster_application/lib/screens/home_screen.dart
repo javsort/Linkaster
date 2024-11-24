@@ -10,9 +10,8 @@ import 'settings_page.dart';
 import 'feedback_page.dart';
 import 'timetable_page.dart';
 import 'logIn_page.dart'; // Import your LoginPage
-
-
 import '../config/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LinkasterHome extends StatefulWidget {
   @override
@@ -21,6 +20,30 @@ class LinkasterHome extends StatefulWidget {
 
 class LinkasterHomeState extends State<LinkasterHome> {
   int _currentIndex = 0;
+
+  // Token storage
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthToken();
+  }
+
+  Future<void> _checkAuthToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('authToken');
+    print('Token: $token');
+
+    if (token == null || token!.isEmpty) {
+      // Redirect to the login page if token is not available
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
+
   final TextEditingController moduleNameController = TextEditingController();
   final TextEditingController moduleCodeController = TextEditingController();
   final TextEditingController classTimeController = TextEditingController();
@@ -71,9 +94,9 @@ class LinkasterHomeState extends State<LinkasterHome> {
   }
 
   Future<void> _launchMoodle() async {
-    const url = 
+    const url =
         'https://portal.lancaster.ac.uk/portal/my-area/modules'; // Replace with your Moodle URL
-        
+
     print('Pinging the following address: $url');
     if (await canLaunch(url)) {
       await launch(url);

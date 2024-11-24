@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import './teacher_logIn_page.dart'; // Import the login page
-import '../screens/register_page.dart'; // Import the student registration page
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../config/config.dart'; // Import AppConfig for API configuration
 
 class TeacherRegistrationPage extends StatefulWidget {
   @override
@@ -14,6 +16,7 @@ class _TeacherRegistrationPageState extends State<TeacherRegistrationPage> {
   final TextEditingController surnameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   bool isPasswordVisible = false;
 
   @override
@@ -77,31 +80,14 @@ class _TeacherRegistrationPageState extends State<TeacherRegistrationPage> {
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(
+                            builder: (context) => TeacherLoginPage()),
                       );
                     },
                     child: Text(
                       'Already have an account? Login',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onBackground,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  TextButton(
-                    onPressed: () {
-                      // Navigate to the Student Registration page
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisterPage()),
-                      );
-                    },
-                    child: Text(
-                      'Are you a student?',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground,
-                        fontSize: 16.0,
-                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
@@ -153,7 +139,7 @@ class _TeacherRegistrationPageState extends State<TeacherRegistrationPage> {
     );
   }
 
-  void _handleTeacherRegister(BuildContext context) {
+  void _handleTeacherRegister(BuildContext context) async {
     if (idController.text.isEmpty ||
         nameController.text.isEmpty ||
         surnameController.text.isEmpty ||
@@ -165,27 +151,74 @@ class _TeacherRegistrationPageState extends State<TeacherRegistrationPage> {
           backgroundColor: Colors.red,
         ),
       );
-    } else if (passwordController.text.length < 6) {
+      return;
+    }
+
+    if (passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Password must be at least 6 characters long'),
           backgroundColor: Colors.orange,
         ),
       );
-    } else {
-      // Handle teacher registration logic here (e.g., POST request to a server)
+      return;
+    }
+
+    final bool isRegistered = await _registerTeacher(
+      idController.text,
+      nameController.text,
+      surnameController.text,
+      emailController.text,
+      passwordController.text,
+    );
+
+    if (isRegistered) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Teacher registered successfully!'),
+          content: Text('Registration successful. Please log in.'),
           backgroundColor: Colors.green,
         ),
       );
 
-      // Navigate to login page after successful registration
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => TeacherLoginPage()),
       );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Registration failed. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<bool> _registerTeacher(String id, String name, String surname,
+      String email, String password) async {
+    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/auth/teacher/register');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "teacherId": id,
+          "name": name,
+          "surname": surname,
+          "userEmail": email,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error during teacher registration: $e');
+      return false;
     }
   }
 }

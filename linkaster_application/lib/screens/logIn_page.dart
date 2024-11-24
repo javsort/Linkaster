@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import './home_screen.dart';
+import './home_screen.dart'; // LinkasterHome as HomeScreen
 import 'register_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../config/config.dart';
-
-//import 'package:shared_preferences/shared_preferences.dart'; // Add this for token storage
+import '../config/config.dart'; // AppConfig for API base URL
+import 'package:shared_preferences/shared_preferences.dart'; // Add for token storage
 
 class LoginPage extends StatefulWidget {
   @override
@@ -168,6 +167,10 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (token != null) {
+      // Save token locally
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('authToken', token);
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => LinkasterHome()),
@@ -188,12 +191,6 @@ class _LoginPageState extends State<LoginPage> {
     print('Base URL: ${AppConfig.apiBaseUrl}');
     print('Logging in to: $url');
     try {
-
-      print('Request Body: ${jsonEncode({
-        "userEmail": email,
-        "password": password,
-      })}');
-
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -203,15 +200,10 @@ class _LoginPageState extends State<LoginPage> {
         }),
       );
 
-      print('Response Status Code: ${response.statusCode}');
-      print('Response: ${response.body}');
-
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        print('Login successful: ${responseData['token']}');
         return responseData['token']; // Return the token
       } else {
-        print('Login failed: ${response.statusCode}');
         return null;
       }
     } catch (e) {
