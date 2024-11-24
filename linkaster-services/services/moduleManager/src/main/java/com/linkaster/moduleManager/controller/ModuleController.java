@@ -149,6 +149,7 @@ public class ModuleController implements APIModuleController {
         return true;
     }
 
+    // Called by the student service - INTERSERVICE COMMUNICATION
     @Override
     public ResponseEntity<Iterable<Long>> getTeachersByStudent(String studentId) {
         log.info(log_header + "Getting teachers for student: {}", studentId);

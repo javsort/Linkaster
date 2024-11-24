@@ -32,6 +32,8 @@ public class AuditManagerService {
         return null; // Replace with actual implementation
     }
 
+
+    // Called by the student service - INTERSERVICE COMMUNICATION
     public ResponseEntity<Iterable<Long>> getTeachersByStudent(String studentId) {
         // From all the modules the student is enrolled in, get the teachers (moduleOwnerId -> userId -> teacher)
         log.info(log_header + "Getting teachers for student: {}", studentId);

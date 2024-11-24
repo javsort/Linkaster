@@ -64,7 +64,7 @@ public class StudentActionsController implements APIUserActionsController {
         return "Student joined module!";
     }
 
-    // Get all the teachers of the student based on studentId
+    // Get all the teachers of the student based on studentId - INTERSERVICE COMMUNICATION
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/getTeachers")
     public Iterable<TeacherDTO> getStudentTeachers(HttpServletRequest request){

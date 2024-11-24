@@ -231,7 +231,7 @@ public class UserHandlerService {
     /*
      * STUDENT Only Operations
      */
-    //  Get student's teachers based on student ID
+    //  Get student's teachers based on student ID -> Contact moduleManager INTERSERVICE COMMUNICATION
     public Iterable<TeacherDTO> getStudentTeachers(HttpServletRequest incRequest) {
         String email = incRequest.getAttribute("userEmail").toString();
 
@@ -243,11 +243,15 @@ public class UserHandlerService {
         // Get List of teachers user Id by studentId after calling moduleManager through logicGateway
         String pathToGetStudentTeachers = logicGatewayAddress + "/api/module/student/" + studentIdToFind + "/teachers";
 
-        // Create request
+        // Create request back to gateway
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Keep token on call for logicGateway & moduleManager re-verification of token 
         headers.set("Authorization", incRequest.getHeader("Authorization"));
         
+        // Add user info to headers
+        // Add claims to the req attributes (opt, but would be [id, username, role])
         headers.set("id", incRequest.getAttribute("id").toString());
         headers.set("userEmail", incRequest.getAttribute("userEmail").toString());
         headers.set("role", incRequest.getAttribute("role").toString());
