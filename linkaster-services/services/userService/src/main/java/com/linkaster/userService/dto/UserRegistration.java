@@ -17,7 +17,7 @@ public class UserRegistration {
     
     // Student only fields
     private String studentId;
-    private Integer year;
+    private String year;
     private String studyProg;
 
     // Teacher only fields

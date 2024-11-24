@@ -1,7 +1,5 @@
 package com.linkaster.userService.model;
 
-import java.security.KeyPair;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -54,6 +53,13 @@ public class User {
     @JoinColumn(name="role", referencedColumnName="role")
     private Role role;
 
-    @Column(name="key_pair")
-    private KeyPair keyPair;
+    // Public Key as a Base64-encoded string
+    @Lob
+    @Column(name = "public_key", columnDefinition = "LONGTEXT")
+    private String publicKey;
+
+    // Private Key as a Base64-encoded string
+    @Lob
+    @Column(name = "private_key", columnDefinition = "LONGTEXT")
+    private String privateKey;
 }

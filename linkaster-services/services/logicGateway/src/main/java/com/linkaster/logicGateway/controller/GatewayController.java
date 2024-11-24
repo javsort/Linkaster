@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
  * It handles all incoming requests to the gateway.
  */
 @RestController
-@RequestMapping("/api")
 @Slf4j
 public class GatewayController implements APIGatewayController {
 
@@ -36,8 +34,11 @@ public class GatewayController implements APIGatewayController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${user.service.url:http://localhost:8081}")
+    @Value("${address.user.url}")
     private String userServiceUrl;
+
+    @Value("${address.module.url}")
+    private String moduleServiceUrl;
 
     // END: Endpoints
 
@@ -100,11 +101,35 @@ public class GatewayController implements APIGatewayController {
         }
     }
 
+    // Forward requests to userService
     @GetMapping("/user/**")
     public ResponseEntity<?> forwardToUserService(HttpServletRequest request) {
 
         log.info("Forwarding request to userService: " + request.getRequestURI());
         String targetUrl = userServiceUrl + request.getRequestURI();
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", request.getHeader("Authorization"));
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        // Forward the request
+        ResponseEntity<String> response = restTemplate.exchange(
+            targetUrl,
+            HttpMethod.valueOf(request.getMethod()),
+            entity,
+            String.class
+        );
+
+        return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+    }
+
+    // Forward requests to moduleService
+    @GetMapping("/module/**")
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request) {
+
+        log.info("Forwarding request to moduleService: " + request.getRequestURI());
+        String targetUrl = moduleServiceUrl + request.getRequestURI();
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", request.getHeader("Authorization"));

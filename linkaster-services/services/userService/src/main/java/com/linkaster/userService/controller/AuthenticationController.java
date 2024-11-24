@@ -3,10 +3,10 @@ package com.linkaster.userService.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.catalina.mbeans.UserMBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.userService.dto.AuthUser;
@@ -21,9 +21,8 @@ import lombok.extern.slf4j.Slf4j;
  * It handles all incoming requests to the service and authenticates users.
  * Called directly by logicGateway to verify user credentials
  */
-@RestController
 @Slf4j
-@RequestMapping("/api/auth")
+@RestController
 public class AuthenticationController implements APIAuthenticationController {
 
     // Service for authenticating users
@@ -46,6 +45,24 @@ public class AuthenticationController implements APIAuthenticationController {
         String password = loginRequest.getPassword();
 
         log.info(log_header + "Received ping to authenticate the " + user_type + ": " + userEmail);
+
+        // If user is admin or test user, skip authentication
+        if(userEmail.equals("student@example.com") 
+        || userEmail.equals("admin@example.com") 
+        || userEmail.equals("teacher@example.com")
+        || userEmail.equals("adminteacher@example.com")){
+            Map<String, String> response = new HashMap<>();
+
+            AuthUser adminUser = userAuthenticatorService.getAuthenticatedUser(userEmail);
+
+            response.put("message", "Admin authenticated");
+            response.put("id", adminUser.getId().toString());
+            response.put("userEmail", adminUser.getUserEmail());
+            response.put("role", adminUser.getRole());
+
+            log.info(log_header + "Admin: '" + userEmail + "' authenticated");
+            return ResponseEntity.ok(response);
+        }
 
         // Authenticate user
         if(userAuthenticatorService.authenticateUser(userEmail, password)){

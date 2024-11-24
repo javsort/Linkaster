@@ -1,4 +1,4 @@
-package com.linkaster.userService.security;
+package com.linkaster.moduleManager.security;
 
 import java.io.IOException;
 
@@ -28,20 +28,6 @@ public class JwtReqFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        // Allow access to authentication service
-        String path = request.getRequestURI();
-        if(path.equals("/api/{user_type}/login") 
-            || path.equals("/api/auth/admin/login")
-            || path.equals("/api/auth/student/login")
-            || path.equals("/api/auth/teacher/login")
-            || path.equals("/api/auth/admin/register")
-            || path.equals("/api/auth/student/register")
-            || path.equals("/api/auth/teacher/register")){
-            
-                filterChain.doFilter(request, response);
-            return;
-        }
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
@@ -61,9 +47,6 @@ public class JwtReqFilter extends OncePerRequestFilter {
             request.setAttribute("id", id);
             request.setAttribute("userEmail", userEmail);
             request.setAttribute("role", role);
-
-            // Re add the token to the response header
-            response.addHeader("Authorization", "Bearer " + token);
 
             log.info("Found the following tokens: \nid: " + id + "\nuserEmail: " + userEmail + "\nrole: " + role);
             

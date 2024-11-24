@@ -4,6 +4,7 @@ import java.security.KeyPair;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.userService.dto.AuthUser;
@@ -16,6 +17,7 @@ import com.linkaster.userService.repository.RoleRepository;
 import com.linkaster.userService.repository.StudentRepository;
 import com.linkaster.userService.repository.TeacherRepository;
 import com.linkaster.userService.repository.UserRepository;
+import com.linkaster.userService.util.KeyMaster;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -33,20 +35,21 @@ import lombok.extern.slf4j.Slf4j;
 //@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class UserAuthenticatorService {
 
-    // Repository for User
+    // Repositories
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private TeacherRepository teacherRepository;
-
     @Autowired
     private StudentRepository studentRepository;
-
     @Autowired
     private RoleRepository roleRepository;
 
-    private final String log_header = "UserAuthenticatorService: ";
+    // Autowired components:
+    @Autowired
+    private KeyMaster keyMaster;
+
+    private final String log_header = "UserAuthenticatorService --- ";
 
     // Authenticate user -> Check if user exists and if password is correct
     public boolean authenticateUser(String userEmail, String password) {
@@ -59,7 +62,7 @@ public class UserAuthenticatorService {
         }
 
         // Check if password is correct
-        if (!userRepository.findByEmail(userEmail).getPassword().equals(password)) {
+        if(!checkPassword(userEmail, password)) {
             log.error(log_header + "Incorrect password for user: '" + userEmail + "'");
             return false;
         }
@@ -85,6 +88,11 @@ public class UserAuthenticatorService {
 
         log.info(log_header + "Registering user: " + userEmail);
 
+        if (!verifyEmail(userEmail)) {
+            log.error(log_header + "Invalid email: " + userEmail);
+            return false;
+        }
+
         // Check if user already exists
         if (userRepository.findByEmail(userEmail) != null) {
             log.error(log_header + "The user: '" + userEmail + "' already exists");
@@ -92,13 +100,41 @@ public class UserAuthenticatorService {
         }
 
         // Create new user
-        User newUser;
+        User newUser;        
         
         String firstName = regRequest.getName();
         String lastName = regRequest.getSurname();
-        String password = regRequest.getPassword();
         String email = regRequest.getUserEmail();
-        KeyPair keyPair = null;
+        
+        
+        // Create a KeyMaster object instance to make keys and encrypt password
+        String password = keyMaster.receivePasswordToHash(regRequest.getPassword());
+
+        // Generate key pair -> values to fill
+        KeyPair keyPair;
+        String publicKey;
+        String privateKey;
+
+        try {
+            keyPair = keyMaster.keyGenerator();
+            
+            privateKey = keyMaster.encodePrivate(keyPair.getPrivate());
+            publicKey = keyMaster.encodePublic(keyPair.getPublic());
+
+            log.info("Public key: \nLength: " + publicKey.length() + "\nKey: '" + publicKey + "'\n");
+            log.info("Private key: \nLength: " + privateKey.length() + "\nKey: '" + privateKey + "'\n");
+
+            // Then get their encrypted versions
+            
+        } catch (Exception e) {
+            log.error(log_header + "Error generating key pair");
+            return false;
+        }
+
+        if(publicKey.length() < 1 || privateKey.length() < 1) {
+            log.error(log_header + "Encoded keys are empty");
+            return false;
+        }
 
         // Create new user based on the path role
         switch (role) {
@@ -110,7 +146,7 @@ public class UserAuthenticatorService {
                     Role studentRole = roleRepository.findByRole("student");
                     String studentId = regRequest.getStudentId();
                     String course = regRequest.getStudyProg();
-                    Integer year = regRequest.getYear();
+                    String year = regRequest.getYear();
                     List<String> modules = null;
                     newUser = StudentUser.builder()
                             .firstName(firstName)
@@ -118,11 +154,11 @@ public class UserAuthenticatorService {
                             .password(password)
                             .email(email)
                             .role(studentRole)
-                            .keyPair(keyPair)
+                            .publicKey(publicKey)
+                            .privateKey(privateKey)
                             .studentId(studentId)
                             .course(course)
                             .year(year)
-                            .registeredModules(modules)
                             .build();
 
                     studentRepository.save((StudentUser) newUser);
@@ -140,8 +176,8 @@ public class UserAuthenticatorService {
                             .password(password)
                             .email(email)
                             .role(teacherRole)
-                            .keyPair(keyPair)
-                            .teachingModules(modules)
+                            .publicKey(publicKey)
+                            .privateKey(privateKey)
                             .build();
 
                     teacherRepository.save((TeacherUser) newUser);
@@ -157,6 +193,27 @@ public class UserAuthenticatorService {
 
         log.info(log_header + "User: '" + userEmail + "' registered");
         return true;
+    }
+
+    private boolean verifyEmail(String email) {
+        // First check if its email actually
+        if(!email.contains("@") || !email.contains(".")) {
+            return false;
+        }
+
+
+        // Then check if it is a lancaster email
+        String domain = "lancaster.ac.uk";
+
+        return email.endsWith("@" + domain);
+    }
+
+    private boolean checkPassword(String userEmail, String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        String encryptedPassword = userRepository.findByEmail(userEmail).getPassword();
+
+        return bCryptPasswordEncoder.matches(password, encryptedPassword);
     }
     
 }
