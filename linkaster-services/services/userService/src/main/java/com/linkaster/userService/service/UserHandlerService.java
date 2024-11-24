@@ -2,7 +2,10 @@ package com.linkaster.userService.service;
 
 import java.security.KeyPair;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,10 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @Slf4j
 public class UserHandlerService {
+
+    // Address to moduleManager
+    @Value("${address.module.url}")
+    private String moduleManagerAddress;
 
     // Repositories for User and Role
     @Autowired
@@ -219,15 +226,22 @@ public class UserHandlerService {
     /*
      * STUDENT Only Operations
      */
-    // Get student's teachers based on student ID
-    public List<TeacherDTO> getStudentTeachers(String email) {
-        User student = studentRepository.findByEmail(email);
+    //  Get student's teachers based on student ID
+    public Iterable<TeacherDTO> getStudentTeachers(String email) {
+        User studentToFind = studentRepository.findByEmail(email);
 
-        // Curr debugging
-        TeacherDTO teacher = new TeacherDTO();
-        List<TeacherDTO> teachers = List.of(teacher);
+        /*
+        String pathToGetStudentTeachers = moduleManagerAddress + "/api/module/student/" + studentToFind.getId() + "/teachers";
 
-        return teachers;
+        // Create request
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        // Call moduleManager to get student's teachers
+        Iterable<TeacherDTO> teachers = restTemplate.exchange(pathToGetStudentTeachers, HttpMethod.POST, request, Map.class);*/
+
+        return null;
     }
 
 

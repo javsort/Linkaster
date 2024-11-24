@@ -35,8 +35,9 @@ public class JoinCodeManagerService {
         return false; // Replace with actual implementation
     }
 
-    public void joinModuleByCode(String joinCode, long studentId) {
+    public boolean joinModuleByCode(String joinCode, long studentId) {
         log.info("Student {} joining module with join code {}", studentId, joinCode);
         // Logic to join a module using the join code
+        return false; // Replace with actual implementation
     }
 }

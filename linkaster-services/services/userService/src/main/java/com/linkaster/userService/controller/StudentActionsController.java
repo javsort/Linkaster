@@ -53,15 +53,9 @@ public class StudentActionsController implements APIUserActionsController {
     // Get all the teachers of the student based on studentId
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/getTeachers")
-    public List<TeacherDTO> getStudentTeachers(HttpServletRequest request){
-        String studentEmail = request.getAttribute("userEmail").toString();
+    public Iterable<TeacherDTO> getStudentTeachers(HttpServletRequest request){
 
-        
-        // Curr debugging
-        TeacherDTO teacher = new TeacherDTO();
-        List<TeacherDTO> teachers = List.of(teacher);
-
-        return teachers;
+        return userHandlerService.getStudentTeachers(request.getAttribute("userEmail").toString());
     }
 
     

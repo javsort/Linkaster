@@ -3,12 +3,16 @@ package com.linkaster.moduleManager.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.moduleManager.dto.TeacherDTO;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 
 @Service
 @Transactional
@@ -18,34 +22,29 @@ public class AuditManagerService {
     @Autowired
     private ModuleRepository moduleRepository;
 
-    public String[] getAllAudit() {
-        log.info("Getting all audit records");
-        // Logic to get all audit records
-        return new String[0]; // Replace with actual implementation
+    @Value("${address.logicGateway.url}")
+    private String logicGatewayAddress;
+
+
+    public List<String> getStudentsByModule(long moduleId) {
+        log.info("Getting students for module {}", moduleId);
+        // Logic to get students for a module
+
+        return null; // Replace with actual implementation
     }
 
-    public String getAuditById(long id) {
-        log.info("Getting audit record by ID: {}", id);
-        // Logic to get an audit record by ID
-        return "Audit record"; // Replace with actual implementation
+    public ResponseEntity<Iterable<TeacherDTO>> getTeachersByStudent(String studentId) {
+        log.info("Getting teachers for student {}", studentId);
+
+        // Call userHandler to pick the user and get the teachers
+        
+        // Logic to get teachers for a student
+        Iterable<TeacherDTO> teachers;
+        
+        // Make request to userHandler to get teachers
+        
+        return null;
     }
 
-    public String addAudit() {
-        log.info("Adding audit record");
-        // Logic to add an audit student to module
-        return "Audit record added"; // Replace with actual implementation
-    }
-
-    public String deleteAudit(long id) {
-        log.info("Deleting audit record by ID: {}", id);
-        // Logic to delete an audit student of module
-        return "Audit record deleted"; // Replace with actual implementation
-    }
-
-    public String updateAudit(long id) {
-        log.info("Updating audit record by ID: {}", id);
-        // Logic to update an audit student of module
-        return "Audit record updated"; // Replace with actual implementation
-    }
 
 }
