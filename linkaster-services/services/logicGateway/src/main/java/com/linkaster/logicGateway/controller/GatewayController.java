@@ -37,6 +37,9 @@ public class GatewayController implements APIGatewayController {
     @Value("${address.user.url}")
     private String userServiceUrl;
 
+    @Value("${address.module.url}")
+    private String moduleServiceUrl;
+
     // END: Endpoints
 
     // Service for authenticating users and generating JWT tokens
@@ -98,11 +101,35 @@ public class GatewayController implements APIGatewayController {
         }
     }
 
+    // Forward requests to userService
     @GetMapping("/user/**")
     public ResponseEntity<?> forwardToUserService(HttpServletRequest request) {
 
         log.info("Forwarding request to userService: " + request.getRequestURI());
         String targetUrl = userServiceUrl + request.getRequestURI();
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", request.getHeader("Authorization"));
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        // Forward the request
+        ResponseEntity<String> response = restTemplate.exchange(
+            targetUrl,
+            HttpMethod.valueOf(request.getMethod()),
+            entity,
+            String.class
+        );
+
+        return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+    }
+
+    // Forward requests to moduleService
+    @GetMapping("/module/**")
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request) {
+
+        log.info("Forwarding request to moduleService: " + request.getRequestURI());
+        String targetUrl = moduleServiceUrl + request.getRequestURI();
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", request.getHeader("Authorization"));
