@@ -3,6 +3,8 @@ import './home_screen.dart';
 import 'register_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/config.dart';
+
 //import 'package:shared_preferences/shared_preferences.dart'; // Add this for token storage
 
 class LoginPage extends StatefulWidget {
@@ -182,8 +184,16 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<String?> loginUser(String email, String password) async {
-    final url = Uri.parse('http://localhost:8080/api/auth/student/login');
+    final url = Uri.parse("${AppConfig.apiBaseUrl}/api/auth/student/login");
+    print('Base URL: ${AppConfig.apiBaseUrl}');
+    print('Logging in to: $url');
     try {
+
+      print('Request Body: ${jsonEncode({
+        "userEmail": email,
+        "password": password,
+      })}');
+
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -192,6 +202,9 @@ class _LoginPageState extends State<LoginPage> {
           "password": password,
         }),
       );
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response: ${response.body}');
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);

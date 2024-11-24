@@ -7,5 +7,5 @@ services:
       context: ../linkaster_application
       dockerfile: Dockerfile
     ports:
-      - "8077:77"
+      - "8077:80"
     restart: unless-stopped

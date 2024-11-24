@@ -11,6 +11,9 @@ import 'feedback_page.dart';
 import 'timetable_page.dart';
 import 'logIn_page.dart'; // Import your LoginPage
 
+
+import '../config/config.dart';
+
 class LinkasterHome extends StatefulWidget {
   @override
   LinkasterHomeState createState() => LinkasterHomeState();
@@ -68,8 +71,10 @@ class LinkasterHomeState extends State<LinkasterHome> {
   }
 
   Future<void> _launchMoodle() async {
-    const url =
+    const url = 
         'https://portal.lancaster.ac.uk/portal/my-area/modules'; // Replace with your Moodle URL
+        
+    print('Pinging the following address: $url');
     if (await canLaunch(url)) {
       await launch(url);
     } else {
