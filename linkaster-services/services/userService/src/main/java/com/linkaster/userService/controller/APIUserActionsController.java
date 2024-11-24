@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.linkaster.userService.dto.UserRegistration;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface APIUserActionsController {
 
     @GetMapping("")
@@ -17,5 +19,9 @@ public interface APIUserActionsController {
 
     @GetMapping("/{role}/getProfile")
     public String getProfile();
+
+    @PostMapping("/assignModuleManager")
+    public String assignModuleManager(HttpServletRequest request);
+
     
 }

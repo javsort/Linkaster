@@ -3,6 +3,7 @@ package com.linkaster.userService.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.catalina.mbeans.UserMBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +46,11 @@ public class AuthenticationController implements APIAuthenticationController {
 
         log.info(log_header + "Received ping to authenticate the " + user_type + ": " + userEmail);
 
-        // If user is admin, skip authentication
-        if(user_type.equals("admin")){
+        // If user is admin or test user, skip authentication
+        if(userEmail.equals("student@example.com") 
+        || userEmail.equals("admin@example.com") 
+        || userEmail.equals("teacher@example.com")
+        || userEmail.equals("adminteacher@example.com")){
             Map<String, String> response = new HashMap<>();
 
             AuthUser adminUser = userAuthenticatorService.getAuthenticatedUser(userEmail);

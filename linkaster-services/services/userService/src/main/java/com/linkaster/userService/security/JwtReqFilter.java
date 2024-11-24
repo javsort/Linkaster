@@ -62,6 +62,9 @@ public class JwtReqFilter extends OncePerRequestFilter {
             request.setAttribute("userEmail", userEmail);
             request.setAttribute("role", role);
 
+            // Re add the token to the response header
+            response.addHeader("Authorization", "Bearer " + token);
+
             log.info("Found the following tokens: \nid: " + id + "\nuserEmail: " + userEmail + "\nrole: " + role);
             
         } else {

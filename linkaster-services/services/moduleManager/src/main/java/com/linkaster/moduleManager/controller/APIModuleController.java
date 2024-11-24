@@ -116,7 +116,8 @@ public interface APIModuleController {
     public boolean updateTimetable(@RequestParam Integer time, @RequestParam Date date);
 
     
+    // Called by the student service
     @GetMapping("/student/{studentId}/teachers")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<TeacherDTO>> getTeachersByStudent(@PathVariable String studentId);
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@PathVariable String studentId);
 }

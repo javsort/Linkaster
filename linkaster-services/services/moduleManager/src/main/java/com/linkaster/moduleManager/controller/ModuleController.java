@@ -24,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ModuleController implements APIModuleController {
 
+    private final String log_header = "ModuleController --- ";
+
     private final ModuleHandlerService moduleHandlerService;
     private final ModuleManagerService moduleManagerService;
     private final AuditManagerService auditManagerService;
@@ -148,12 +150,9 @@ public class ModuleController implements APIModuleController {
     }
 
     @Override
-    public ResponseEntity<Iterable<TeacherDTO>> getTeachersByStudent(String studentId) {
-        // Example logic; replace with actual implementation
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(String studentId) {
+        log.info(log_header + "Getting teachers for student: {}", studentId);
         return auditManagerService.getTeachersByStudent(studentId);
     }
-
-
-
 
 }

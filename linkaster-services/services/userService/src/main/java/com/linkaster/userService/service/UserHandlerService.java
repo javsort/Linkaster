@@ -1,13 +1,20 @@
 package com.linkaster.userService.service;
 
 import java.security.KeyPair;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.linkaster.userService.dto.TeacherDTO;
 import com.linkaster.userService.dto.UserRegistration;
@@ -21,6 +28,7 @@ import com.linkaster.userService.repository.TeacherRepository;
 import com.linkaster.userService.repository.UserRepository;
 import com.linkaster.userService.util.KeyMaster;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,10 +41,11 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @Slf4j
 public class UserHandlerService {
+    @Value("${address.logicGateway.url}")
+    private String logicGatewayAddress;
 
-    // Address to moduleManager
-    @Value("${address.module.url}")
-    private String moduleManagerAddress;
+    // RestTemplate for making requests
+    private final RestTemplate restTemplate = new RestTemplate();
 
     // Repositories for User and Role
     @Autowired
@@ -114,7 +123,7 @@ public class UserHandlerService {
                     Role studentRole = roleRepository.findByRole("student");
                     String studentId = regRequest.getStudentId();
                     String course = regRequest.getStudyProg();
-                    Integer year = regRequest.getYear();
+                    String year = regRequest.getYear();
                     List<String> modules = null;
                     newUser = StudentUser.builder()
                             .firstName(firstName)
@@ -127,7 +136,6 @@ public class UserHandlerService {
                             .studentId(studentId)
                             .course(course)
                             .year(year)
-                            .registeredModules(modules)
                             .build();
 
                     studentRepository.save((StudentUser) newUser);
@@ -138,7 +146,6 @@ public class UserHandlerService {
                     log.info("Registering teacher with email: " + email);
                     // Get teacher pertinent fields:
                     Role teacherRole = roleRepository.findByRole("teacher");
-                    List<String> modules = null;
                     newUser = TeacherUser.builder()
                             .firstName(firstName)
                             .lastName(lastName)
@@ -147,7 +154,6 @@ public class UserHandlerService {
                             .role(teacherRole)
                             .publicKey(publicKey)
                             .privateKey(privateKey)
-                            .teachingModules(modules)
                             .build();
 
                     teacherRepository.save((TeacherUser) newUser);
@@ -222,26 +228,84 @@ public class UserHandlerService {
         return userRepository.findByRole(role);
     }
 
-
     /*
      * STUDENT Only Operations
      */
     //  Get student's teachers based on student ID
-    public Iterable<TeacherDTO> getStudentTeachers(String email) {
-        User studentToFind = studentRepository.findByEmail(email);
+    public Iterable<TeacherDTO> getStudentTeachers(HttpServletRequest incRequest) {
+        String email = incRequest.getAttribute("userEmail").toString();
 
-        /*
-        String pathToGetStudentTeachers = moduleManagerAddress + "/api/module/student/" + studentToFind.getId() + "/teachers";
+        log.info("Getting student's teachers for '" + email + "' \nContacting moduleManager...");
+        StudentUser studentToFind = studentRepository.findByEmail(email);
+
+        String studentIdToFind = studentToFind.getStudentId();
+
+        // Get List of teachers user Id by studentId after calling moduleManager through logicGateway
+        String pathToGetStudentTeachers = logicGatewayAddress + "/api/module/student/" + studentIdToFind + "/teachers";
 
         // Create request
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", incRequest.getHeader("Authorization"));
+        
+        headers.set("id", incRequest.getAttribute("id").toString());
+        headers.set("userEmail", incRequest.getAttribute("userEmail").toString());
+        headers.set("role", incRequest.getAttribute("role").toString());
+
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        // Call moduleManager to get student's teachers
-        Iterable<TeacherDTO> teachers = restTemplate.exchange(pathToGetStudentTeachers, HttpMethod.POST, request, Map.class);*/
+
+        // Call moduleManager through logicGateway to get student's teachers
+        try {
+            log.info(log_header + "Making request to: " + pathToGetStudentTeachers);
+            ResponseEntity<Iterable<Long>> response = restTemplate.exchange(
+                pathToGetStudentTeachers, 
+                HttpMethod.GET, 
+                request, 
+                new ParameterizedTypeReference<Iterable<Long>>() {});
+
+            // If response is successful, return the list of teachers
+            Iterable<Long> teacherIds = response.getBody();
+            log.info(log_header + "Response from module-manager: " + teacherIds + "\nConverting and hetting teachers...");
+            Iterable<TeacherDTO> teachers = getTeacherDTOs(teacherIds);
+
+            log.info(log_header + "Returning teachers...");
+            return teachers;
+
+        } catch (Exception e) {
+            log.error(log_header + "Error getting teachers for student: " + email);
+        }
 
         return null;
+    }
+
+    // Get TeacherDTOs from teacherIds
+    private Iterable<TeacherDTO> getTeacherDTOs(Iterable<Long> teacherIds) {
+        log.info(log_header + "Getting TeacherDTOs from teacherIds...");
+        List<TeacherDTO> teachers = new ArrayList<>();
+
+        teacherIds.forEach(teacherId -> {
+            TeacherUser teacher = teacherRepository.findById(teacherId).orElse(null);
+            if(teacher != null) {
+                teachers.add(new TeacherDTO(
+                    teacher.getId(),
+                    teacher.getFirstName(), 
+                    teacher.getLastName(), 
+                    teacher.getEmail(),
+                    teacher.getSubject()));
+            } else {
+                log.error(log_header + "Teacher with id: " + teacherId + " not found");
+            }
+        });
+
+        log.info(log_header + "Returning TeacherDTOs...");
+        return teachers;
+    }
+
+
+    public String assignModuleManager(String userEmail) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'assignModuleManager'");
     }
 
 

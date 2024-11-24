@@ -1,11 +1,5 @@
 package com.linkaster.userService.model;
 
-import java.security.KeyPair;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.linkaster.userService.util.KeyMaster;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

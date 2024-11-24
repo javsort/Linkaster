@@ -146,7 +146,7 @@ public class UserAuthenticatorService {
                     Role studentRole = roleRepository.findByRole("student");
                     String studentId = regRequest.getStudentId();
                     String course = regRequest.getStudyProg();
-                    Integer year = regRequest.getYear();
+                    String year = regRequest.getYear();
                     List<String> modules = null;
                     newUser = StudentUser.builder()
                             .firstName(firstName)
@@ -159,7 +159,6 @@ public class UserAuthenticatorService {
                             .studentId(studentId)
                             .course(course)
                             .year(year)
-                            .registeredModules(modules)
                             .build();
 
                     studentRepository.save((StudentUser) newUser);
@@ -179,7 +178,6 @@ public class UserAuthenticatorService {
                             .role(teacherRole)
                             .publicKey(publicKey)
                             .privateKey(privateKey)
-                            .teachingModules(modules)
                             .build();
 
                     teacherRepository.save((TeacherUser) newUser);
