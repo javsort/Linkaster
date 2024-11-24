@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import './home_screen.dart';
 import 'register_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart'; // Add this for token storage
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,9 +11,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool isLoading = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () async {
-                        await _handleLogin(context);
-                      },
+                      onPressed: () => _handleLogin(context),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -128,7 +127,9 @@ class _LoginPageState extends State<LoginPage> {
                         textStyle: TextStyle(fontSize: 18.0),
                       ),
                       child: isLoading
-                          ? CircularProgressIndicator(color: Colors.white)
+                          ? CircularProgressIndicator(
+                              color: Colors.white,
+                            )
                           : Text('Login'),
                     ),
                   ],
@@ -142,67 +143,67 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _handleLogin(BuildContext context) async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter your email and password'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
+ Future<void> _handleLogin(BuildContext context) async {
+  if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Please enter your email and password'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
+  }
 
-    setState(() {
-      isLoading = true;
-    });
+  setState(() {
+    isLoading = true;
+  });
 
-    final success = await loginUser(emailController.text, passwordController.text);
+  final String? token =
+      await loginUser(emailController.text, passwordController.text);
 
-    setState(() {
-      isLoading = false;
-    });
+  setState(() {
+    isLoading = false;
+  });
 
-    if (success) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => LinkasterHome()),
-        (route) => false,
-      );
+  if (token != null) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LinkasterHome(token: token)),
+      (route) => false,
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Invalid email or password'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
+Future<String?> loginUser(String email, String password) async {
+  final url = Uri.parse('http://logic-gateway:8080/api/student/login');
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      print('Login successful: ${responseData['token']}');
+      return responseData['token']; // Return the token
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Invalid email or password'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      print('Login failed: ${response.statusCode}');
+      return null;
     }
+  } catch (e) {
+    print('Error logging in: $e');
+    return null;
   }
-
-  Future<bool> loginUser(String email, String password) async {
-    final url = Uri.parse('https://your-backend-url.com/api/login');
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        // Assuming the backend returns a token or some success message
-        final responseData = jsonDecode(response.body);
-        print('Login successful: ${responseData['token']}');
-        return true;
-      } else {
-        print('Login failed: ${response.statusCode}');
-        return false;
-      }
-    } catch (e) {
-      print('Error logging in: $e');
-      return false;
-    }
-  }
+}
 }
