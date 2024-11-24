@@ -1,17 +1,28 @@
 package com.linkaster.moduleManager.model;
 
-import java.sql.Date;
+import java.util.List;
 
-import org.yaml.snakeyaml.events.Event;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.persistence.*;
+import lombok.experimental.SuperBuilder;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Setter
 @Getter
 @Entity
@@ -20,26 +31,34 @@ import jakarta.persistence.*;
 public class Module {
 
     @Id
-    @Column(name = "id", unique = true,nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "name", unique = true,nullable = false)
+    @Column(name = "module_owner_id", unique = true, nullable = false)
+    private long moduleOwnerId;
+
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "code" , unique = true,nullable = false)
-    private String code;    
+    @Column(name = "module_code", unique = true, nullable = false)
+    private String moduleCode;    
 
-    @Column(name = "studentId")
-    private long[] studentId;
+    @Column(name = "studentList")
+    private List<String> studentList;
 
-    @Column(name = "event")
-    private EventModel[] event;
-
-    @Column(name = "announcement")
-    private String[] announcement;
+    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EventModel> eventsAndAnnouncements;
 
     @Column(name = "type")
     private String type;
+
+    @Column(name = "description")
+    private String description;
     
+    @Column(name = "startTime")
+    private String startTime;
+
+    @Column(name = "endTime")
+    private String endTime;
 }

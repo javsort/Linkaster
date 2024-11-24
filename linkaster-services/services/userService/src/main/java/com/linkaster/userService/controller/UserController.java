@@ -3,9 +3,9 @@ package com.linkaster.userService.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.linkaster.userService.dto.UserRegistration;
 import com.linkaster.userService.model.User;
 import com.linkaster.userService.service.UserAuthenticatorService;
 import com.linkaster.userService.service.UserHandlerService;
@@ -17,9 +17,8 @@ import lombok.extern.slf4j.Slf4j;
  * It handles all incoming requests to the service.
  * Called by the Gateway to create, delete, update, and retrieve user information
  */
-@RestController
-@RequestMapping("/api/user")
 @Slf4j
+@RestController
 public class UserController implements APIUserController {
 
     // Services for handling user operations
@@ -42,10 +41,10 @@ public class UserController implements APIUserController {
         return "Welcome to the User Service!";
     }
 
-    // CreateUser endpoint
+    // CreateUser endpoint -> ADMIN ACCESS ONLY
     @Override
-    public String createUser(User userInfo, String roleName) {
-        userHandlerService.createUser(userInfo, roleName);
+    public String createUser(UserRegistration regRequest, String roleName) {
+        userHandlerService.createUser(regRequest, roleName);
         return "User created successfully!";
     }
     

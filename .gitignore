@@ -33,6 +33,12 @@ buildNumber.properties
 /linkaster-services/services/userService/userService.iml
 
 
+linkaster-services\services\unifiedService\src\main\java\com\linkaster\unifiedService\UnifiedServiceApplication.java
+linkaster-services\services\unifiedService\src\main\resources\application.yml
+linkaster-services\services\unifiedService\src\test\java\com\linkaster\unifiedService\UnifiedServiceApplicationTests.java
+linkaster-services\services\unifiedService\Dockerfile
+linkaster-services\services\unifiedService\pom.xml
+
 linkaster-services\services\timetableService\timetableService.iml
 linkaster-services/linkaster-services.iml
 

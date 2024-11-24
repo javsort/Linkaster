@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -24,6 +25,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @Builder
+@Getter
 @Table(name = "students")
 public class StudentUser extends User {
 
@@ -34,10 +36,8 @@ public class StudentUser extends User {
     private String course;
 
     @Column(name = "year")
-    private Integer year;
+    private String year;
     
-    @ElementCollection(fetch= FetchType.EAGER)
-    @CollectionTable(name = "student_user_registered_modules", joinColumns = @JoinColumn(name = "student_user_id"))        // FOR NOW, I WILL USE A SEPARATE TABLE TO STORE THE MODULES
-    @Column(name = "module_name")
-    private List<String> registeredModules;
+    @Column(name = "enrolled_modules_ids")
+    private List<String> enrolledModulesIds;
 }

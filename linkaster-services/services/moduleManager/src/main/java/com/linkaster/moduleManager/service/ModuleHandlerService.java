@@ -20,10 +20,11 @@ public class ModuleHandlerService {
 
     // Admin Tasks
 
-    public Module assignTeacher(long moduleId, long teacherId) {
+    public boolean assignTeacher(long moduleId, long teacherId) {
         log.info("Assigning teacher {} to module {}", teacherId, moduleId);
         // Logic to assign a teacher to a module
-        return null; // Replace with actual implementation
+        
+        return true; // Replace with actual implementation
     }
 
     public Module unassignTeacher(long moduleId, long teacherId) {

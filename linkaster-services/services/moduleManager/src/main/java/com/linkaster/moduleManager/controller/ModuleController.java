@@ -1,11 +1,16 @@
 package com.linkaster.moduleManager.controller;
 
+import org.hibernate.sql.ast.tree.update.Assignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+import com.linkaster.moduleManager.dto.ModuleCreate;
+import com.linkaster.moduleManager.dto.TeacherDTO;
+import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.service.AuditManagerService;
 import com.linkaster.moduleManager.service.JoinCodeManagerService;
@@ -16,9 +21,10 @@ import com.linkaster.moduleManager.service.TimetableIntegratorService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/module")
 @Slf4j
-public class ModuleController {
+public class ModuleController implements APIModuleController {
+
+    private final String log_header = "ModuleController --- ";
 
     private final ModuleHandlerService moduleHandlerService;
     private final ModuleManagerService moduleManagerService;
@@ -35,75 +41,119 @@ public class ModuleController {
         this.timetableIntegratorService = timetableIntegratorService;
     }
 
-    @ResponseStatus(HttpStatus.OK)
+
+    @Override
     public String home() {
         return "Welcome to the Module Service!";
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    public String status() {
-        return "Module Service is up and running!";
-    }
-
-    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public Module createModule(@RequestBody Module module) {
+    @Override
+    public Module createModule(ModuleCreate module) {
         return moduleManagerService.createModule(module);
     }
 
-    @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteModule(@PathVariable long id) {
-        moduleManagerService.deleteModule(id);
+    @Override
+    public boolean deleteModule(long id) {
+        return moduleManagerService.deleteModule(id);
     }
 
-    @PutMapping("/update/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Module updateModule(@PathVariable long id, @RequestBody Module module) {
+    @Override
+    public boolean updateModule(long id, ModuleCreate module) {
         return moduleManagerService.updateModule(id, module);
     }
 
-    @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK)
+    @Override
     public List<Module> getAllModules() {
         return moduleManagerService.getAllModules();
     }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Module getModuleById(@PathVariable long id) {
+    @Override
+    public Module getModuleById(long id) {
         return moduleManagerService.getModuleById(id);
     }
 
-    @PostMapping("/assignTeacher/{id}/{teacherId}")
-    @ResponseStatus(HttpStatus.OK)
-    public Module assignTeacher(@PathVariable long id, @PathVariable long teacherId) {
-        return moduleHandlerService.assignTeacher(id, teacherId);
+    @Override
+    public boolean assignTeacher(long moduleId, long teacherId) {
+        return moduleHandlerService.assignTeacher(moduleId, teacherId);
     }
 
-
-
-
-  
-
-    @GetMapping("/studentsByModule/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public String[] getStudentsByModule(@PathVariable String moduleId) {
+    @Override
+    public List<String> getStudentsByModule(long moduleId) {
         // Example logic; replace with actual implementation
-        return new String[]{"student1", "student2", "student3"};
+        return auditManagerService.getStudentsByModule(moduleId);
     }
 
+    @Override
+    public boolean joinModuleByCode(String joinCode, long studentId) {
+        return joinCodeManagerService.joinModuleByCode(joinCode, studentId);
+    }
 
-    @PostMapping("/leaveModule/{moduleId}/{studentId}")
-    @ResponseStatus(HttpStatus.OK)
+    @Override
     public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId) {
         // Logic for a student to leave a module
     }
 
-    @PostMapping("/updateTimetable")
-    @ResponseStatus(HttpStatus.OK)
-    public String updateTimetable(@RequestParam Integer time, @RequestParam Date date) {
-        // Logic to update the timetable
-        return "Timetable updated successfully";
+    @Override
+    public String newAssignment() {
+        // Logic to create a new assignment
+        return "New assignment created successfully";
     }
+
+    @Override
+    public void deleteAssignment() {
+        // Logic to delete an assignment
+    }
+
+    @Override
+    public boolean updateAssignment() {
+        // Logic to update an assignment
+        return true;
+    }
+
+    @Override
+    public ResponseEntity<Iterable<EventModel>> getAllAssignments() {
+        // Logic to get all assignments
+        return null;
+    }
+
+    @Override
+    public String newAnnouncement() {
+        // Logic to create a new announcement
+        return "New announcement created successfully";
+    }
+
+    @Override
+    public boolean deleteAnnouncement() {
+        // Logic to delete an announcement
+        return true;
+    }
+
+    @Override
+    public boolean updateAnnouncement() {
+        // Logic to update an announcement
+        return true;
+    }
+
+    @Override
+    public ResponseEntity<Iterable<EventModel>> getAllAnnouncements() {
+        // Logic to get all announcements
+        return null;
+    }
+
+    @Override
+    public boolean updateTimetable(Integer time, Date date) {
+        // Logic to update the timetable
+        log.info("Timetable updated successfully");
+        return true;
+    }
+
+    // Called by the student service - INTERSERVICE COMMUNICATION
+    @Override
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(String studentId) {
+        log.info(log_header + "Getting teachers for student: {}", studentId);
+        return auditManagerService.getTeachersByStudent(studentId);
+    }
+
 }
