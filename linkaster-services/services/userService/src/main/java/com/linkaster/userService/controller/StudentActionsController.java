@@ -22,8 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 public class StudentActionsController implements APIUserActionsController {
 
     private final UserHandlerService userHandlerService;
-
-    
     private final String log_header = "StudentActionsController --- ";
 
     @Autowired
