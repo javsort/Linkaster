@@ -1,18 +1,15 @@
-package com.linkaster.userService.util;
+package com.linkaster.messageHandler.util;
 
 import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,32 +19,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class KeyMaster {
+public class MessageKeyMaster {
 
-    /*
-     * Key related methods
-     */
-    // Generate RSA key pair for the new user
-    public KeyPair keyGenerator() throws Exception {
-        // Generate key pair
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
-        keyGenerator.initialize(2048);
-
-        return keyGenerator.generateKeyPair();
-    }
-
-    // Encode the key pair
-    public String encodePublic(PublicKey pubKey) {
-        String publicKey = Base64.getEncoder().encodeToString(pubKey.getEncoded());
-        return publicKey;
-    }
-
-    public String encodePrivate(PrivateKey privKey) {
-        String privateKey = Base64.getEncoder().encodeToString(privKey.getEncoded());
-        return privateKey;
-    }
-
-    // Decode the key pair
+    // Private Chat Ops
     public KeyPair decodePair(String publicKey, String privateKey) throws Exception {
         PublicKey pubKey = KeyFactory.getInstance("RSA")
             .generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(publicKey)));
@@ -94,21 +68,8 @@ public class KeyMaster {
         return new String(decryptedMessage);
     }
 
-
     /*
-     * Password related methods
+     * Group Chat extra functionality -> Hybrid Encryption
      */
-    // Hash the password
-    public String receivePasswordToHash(String password){
-        return convertPassword(password);
-    }
 
-    private String convertPassword(String password){
-        // Encrypt password
-        int encryptionStrength = 10;
-
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(encryptionStrength, new SecureRandom());
-
-        return bCryptPasswordEncoder.encode(password);
-    }
 }

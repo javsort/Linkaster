@@ -37,6 +37,8 @@ public class GatewayAuthService {
     
     private final RestTemplate restTemplate = new RestTemplate();
 
+    private final String log_header = "GatewayAuthService --- ";
+
     public String authenticateAndGenerateToken(UserLogin incRequest, String userType) {
 
         String userEmail = incRequest.getUserEmail();
@@ -45,7 +47,7 @@ public class GatewayAuthService {
         // Call User Authenticator Service for auth process
         String pathToAuth = userServiceUrl + "/api/auth/"+ userType + "/login";
         
-        log.info("Authenticating user: '" + userEmail + "', calling userAuthenticator service to: " + pathToAuth);
+        log.info(log_header + log_header + "Authenticating user: '" + userEmail + "', calling userAuthenticator service to: " + pathToAuth);
 
         // Create UserLogin dto to send back
         UserLogin loginRequest = new UserLogin(userEmail, password);
@@ -56,9 +58,9 @@ public class GatewayAuthService {
         HttpEntity<UserLogin> request = new HttpEntity<>(loginRequest, headers);
         
         try {
-            System.out.println("Making request to: " + pathToAuth);
+            log.info(log_header + log_header + "Making request to: " + pathToAuth);
             ResponseEntity<Map> response = restTemplate.exchange(pathToAuth, HttpMethod.POST, request, Map.class);
-            System.out.println("Response from user-service: " + response.getBody());
+            log.info(log_header + "Response from user-service: " + response.getBody());
             
             // If the response is successful, generate JWT
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -111,18 +113,18 @@ public class GatewayAuthService {
 
         // Validate required fields
         if (userEmail == null || userEmail.isEmpty()) {
-            log.error("User email is missing");
+            log.error(log_header + "User email is missing");
             throw new IllegalArgumentException("User email is required");
         }
         if (password == null || password.isEmpty()) {
-            log.error("Password is missing");
+            log.error(log_header + "Password is missing");
             throw new IllegalArgumentException("Password is required");
         }
 
         // Call User Authenticator Service for auth process
         String pathToRegister = userServiceUrl + "/api/auth/"+ userType + "/register";
         
-        log.info("Registering user: '" + userEmail + "', calling userAuthenticator service to: " + pathToRegister);
+        log.info(log_header + "Registering user: '" + userEmail + "', calling userAuthenticator service to: " + pathToRegister);
 
         // Create UserRegistration dto to send back
         UserRegistration toRegister = new UserRegistration(
@@ -142,9 +144,9 @@ public class GatewayAuthService {
         HttpEntity<UserRegistration> request = new HttpEntity<>(toRegister, headers);
         
         try {
-            System.out.println("Making request to: " + pathToRegister);
+            log.info(log_header + "Making request to: " + pathToRegister);
             ResponseEntity<Map> response = restTemplate.exchange(pathToRegister, HttpMethod.POST, request, Map.class);
-            System.out.println("Response from user-service: " + response.getBody());
+            log.info(log_header + "Response from user-service: " + response.getBody());
             
             // If the response is successful, generate JWT
             if (response.getStatusCode().is2xxSuccessful()) {

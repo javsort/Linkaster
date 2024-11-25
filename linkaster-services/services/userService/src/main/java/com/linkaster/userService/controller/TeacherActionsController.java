@@ -1,14 +1,9 @@
 package com.linkaster.userService.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.linkaster.userService.dto.AssignTeacher;
 import com.linkaster.userService.dto.UserRegistration;
 import com.linkaster.userService.service.UserHandlerService;
 
@@ -22,6 +17,8 @@ public class TeacherActionsController implements APIUserActionsController {
     
     @Autowired
     private final UserHandlerService userHandlerService;
+
+    private final String log_header = "TeacherActionsController --- ";
 
     public TeacherActionsController(UserHandlerService userHandlerService) {
         this.userHandlerService = userHandlerService;
@@ -46,7 +43,7 @@ public class TeacherActionsController implements APIUserActionsController {
     @Override
     public String assignModuleManager(HttpServletRequest request) {
         String userEmail = request.getAttribute("userEmail").toString();
-        log.info("Request received to get assign Teacher to Module with email: '" + userEmail + "'");
+        log.info(log_header + "Request received to get assign Teacher to Module with email: '" + userEmail + "'");
         return userHandlerService.assignModuleManager(userEmail);   
     }
 

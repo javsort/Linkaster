@@ -3,7 +3,6 @@ package com.linkaster.moduleManager.controller;
 import java.util.Date;
 import java.util.List;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.linkaster.moduleManager.dto.ModuleCreate;
-import com.linkaster.moduleManager.dto.TeacherDTO;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 

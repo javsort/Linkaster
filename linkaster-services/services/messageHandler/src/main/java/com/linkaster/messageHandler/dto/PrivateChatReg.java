@@ -1,16 +1,17 @@
 package com.linkaster.messageHandler.dto;
 
+import com.linkaster.messageHandler.model.UserInfo;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
-public class MessageDTO {
-    private String mssgToEncrypt;
-    private String senderId;
-    private String receiverId;
+public class PrivateChatReg {
+    private UserInfo user1;
+    private UserInfo user2;
 }

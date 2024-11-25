@@ -1,15 +1,16 @@
 package com.linkaster.moduleManager.controller;
 
-import org.hibernate.sql.ast.tree.update.Assignment;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.linkaster.moduleManager.dto.ModuleCreate;
-import com.linkaster.moduleManager.dto.TeacherDTO;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.service.AuditManagerService;
@@ -145,7 +146,7 @@ public class ModuleController implements APIModuleController {
     @Override
     public boolean updateTimetable(Integer time, Date date) {
         // Logic to update the timetable
-        log.info("Timetable updated successfully");
+        log.info(log_header + "Timetable updated successfully");
         return true;
     }
 

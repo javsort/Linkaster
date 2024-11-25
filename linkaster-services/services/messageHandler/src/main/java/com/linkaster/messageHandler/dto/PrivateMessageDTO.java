@@ -1,5 +1,5 @@
 package com.linkaster.messageHandler.dto;
 
-public class GroupMessageDTO {
+public class PrivateMessageDTO {
     
 }

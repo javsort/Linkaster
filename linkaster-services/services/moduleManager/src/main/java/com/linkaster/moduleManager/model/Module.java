@@ -61,4 +61,6 @@ public class Module {
 
     @Column(name = "endTime")
     private String endTime;
+
+    // Add groupchat's RSA key here
 }

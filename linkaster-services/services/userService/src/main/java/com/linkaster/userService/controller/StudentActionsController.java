@@ -22,8 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 public class StudentActionsController implements APIUserActionsController {
 
     private final UserHandlerService userHandlerService;
-
-    
     private final String log_header = "StudentActionsController --- ";
 
     @Autowired
@@ -49,7 +47,7 @@ public class StudentActionsController implements APIUserActionsController {
     @Override
     public String assignModuleManager(HttpServletRequest request) {
         String userEmail = request.getAttribute("userEmail").toString();
-        log.info("Request received to get assign ClubStudent to Module with email: '" + userEmail + "'");
+        log.info(log_header + "Request received to get assign ClubStudent to Module with email: '" + userEmail + "'");
         return userHandlerService.assignModuleManager(userEmail);   
     }
 

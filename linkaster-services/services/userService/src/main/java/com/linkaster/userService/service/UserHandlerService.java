@@ -3,8 +3,8 @@ package com.linkaster.userService.service;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -48,21 +47,25 @@ public class UserHandlerService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     // Repositories for User and Role
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private TeacherRepository teacherRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
+    private final RoleRepository roleRepository;
 
     // Autowired components:
-    @Autowired
-    private KeyMaster keyMaster;
-
+    private final KeyMaster keyMaster;
     
     private final String log_header = "UserHandlerService --- ";
+
+    // Constructor
+    @Autowired
+    public UserHandlerService(UserRepository userRepository, StudentRepository studentRepository, TeacherRepository teacherRepository, RoleRepository roleRepository, KeyMaster keyMaster) {
+        this.userRepository = userRepository;
+        this.studentRepository = studentRepository;
+        this.teacherRepository = teacherRepository;
+        this.roleRepository = roleRepository;
+        this.keyMaster = keyMaster;
+    }
 
     // Create a new user -> ADMIN VERSION (skips email verif and such)
     public boolean createUser(UserRegistration regRequest, String role) {
@@ -79,7 +82,7 @@ public class UserHandlerService {
         // Assign role
         Role toAssign = roleRepository.findByRole(role);
         if(toAssign == null) {
-            log.error("Role does not exist in DB");
+            log.error(log_header + "Role does not exist in DB");
             return false;
         }
 
@@ -117,7 +120,7 @@ public class UserHandlerService {
         switch (role) {
             case "student":
                 {
-                    log.info("Registering student with email: " + email);
+                    log.info(log_header + "Registering student with email: " + email);
                     
                     // Get student pertinent fields:
                     Role studentRole = roleRepository.findByRole("student");
@@ -143,7 +146,7 @@ public class UserHandlerService {
                 }
             case "teacher":
                 {
-                    log.info("Registering teacher with email: " + email);
+                    log.info(log_header + "Registering teacher with email: " + email);
                     // Get teacher pertinent fields:
                     Role teacherRole = roleRepository.findByRole("teacher");
                     newUser = TeacherUser.builder()
@@ -175,7 +178,7 @@ public class UserHandlerService {
     
     // Delete user
     public void deleteUser(long user_id){
-        log.info("Deleting user with id: '" + user_id + "'...");
+        log.info(log_header + "Deleting user with id: '" + user_id + "'...");
         userRepository.deleteById(user_id);
     }
 
@@ -186,7 +189,7 @@ public class UserHandlerService {
         User user = userRepository.findById(userToUpdate.getId()).orElse(null);
         
         if (user != null) {
-            log.info("User found with id: '" + user.getId() + "'. Updating now...");
+            log.info(log_header + "User found with id: '" + user.getId() + "'. Updating now...");
             
             user.setFirstName(userToUpdate.getFirstName());
             user.setLastName(userToUpdate.getLastName());
@@ -199,7 +202,7 @@ public class UserHandlerService {
             return true;
 
         } else {
-            log.error("User requested to update is not in the DB, returning error....");
+            log.error(log_header + "User requested to update is not in the DB, returning error....");
             return false;
         }
     }
@@ -219,7 +222,7 @@ public class UserHandlerService {
 
     // Get all users
     public List<User> getAllUsers(){
-        log.info("UserHandler Service: Getting all users...");
+        log.info(log_header + "UserHandler Service: Getting all users...");
         return userRepository.findAll();
     }
 
@@ -235,7 +238,7 @@ public class UserHandlerService {
     public Iterable<TeacherDTO> getStudentTeachers(HttpServletRequest incRequest) {
         String email = incRequest.getAttribute("userEmail").toString();
 
-        log.info("Getting student's teachers for '" + email + "' \nContacting moduleManager...");
+        log.info(log_header + "Getting student's teachers for '" + email + "' \nContacting moduleManager...");
         StudentUser studentToFind = studentRepository.findByEmail(email);
 
         String studentIdToFind = studentToFind.getStudentId();
