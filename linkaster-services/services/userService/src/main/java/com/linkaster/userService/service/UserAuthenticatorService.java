@@ -72,7 +72,7 @@ public class UserAuthenticatorService {
 
     // Slightly different to the one found in user handler. User handler is for admin tasks, this for retrieving necessary info for JWT token
     public AuthUser getAuthenticatedUser(String userEmail) {
-        log.info("Getting user: " + userEmail);
+        log.info(log_header + "Getting user: " + userEmail);
 
         User toGet = userRepository.findByEmail(userEmail);
 
@@ -121,8 +121,8 @@ public class UserAuthenticatorService {
             privateKey = keyMaster.encodePrivate(keyPair.getPrivate());
             publicKey = keyMaster.encodePublic(keyPair.getPublic());
 
-            log.info("Public key: \nLength: " + publicKey.length() + "\nKey: '" + publicKey + "'\n");
-            log.info("Private key: \nLength: " + privateKey.length() + "\nKey: '" + privateKey + "'\n");
+            log.info(log_header + "Public key: \nLength: " + publicKey.length() + "\nKey: '" + publicKey + "'\n");
+            log.info(log_header + "Private key: \nLength: " + privateKey.length() + "\nKey: '" + privateKey + "'\n");
 
             // Then get their encrypted versions
             
@@ -140,7 +140,7 @@ public class UserAuthenticatorService {
         switch (role) {
             case "student":
                 {
-                    log.info("Registering student with email: " + email);
+                    log.info(log_header + "Registering student with email: " + email);
                     
                     // Get student pertinent fields:
                     Role studentRole = roleRepository.findByRole("student");
@@ -166,7 +166,7 @@ public class UserAuthenticatorService {
                 }
             case "teacher":
                 {
-                    log.info("Registering teacher with email: " + email);
+                    log.info(log_header + "Registering teacher with email: " + email);
                     // Get teacher pertinent fields:
                     Role teacherRole = roleRepository.findByRole("teacher");
                     List<String> modules = null;

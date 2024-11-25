@@ -1,6 +1,10 @@
 package com.linkaster.moduleManager.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.moduleManager.model.ClassModule;
@@ -8,11 +12,6 @@ import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
 
 @Service
 @Transactional
@@ -26,7 +25,7 @@ public class AuditManagerService {
 
 
     public List<String> getStudentsByModule(long moduleId) {
-        log.info("Getting students for module {}", moduleId);
+        log.info(log_header + "Getting students for module: " + moduleId);
         // Logic to get students for a module
 
         return null; // Replace with actual implementation

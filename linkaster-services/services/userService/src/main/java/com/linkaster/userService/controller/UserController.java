@@ -26,6 +26,8 @@ public class UserController implements APIUserController {
     //private final UserCustomizerService userCustomizerService;              // To implement (?)
     //private final AuthorizationAgentService authorizationAgentService;      // To implement (?)
 
+    private final String log_header = "UserController --- ";
+
     // Constructor
     @Autowired
     public UserController(UserHandlerService userHandlerService, UserAuthenticatorService userAuthenticatorService/*UserCustomizerService userCustomizerService, AuthorizationAgentService authorizationAgentService*/) {
@@ -69,7 +71,7 @@ public class UserController implements APIUserController {
     // GetAllUsers endpoint
     @Override
     public List<User> getAllUsers(){
-        log.info("UserHandler: Getting all users...");
+        log.info(log_header + "Getting all users...");
         return userHandlerService.getAllUsers();
     }
 

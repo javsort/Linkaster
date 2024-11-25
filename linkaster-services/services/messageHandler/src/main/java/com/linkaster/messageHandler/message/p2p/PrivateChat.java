@@ -4,6 +4,7 @@ package com.linkaster.messageHandler.message.p2p;
 import com.linkaster.messageHandler.model.UserInfo;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,10 +43,10 @@ public class PrivateChat {
      * - User's role
      */
 
-    @Column(name = "user1")
+    @Embedded
     private UserInfo user1;
 
-    @Column(name = "user2")
+    @Embedded
     private UserInfo user2;
 
     /*

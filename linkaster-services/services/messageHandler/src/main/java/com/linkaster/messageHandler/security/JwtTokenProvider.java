@@ -23,6 +23,8 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secret;
 
+    private final String log_header = "JwtTokenProvider --- ";
+
     public boolean validateToken(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -32,7 +34,7 @@ public class JwtTokenProvider {
             return true;    
         } catch (JWTVerificationException e) {
 
-            log.error("Error validating token: " + e.getMessage());
+            log.error(log_header + "Error validating token: " + e.getMessage());
             return false;
         }
     }
@@ -46,7 +48,7 @@ public class JwtTokenProvider {
             return jwt;    
         } catch (JWTVerificationException e) {
 
-            log.error("Error decoding token: " + e.getMessage());
+            log.error(log_header + "Error decoding token: " + e.getMessage());
             return null;
         }
     }

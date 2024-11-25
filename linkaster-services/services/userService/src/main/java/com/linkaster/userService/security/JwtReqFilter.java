@@ -19,12 +19,14 @@ public class JwtReqFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    private final String log_header = "JwtReqFilter --- ";
+
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         // Log the request
-        log.info("Request: " + request.getRequestURI() + " Method: " + request.getMethod());
-        log.info("Request received with the following headers: '" + request.getHeaderNames() + "'");
-        log.info("Authorization Header: '" + request.getHeader("Authorization") + "'");
+        log.info(log_header + "Request: " + request.getRequestURI() + " Method: " + request.getMethod());
+        log.info(log_header + "Request received with the following headers: '" + request.getHeaderNames() + "'");
+        log.info(log_header + "Authorization Header: '" + request.getHeader("Authorization") + "'");
 
         String authHeader = request.getHeader("Authorization");
 
@@ -48,7 +50,7 @@ public class JwtReqFilter extends OncePerRequestFilter {
             // Validate token
             if (!jwtTokenProvider.validateToken(token)){
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT Token");
-                log.error("Unable to validate token at userService - token is invalid");
+                log.error(log_header + "Unable to validate token - it's invalid");
                 return;
             }
 
@@ -65,12 +67,12 @@ public class JwtReqFilter extends OncePerRequestFilter {
             // Re add the token to the response header
             response.addHeader("Authorization", "Bearer " + token);
 
-            log.info("Found the following tokens: \nid: " + id + "\nuserEmail: " + userEmail + "\nrole: " + role);
+            log.info(log_header + "Found the following tokens: \nid: " + id + "\nuserEmail: " + userEmail + "\nrole: " + role);
             
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing header for authorization");
             
-            log.error("Unable to validate token at userService - missing auth header");
+            log.error(log_header + "Unable to validate token - missing auth header");
             return;
         }
 

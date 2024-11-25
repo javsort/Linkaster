@@ -17,8 +17,10 @@ public class TimetableIntegratorService {
     @Autowired
     private ModuleRepository moduleRepository;
 
+    private final String log_header = "TimetableIntegratorService --- ";
+
     public void updateTimetable(Module module) {
-        log.info("Updating timetable for module {}", module);
+        log.info(log_header + "Updating timetable for module: " + module);
         // Once the module is created or updated, send time, date, moduleName, and room to the timetable service
 
 
