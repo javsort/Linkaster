@@ -1,6 +1,5 @@
 package com.linkaster.moduleManager.model;
 
-
 import java.sql.Date;
 
 import jakarta.persistence.Column;
@@ -11,34 +10,28 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-@Entity
-@Table (name = "module_events")
-public class EventModel {
+@Entity 
+@Table (name = "module_announcements")
+public class Announcement {
 
     @Id
     @Column(name = "id", unique = true, nullable = false)
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "module_id", nullable = false)  
+    @JoinColumn(name = "module_id", nullable = false)
     private Module module;
 
-    @Column(name = "type")
-    private String type;
-
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "startTime")
-    private String startTime;
-
-    @Column(name = "endTime")
-    private String endTime;
+    @Column(name = "message")
+    private String message;
 
     @Column(name = "date")
     private Date date;
 
-    @Column(name = "room")
-    private String room;
+    @Column(name = "time")
+    private String time;
 
+    @Column(name = "author_id")
+    private String authorId;
+    
 }

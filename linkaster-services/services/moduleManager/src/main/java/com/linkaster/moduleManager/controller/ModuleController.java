@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -86,56 +88,35 @@ public class ModuleController implements APIModuleController {
         return auditManagerService.getStudentsByModule(moduleId);
     }
 
+    /* 
     @Override
     public boolean joinModuleByCode(String joinCode, long studentId) {
         return joinCodeManagerService.joinModuleByCode(joinCode, studentId);
     }
+    */
 
     @Override
     public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId) {
         // Logic for a student to leave a module
+        moduleHandlerService.leaveModule(moduleId, studentId);
     }
 
     @Override
-    public String newAssignment() {
-        // Logic to create a new assignment
-        return "New assignment created successfully";
-    }
-
-    @Override
-    public void deleteAssignment() {
-        // Logic to delete an assignment
-    }
-
-    @Override
-    public boolean updateAssignment() {
-        // Logic to update an assignment
-        return true;
-    }
-
-    @Override
-    public ResponseEntity<Iterable<EventModel>> getAllAssignments() {
-        // Logic to get all assignments
-        return null;
-    }
-
-    @Override
-    public String newAnnouncement() {
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createAnnouncement(@PathVariable long moduleId, @PathVariable long userId, @RequestBody String announcement) {
         // Logic to create a new announcement
+        moduleHandlerService.createAnnouncement(moduleId, announcement, userId);
         return "New announcement created successfully";
     }
 
+
     @Override
-    public boolean deleteAnnouncement() {
+    public boolean deleteAnnouncement(@PathVariable long announcementId, @PathVariable long moduleId) {
         // Logic to delete an announcement
+        moduleHandlerService.deleteAnnouncement(announcementId, moduleId);
         return true;
     }
 
-    @Override
-    public boolean updateAnnouncement() {
-        // Logic to update an announcement
-        return true;
-    }
 
     @Override
     public ResponseEntity<Iterable<EventModel>> getAllAnnouncements() {
@@ -143,12 +124,12 @@ public class ModuleController implements APIModuleController {
         return null;
     }
 
+    /*
     @Override
     public boolean updateTimetable(Integer time, Date date) {
-        // Logic to update the timetable
-        log.info(log_header + "Timetable updated successfully");
-        return true;
+        return timetableIntegratorService.updateTimetable(time, date);
     }
+    */
 
     // Called by the student service - INTERSERVICE COMMUNICATION
     @Override

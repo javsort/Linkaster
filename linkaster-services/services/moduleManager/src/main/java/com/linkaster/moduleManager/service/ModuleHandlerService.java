@@ -34,7 +34,7 @@ public class ModuleHandlerService {
         return null; // Replace with actual implementation
     }
 
-    public Module createAnnouncement(long moduleId, String announcement) {
+    public Module createAnnouncement(long moduleId, String announcement, long teacherId) {
         log.info(log_header + "Creating announcement for module: " + moduleId);
         // Logic to create an announcement for a module
         return null; // Replace with actual implementation
@@ -46,6 +46,10 @@ public class ModuleHandlerService {
         return null; // Replace with actual implementation
     }
 
-    
+    public Module leaveModule(long moduleId, long studentId) {
+        log.info(log_header + "Student: " + studentId + " leaving module: " + moduleId);
+        // Logic to remove a student from a module
+        return null; // Replace with actual implementation
+    }
 
 }

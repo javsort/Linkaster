@@ -59,60 +59,36 @@ public interface APIModuleController {
     public List<String> getStudentsByModule(@PathVariable long moduleId);
 
 
+    /* 
     @GetMapping("/joinModulebyCode/{code}")
     @ResponseStatus(HttpStatus.OK)
     public boolean joinModuleByCode(@PathVariable String code, @RequestParam long studentId);
-
+    */
 
     @GetMapping("/leaveModule/{moduleId}/{studentId}")
     @ResponseStatus(HttpStatus.OK)
     public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId);
 
 
-    @GetMapping("/newAssignment")
-    @ResponseStatus(HttpStatus.OK)
-    public String newAssignment();
-
-
-    @GetMapping("/deleteAssignment")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteAssignment();
-
-
-    @GetMapping("/updateAssignment")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean updateAssignment();
-
-
-    @GetMapping("/getAllAssignments")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<EventModel>> getAllAssignments();
-
-
-    @GetMapping("/newAnnouncement")
-    @ResponseStatus(HttpStatus.OK)
-    public String newAnnouncement();
+    @GetMapping("/createAnnouncement")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createAnnouncement(@PathVariable long moduleId, @PathVariable long userId, @RequestBody String announcement);
 
 
     @GetMapping("/deleteAnnouncement")
     @ResponseStatus(HttpStatus.OK)
-    public boolean deleteAnnouncement();
-
-
-    @GetMapping("/updateAnnouncement")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean updateAnnouncement();
+    public boolean deleteAnnouncement(@PathVariable long announcementId, @PathVariable long moduleId);
 
 
     @GetMapping("/getAllAnnouncements")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Iterable<EventModel>> getAllAnnouncements();
 
-
+    /* 
     @GetMapping("/updateTimetable")
     @ResponseStatus(HttpStatus.OK)
     public boolean updateTimetable(@RequestParam Integer time, @RequestParam Date date);
-
+    */
     
     // Called by the student service - INTERSERVICE COMMUNICATION
     @GetMapping("/student/{studentId}/teachers")

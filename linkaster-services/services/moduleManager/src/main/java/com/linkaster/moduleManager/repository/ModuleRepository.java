@@ -14,6 +14,7 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
     @Query("SELECT m FROM Module m WHERE m.moduleCode = :moduleCode")
     public Module findByCode(@Param("moduleCode") String moduleCode);
 
-
+    // check if module exists by code
+    boolean existsByCode(String code);
     
 }   

@@ -24,11 +24,40 @@ public class AuditManagerService {
     private ModuleRepository moduleRepository;
 
 
+    // Called by the student service - INTERSERVICE COMMUNICATION
     public List<String> getStudentsByModule(long moduleId) {
         log.info(log_header + "Getting students for module: " + moduleId);
-        // Logic to get students for a module
+        
+        List<String> students = new ArrayList<>();
 
-        return null; // Replace with actual implementation
+        moduleRepository.findById(moduleId).ifPresent(module -> {
+            // Check if module is a class module
+            if(module instanceof ClassModule){
+                log.info(log_header + "Module {} is a class module", moduleId);
+
+                // Get the students for this module
+                students.addAll(((ClassModule) module).getStudentList());
+            }
+        });
+            // Check if module is a club module
+            // if(module instanceof ClubModule){
+            //     log.info(log_header + "Module {} is a club module", moduleId);
+
+            //     // Get the students for this module
+
+            //     // students.addAll(((ClubModule) module).getStudentList());
+            // }
+            //});
+
+        if (students.isEmpty()) {
+            log.info(log_header + "No students found for module: {}", moduleId);
+            return null;
+
+        } else {
+            log.info(log_header + "Students found for module: {}", moduleId);
+            return students;
+
+        }
     }
 
 
