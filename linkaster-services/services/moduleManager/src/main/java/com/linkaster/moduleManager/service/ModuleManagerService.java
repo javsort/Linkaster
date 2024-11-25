@@ -32,14 +32,14 @@ public class ModuleManagerService {
 
         //Check that the module does not already exist
         if (existingModule != null) {
-            log.error("Module with ID: '" +  existingModule.getId() + "'' already exists");
+            log.error(log_header + "Module with ID: '" +  existingModule.getId() + "'' already exists");
             return null;
         }
 
         //Check that date and time(start time and end time) is valid 
         // CHECK PROBLEM: A MODULE CAN HAVEMULTIPLE START AND END TIMES but they need to check that specfic stat time goes with specific end time
         /*if(module.getStartTime().isAfter(module.getEndTime())) {
-            log.error("Start time is after end time");
+            log.error(log_header + "Start time is after end time");
             return null;
         }
         */
@@ -81,7 +81,7 @@ public class ModuleManagerService {
                 break;
 
             default:
-                log.error("Invalid module type");
+                log.error(log_header + "Invalid module type");
                 return null;
         }
 
@@ -96,7 +96,7 @@ public class ModuleManagerService {
 
         //Check that the module exists
         if (!moduleRepository.existsById(id)) {
-            log.error("Module with ID: " + id +" does not exist");
+            log.error(log_header + "Module with ID: " + id +" does not exist");
             return false;
         }
         
@@ -111,7 +111,7 @@ public class ModuleManagerService {
         if (tempModule != null) {
             // If a tempModule is returned, check if it is the same as the module being updated
             if (tempModule.getId() != existingModule.getId()) {
-                log.error("Module with code '" + existingModule.getModuleCode() +"' already exists");
+                log.error(log_header + "Module with code '" + existingModule.getModuleCode() +"' already exists");
                 return false;
             }
         }
@@ -120,7 +120,7 @@ public class ModuleManagerService {
         // CHECK PROBLEM: A MODULE CAN HAVE MULTIPLE START AND END TIMES but they need to check that specfic stat time goes with specific end time
         /* 
             if(module.getStartTime().isAfter(module.getEndTime())) {
-                log.error("Start time is after end time");
+                log.error(log_header + "Start time is after end time");
                 return null;
             }
         */
@@ -133,7 +133,7 @@ public class ModuleManagerService {
 
         //Check that the module exists
         if (!moduleRepository.existsById(id)) {
-            log.error("Module with ID: '"+ id +"' does not exist");
+            log.error(log_header + "Module with ID: '"+ id +"' does not exist");
             return false;
         }
 
