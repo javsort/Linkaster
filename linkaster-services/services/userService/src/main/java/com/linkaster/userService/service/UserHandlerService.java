@@ -47,25 +47,19 @@ public class UserHandlerService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     // Repositories for User and Role
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private TeacherRepository teacherRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
+    private final RoleRepository roleRepository;
 
     // Autowired components:
-    @Autowired
-    private KeyMaster keyMaster;
-
+    private final KeyMaster keyMaster;
     
     private final String log_header = "UserHandlerService --- ";
 
     // Constructor
-
-    private UserHandlerService(UserRepository userRepository, StudentRepository studentRepository, TeacherRepository teacherRepository, RoleRepository roleRepository, KeyMaster keyMaster) {
+    @Autowired
+    public UserHandlerService(UserRepository userRepository, StudentRepository studentRepository, TeacherRepository teacherRepository, RoleRepository roleRepository, KeyMaster keyMaster) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;

@@ -31,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 public class GatewayController implements APIGatewayController {
 
     // INIT: Endpoints
-    @Autowired
     private RestTemplate restTemplate;
 
     @Value("${address.user.url}")
@@ -45,8 +44,13 @@ public class GatewayController implements APIGatewayController {
     // END: Endpoints
 
     // Service for authenticating users and generating JWT tokens
+    private final GatewayAuthService gatewayAuthService;
+
     @Autowired
-    private GatewayAuthService gatewayAuthService;
+    public GatewayController(GatewayAuthService gatewayAuthService) {
+        this.gatewayAuthService = gatewayAuthService;
+        this.restTemplate = new RestTemplate();
+    }
 
     @Override
     public String home(){
