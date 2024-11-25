@@ -40,6 +40,8 @@ public class GatewayController implements APIGatewayController {
     @Value("${address.module.url}")
     private String moduleServiceUrl;
 
+    private final String log_header = "GatewayController --- ";
+
     // END: Endpoints
 
     // Service for authenticating users and generating JWT tokens
@@ -63,17 +65,17 @@ public class GatewayController implements APIGatewayController {
         String userEmail = loginRequest.getUserEmail();
         String password = loginRequest.getPassword();
 
-        log.info("Received login request for user: " + userEmail + " with password: " + password);
+        log.info(log_header + "Received login request for user: " + userEmail + " with password: " + password);
         try {
-            log.info("Authenticating user: " + userEmail + ", calling GatewayAuthService");
+            log.info(log_header + "Authenticating user: " + userEmail + ", calling GatewayAuthService");
 
             String token = gatewayAuthService.authenticateAndGenerateToken(loginRequest, userType);
 
-            log.info("User: '" + userEmail + "' authenticated, returning token");
+            log.info(log_header + "User: '" + userEmail + "' authenticated, returning token");
             return ResponseEntity.ok(Map.of("token", token));
 
         } catch (Exception e) {
-            log.error("Error while authenticating user: '" + userEmail + "'. Exception string: " + e);
+            log.error(log_header + "Error while authenticating user: '" + userEmail + "'. Exception string: " + e);
             return ResponseEntity.status(401).body("Invalid credentials");
             
         }
@@ -85,17 +87,17 @@ public class GatewayController implements APIGatewayController {
         String userEmail = regRequest.getUserEmail();
         String password = regRequest.getPassword();
 
-        log.info("Received registration request for user: " + userEmail + " with password: " + password);
+        log.info(log_header + "Received registration request for user: " + userEmail + " with password: " + password);
         try {
-            log.info("Registering user: " + userEmail + ", calling GatewayAuthService");
+            log.info(log_header + "Registering user: " + userEmail + ", calling GatewayAuthService");
 
             String token = gatewayAuthService.registerAndGenerateToken(regRequest, userType);
 
-            log.info("User: '" + userEmail + "' registered, returning token");
+            log.info(log_header + "User: '" + userEmail + "' registered, returning token");
             return ResponseEntity.ok(Map.of("token", token));
 
         } catch (Exception e) {
-            log.error("Error while registering user: '" + userEmail + "'. Exception string: " + e);
+            log.error(log_header + "Error while registering user: '" + userEmail + "'. Exception string: " + e);
             return ResponseEntity.status(401).body("Invalid credentials");
             
         }
@@ -105,7 +107,7 @@ public class GatewayController implements APIGatewayController {
     @GetMapping("/user/**")
     public ResponseEntity<?> forwardToUserService(HttpServletRequest request) {
 
-        log.info("Forwarding request to userService: " + request.getRequestURI());
+        log.info(log_header + "Forwarding request to userService: " + request.getRequestURI());
         String targetUrl = userServiceUrl + request.getRequestURI();
         
         HttpHeaders headers = new HttpHeaders();
@@ -128,7 +130,7 @@ public class GatewayController implements APIGatewayController {
     @GetMapping("/module/**")
     public ResponseEntity<?> forwardToModuleService(HttpServletRequest request) {
 
-        log.info("Forwarding request to moduleService: " + request.getRequestURI());
+        log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());
         String targetUrl = moduleServiceUrl + request.getRequestURI();
         
         HttpHeaders headers = new HttpHeaders();

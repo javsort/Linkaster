@@ -36,6 +36,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private String secret;
 
+    private final String log_header = "JwtFilter --- ";
+
     // Filter method
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -44,13 +46,13 @@ public class JwtFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper requestWrap = new ContentCachingRequestWrapper(request);
 
         // Log the request
-        log.info("Request: " + requestWrap.getRequestURI() + " Method: " + requestWrap.getMethod());
-        log.info("Authorization Header: '" + requestWrap.getHeader("Authorization") + "'");
+        log.info(log_header + "Request: " + requestWrap.getRequestURI() + " Method: " + requestWrap.getMethod());
+        log.info(log_header + "Authorization Header: '" + requestWrap.getHeader("Authorization") + "'");
         
         // And its body
         if(requestWrap.getContentAsByteArray().length > 0){
             String reqBody = new String(requestWrap.getContentAsByteArray(), requestWrap.getCharacterEncoding());
-            log.info("Request body: " + reqBody);
+            log.info(log_header + "Request body: " + reqBody);
 
         }
 
@@ -64,7 +66,7 @@ public class JwtFilter extends OncePerRequestFilter {
             || requestWrap.getRequestURI().equals("/api/auth/admin/register")
             || requestWrap.getRequestURI().equals("/api/auth/student/register")
             || requestWrap.getRequestURI().equals("/api/auth/teacher/register")){
-            log.info("Public endpoint accessed, no token required");
+            log.info(log_header + "Public endpoint accessed, no token required");
             filterChain.doFilter(request, response);
             return;
         }
@@ -72,21 +74,21 @@ public class JwtFilter extends OncePerRequestFilter {
         // For all authenticated accesses
         String authHeader = requestWrap.getHeader("Authorization");
 
-        log.info("About to verify access token: " + authHeader);
+        log.info(log_header + "About to verify access token: " + authHeader);
         if (authHeader != null && authHeader.startsWith("Bearer ")){
-            log.info("Token found, verifying...");
+            log.info(log_header + "Token found, verifying...");
 
             // Extract token from header
             String token = authHeader.substring(7);
-            log.info("Token: " + token);
+            log.info(log_header + "Token: " + token);
 
             // Verify token
             try {
-                log.info("Verifying token...");
+                log.info(log_header + "Verifying token...");
                 JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).build();
                 DecodedJWT decodedToken = verifier.verify(token);
 
-                log.info("Token verified: " + decodedToken);
+                log.info(log_header + "Token verified: " + decodedToken);
 
                 String id = decodedToken.getClaim("id").asString();
                 String userEmail = decodedToken.getClaim("userEmail").asString();
@@ -97,14 +99,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 request.setAttribute("userEmail", userEmail);
                 request.setAttribute("role", role);
 
-                log.info("Request attributes set: \n id: " + id + "\n userEmail: " + userEmail + "\n role: " + role);
+                log.info(log_header + "Request attributes set: \n id: " + id + "\n userEmail: " + userEmail + "\n role: " + role);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userEmail, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                log.info("UsernamePasswordAuthenticationToken set: " + authentication);
-                log.info("Forwarding request to: " + request.getRequestURI());
+                log.info(log_header + "UsernamePasswordAuthenticationToken set: " + authentication);
+                log.info(log_header + "Forwarding request to: " + request.getRequestURI());
 
             } catch (JWTVerificationException e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token at the request");
@@ -115,17 +117,17 @@ public class JwtFilter extends OncePerRequestFilter {
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");
 
-            log.error("Missing token, unauthorized access for: '" + request + "' Headers:");
+            log.error(log_header + "Missing token, unauthorized access for: '" + request + "' Headers:");
             Enumeration<String> headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
                 String headerName = headerNames.nextElement();
-                log.error(headerName + ": " + request.getHeader(headerName));
+                log.error(log_header + headerName + ": " + request.getHeader(headerName));
             }
 
             return;
         }
         
-        log.info("Request forwarded to: " + request.getAttribute("forwarded-uri"));
+        log.info(log_header + "Request forwarded to: " + request.getAttribute("forwarded-uri"));
         
         // Continue with the request
         filterChain.doFilter(request, response);

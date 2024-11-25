@@ -49,7 +49,7 @@ public class StudentActionsController implements APIUserActionsController {
     @Override
     public String assignModuleManager(HttpServletRequest request) {
         String userEmail = request.getAttribute("userEmail").toString();
-        log.info("Request received to get assign ClubStudent to Module with email: '" + userEmail + "'");
+        log.info(log_header + "Request received to get assign ClubStudent to Module with email: '" + userEmail + "'");
         return userHandlerService.assignModuleManager(userEmail);   
     }
 
