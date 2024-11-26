@@ -45,22 +45,17 @@ public class Module {
     private String moduleCode;    
 
     @Column(name = "studentList")
-    private List<String> studentList;
+    private List<Long> studentList;
 
     @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<EventModel> eventsAndAnnouncements;
+    private List<EventModel> events;
+
+    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Announcement> announcements;
 
     @Column(name = "type")
     private String type;
 
-    @Column(name = "description")
-    private String description;
-    
-    @Column(name = "startTime")
-    private String startTime;
-
-    @Column(name = "endTime")
-    private String endTime;
 
     // Add groupchat's RSA key here
 }

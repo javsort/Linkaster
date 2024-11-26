@@ -1,14 +1,18 @@
 package com.linkaster.moduleManager.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.model.ClassModule;
 import com.linkaster.moduleManager.model.ClubModule;
+import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
+import com.linkaster.moduleManager.repository.EventRepository;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
@@ -21,6 +25,9 @@ public class ModuleManagerService {
 
     @Autowired
     private ModuleRepository moduleRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     private final String log_header = "ModuleManagerService --- ";
 
@@ -36,14 +43,6 @@ public class ModuleManagerService {
             return null;
         }
 
-        //Check that date and time(start time and end time) is valid 
-        // CHECK PROBLEM: A MODULE CAN HAVEMULTIPLE START AND END TIMES but they need to check that specfic stat time goes with specific end time
-        /*if(module.getStartTime().isAfter(module.getEndTime())) {
-            log.error(log_header + "Start time is after end time");
-            return null;
-        }
-        */
-
         Module newModule;
 
         // Create module from DTO
@@ -53,12 +52,12 @@ public class ModuleManagerService {
                 newModule = ClassModule.builder()
                         .moduleCode(module.getModuleCode())
                         .name(module.getName())
-                        .description(module.getDescription())
                         .type(module.getType())
-                        .startTime(module.getStartTime())
-                        .endTime(module.getEndTime())
                         .teacherId(module.getTeacherId())
                         .teacherName(module.getTeacherName())
+                        .studentList(module.getStudentIds().stream().map(Long::valueOf).collect(Collectors.toList()))
+                        .events(module.getEvents())
+                        .announcements(module.getAnnouncements())
                         .build();
                 // If all checks pass, save the module
                 moduleRepository.save(newModule);
@@ -69,12 +68,12 @@ public class ModuleManagerService {
                 newModule = ClubModule.builder()
                         .moduleCode(module.getModuleCode())
                         .name(module.getName())
-                        .description(module.getDescription())
                         .type(module.getType())
-                        .startTime(module.getStartTime())
-                        .endTime(module.getEndTime())
                         .clubLeaderStudentId(module.getClubLeaderStudentId())
                         .clubLeader(module.getClubLeader())
+                        .studentList(module.getStudentIds().stream().map(Long::valueOf).collect(Collectors.toList()))
+                        .events(module.getEvents())
+                        .announcements(module.getAnnouncements())
                         .build();
                 // If all checks pass, save the module
                 moduleRepository.save(newModule);
@@ -116,15 +115,6 @@ public class ModuleManagerService {
             }
         }
 
-        //Check that date and time is valid
-        // CHECK PROBLEM: A MODULE CAN HAVE MULTIPLE START AND END TIMES but they need to check that specfic stat time goes with specific end time
-        /* 
-            if(module.getStartTime().isAfter(module.getEndTime())) {
-                log.error(log_header + "Start time is after end time");
-                return null;
-            }
-        */
-
         moduleRepository.save(existingModule);
         return true;
     }
@@ -160,7 +150,19 @@ public class ModuleManagerService {
         log.info(log_header + "Getting module by ID: " + id);
         return moduleRepository.findById(id).orElse(null);
     }
+
+    public EventModel getModuleEvents(long id) {
+        log.info(log_header + "Getting events for module: " + id);
+        // Logic to get events for a module
+        eventRepository.findByModuleId(id);
+        return null; // Replace with actual implementation
+    }
+
+    public EventModel getEventsByUserId(long userId) {
+        log.info(log_header + "Getting events for user: " + userId);
+        // Logic to get events for a module by user
+        eventRepository.findByUserId(userId);
+        return null; // Replace with actual implementation
+    }
    
-
-
 }

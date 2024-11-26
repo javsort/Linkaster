@@ -52,7 +52,7 @@ public class JoinCodeManagerService {
         return exists;
     }
     
-    /* 
+    
     // INTERSERVICE COMMUNICATION - Called by the student service
     public boolean joinModuleByCode(String joinCode, long studentId) {
         log.info(log_header + "Student " + studentId + " attempting to join module with join code: " + joinCode);
@@ -71,18 +71,17 @@ public class JoinCodeManagerService {
         }
     
         // Step 3: Check if the student is already enrolled
-        if (module.getStudents().contains(studentId)) {
+        if (module.getStudentList().contains(studentId)) {
             log.info(log_header + "Student " + studentId + " is already enrolled in module: " + module.getName());
             return true; // Student is already enrolled
         }
     
         // Step 4: Add the student to the module
-        module.getStudents().add(studentId);
+        module.getStudentList().add(studentId);
         moduleRepository.save(module); // Save the updated module
     
         log.info(log_header + "Student " + studentId + " successfully joined module: " + module.getName());
         return true; // Successfully added the student
     }
-    */
-    
+        
 }

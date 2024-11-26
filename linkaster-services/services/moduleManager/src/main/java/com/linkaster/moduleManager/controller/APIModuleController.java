@@ -56,14 +56,14 @@ public interface APIModuleController {
 
     @GetMapping("/getStudentsByModule/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> getStudentsByModule(@PathVariable long moduleId);
+    public List<Long> getStudentsByModule(@PathVariable long moduleId);
 
 
-    /* 
+    
     @GetMapping("/joinModulebyCode/{code}")
     @ResponseStatus(HttpStatus.OK)
     public boolean joinModuleByCode(@PathVariable String code, @RequestParam long studentId);
-    */
+    
 
     @GetMapping("/leaveModule/{moduleId}/{studentId}")
     @ResponseStatus(HttpStatus.OK)
@@ -93,5 +93,5 @@ public interface APIModuleController {
     // Called by the student service - INTERSERVICE COMMUNICATION
     @GetMapping("/student/{studentId}/teachers")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@PathVariable String studentId);
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@PathVariable Long studentId);
 }

@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
     
+    // find announcement by user id
+    public Announcement findByUserId(Long userId);
 }  

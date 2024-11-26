@@ -83,17 +83,15 @@ public class ModuleController implements APIModuleController {
 
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public List<String> getStudentsByModule(long moduleId) {
+    public List<Long> getStudentsByModule(long moduleId) {
         // Example logic; replace with actual implementation
         return auditManagerService.getStudentsByModule(moduleId);
     }
 
-    /* 
     @Override
     public boolean joinModuleByCode(String joinCode, long studentId) {
         return joinCodeManagerService.joinModuleByCode(joinCode, studentId);
     }
-    */
 
     @Override
     public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId) {
@@ -133,7 +131,7 @@ public class ModuleController implements APIModuleController {
 
     // Called by the student service - INTERSERVICE COMMUNICATION
     @Override
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(String studentId) {
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(Long studentId) {
         log.info(log_header + "Getting teachers for student: {}", studentId);
         return auditManagerService.getTeachersByStudent(studentId);
     }

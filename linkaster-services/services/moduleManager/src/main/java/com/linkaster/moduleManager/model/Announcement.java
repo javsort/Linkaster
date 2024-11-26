@@ -10,7 +10,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-@Entity 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+@Entity
 @Table (name = "module_announcements")
 public class Announcement {
 
@@ -31,7 +40,7 @@ public class Announcement {
     @Column(name = "time")
     private String time;
 
-    @Column(name = "author_id")
-    private String authorId;
+    @Column(name = "owner_id")
+    private Long ownerId;
     
 }

@@ -1,5 +1,10 @@
 package com.linkaster.moduleManager.dto;
 
+import java.util.List;
+
+import com.linkaster.moduleManager.model.Announcement;
+import com.linkaster.moduleManager.model.EventModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -13,9 +18,10 @@ public class ModuleCreate {
     private String name;
     private String moduleCode;
     private String type;
-    private String description;
-    private String startTime;
-    private String endTime;
+    private List<Long> students;
+    private List<EventModel> events;
+    private List<Announcement> announcements;
+    private List<String> studentIds;
 
     // ClubModule only fields
     private String clubLeaderStudentId;

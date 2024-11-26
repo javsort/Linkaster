@@ -23,9 +23,6 @@ public class EventModel {
     @JoinColumn(name = "module_id", nullable = false)  
     private Module module;
 
-    @Column(name = "type")
-    private String type;
-
     @Column(name = "name")
     private String name;
 
@@ -40,5 +37,8 @@ public class EventModel {
 
     @Column(name = "room")
     private String room;
+
+    @Column(name = "owner_id")
+    private Long ownerId;
 
 }

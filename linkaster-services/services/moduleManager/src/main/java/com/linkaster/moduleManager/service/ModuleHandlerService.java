@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.moduleManager.model.Module;
+import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.repository.ModuleRepository;
+import com.linkaster.moduleManager.repository.AnnouncementRepository;
+import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,9 @@ public class ModuleHandlerService {
     @Autowired
     private ModuleRepository moduleRepository;
 
+    @Autowired
+    private AnnouncementRepository announcementRepository;
+
     private final String log_header = "ModuleHandlerService --- ";
 
     // Admin Tasks
@@ -25,6 +31,7 @@ public class ModuleHandlerService {
         log.info(log_header + "Assigning teacher: '" + teacherId + "'' to module: " + moduleId);
         // Logic to assign a teacher to a module
         
+
         return true; // Replace with actual implementation
     }
 
@@ -34,22 +41,90 @@ public class ModuleHandlerService {
         return null; // Replace with actual implementation
     }
 
-    public Module createAnnouncement(long moduleId, String announcement, long teacherId) {
+    public Announcement createAnnouncement(long moduleId, String announcement, long ownerId) {
         log.info(log_header + "Creating announcement for module: " + moduleId);
-        // Logic to create an announcement for a module
-        return null; // Replace with actual implementation
+
+        // Validate module existence
+        Optional<Module> moduleOptional = moduleRepository.findById(moduleId);
+        if (moduleOptional.isEmpty()) {
+            log.error(log_header + "Module with ID " + moduleId + " not found.");
+            throw new IllegalArgumentException("Module not found");
+        }
+
+        // Create the announcement
+        Module module = moduleOptional.get();
+        Announcement newAnnouncement = new Announcement();
+        newAnnouncement.setModule(module);
+        newAnnouncement.setMessage(announcement);
+        newAnnouncement.setDate(new java.sql.Date(System.currentTimeMillis())); // Current date
+        newAnnouncement.setTime(java.time.LocalTime.now().toString()); // Current time
+        newAnnouncement.setOwnerId(ownerId);
+
+        // Save and return
+        Announcement savedAnnouncement = announcementRepository.save(newAnnouncement);
+        log.info(log_header + "Announcement created successfully: " + savedAnnouncement);
+        return savedAnnouncement;
     }
 
-    public Module deleteAnnouncement(long moduleId, long announcementId) {
+
+    public Announcement deleteAnnouncement(long moduleId, long announcementId) {
         log.info(log_header + "Deleting announcement - " + announcementId + " - from module: " + moduleId);
-        // Logic to delete an announcement from a module
-        return null; // Replace with actual implementation
+
+        // Fetch the announcement
+        Optional<Announcement> announcementOptional = announcementRepository.findById(announcementId);
+        if (announcementOptional.isEmpty()) {
+            log.error(log_header + "Announcement with ID " + announcementId + " not found.");
+            throw new IllegalArgumentException("Announcement not found");
+        }
+
+        Announcement announcement = announcementOptional.get();
+
+        // Validate the module
+        if (announcement.getModule().getId() != moduleId) {
+            log.error(log_header + "Announcement does not belong to module ID " + moduleId);
+            throw new IllegalArgumentException("Announcement does not belong to the specified module");
+        }
+
+        // Delete the announcement
+        announcementRepository.delete(announcement);
+        log.info(log_header + "Announcement deleted successfully: " + announcement);
+        return announcement;
     }
+
+    public Announcement getAllAnnouncements(){
+        log.info(log_header + "Fetching all announcements");
+        // Logic to get all announcements
+        announcementRepository.findAll();
+        return null;
+    }
+
+    public Announcement getAllAnnouncementsByUserId(long userId){
+        log.info(log_header + "Fetching all announcements for user: " + userId);    
+        // Logic to get all announcements
+        announcementRepository.findByUserId(userId);
+        return null;
+    }
+
 
     public Module leaveModule(long moduleId, long studentId) {
         log.info(log_header + "Student: " + studentId + " leaving module: " + moduleId);
         // Logic to remove a student from a module
-        return null; // Replace with actual implementation
+        if (moduleRepository.existsById(moduleId)) {
+            // Check if the module exists
+           if (moduleRepository.findById(moduleId).get().getStudentList().contains(studentId)) {
+               // Check if the student is in the module
+               Module module = moduleRepository.findById(moduleId).get();
+               module.getStudentList().remove(studentId);
+               moduleRepository.save(module);
+               return module;
+            // Logic to remove a student from a module
+        } else {
+            log.error(log_header + "Module with ID: '" + moduleId + "'' does not exist");
+            return null;
+        }
+        } else {
+            log.error(log_header + "Module with ID: '" + moduleId + "'' does not exist");
+            return null;
+        }
     }
-
 }
