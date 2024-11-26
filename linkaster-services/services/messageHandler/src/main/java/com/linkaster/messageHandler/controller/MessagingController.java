@@ -1,11 +1,17 @@
 package com.linkaster.messageHandler.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.MessageRetrieval;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
+import com.linkaster.messageHandler.message.p2p.PrivateChat;
+import com.linkaster.messageHandler.repository.PrivateChatRepository;
+import com.linkaster.messageHandler.repository.PrivateMessageRepository;
 import com.linkaster.messageHandler.security.JwtTokenProvider;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,16 +22,28 @@ import lombok.extern.slf4j.Slf4j;
 public class MessagingController implements APIMessagingController {
 
     private final String log_header = "MessagingController --- ";
+
     private final JwtTokenProvider jwtTokenProvider;
+    private final PrivateChatRepository privateChatRepository;
+    private final PrivateMessageRepository privateMessageRepository;
 
     @Autowired
-    public MessagingController(JwtTokenProvider jwtTokenProvider){
+    public MessagingController(JwtTokenProvider jwtTokenProvider, PrivateChatRepository privateChatRepository, PrivateMessageRepository privateMessageRepository){
         this.jwtTokenProvider = jwtTokenProvider;
+        this.privateChatRepository = privateChatRepository;
+        this.privateMessageRepository = privateMessageRepository;
     }
     
     @Override
     public String home(){
         return "Welcome to the Messaging Service!";
+    }
+
+    @Override
+    public ResponseEntity<Iterable<PrivateChat>> getAllPrivateChats(){
+        List<PrivateChat> privateChats = privateChatRepository.findAll();
+
+        return ResponseEntity.ok(privateChats);
     }
 
     @Override

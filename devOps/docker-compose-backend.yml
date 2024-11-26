@@ -147,6 +147,7 @@ services:
     volumes:
       - ./sql/roles.sql:/docker-entrypoint-initdb.d/roles.sql
       - ./sql/users.sql:/docker-entrypoint-initdb.d/users.sql
+      - ./sql/chats.sql:/docker-entrypoint-initdb.d/chats.sql
 
 networks:
   linkaster-network:

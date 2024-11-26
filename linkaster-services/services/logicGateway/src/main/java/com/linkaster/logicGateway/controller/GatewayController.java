@@ -142,7 +142,7 @@ public class GatewayController implements APIGatewayController {
 
         } else {
             log.info(log_header + "Forwarding request to messageService: " + request.getRequestURI());
-            String targetUrl = userServiceUrl + request.getRequestURI();
+            String targetUrl = messageServiceUrl + request.getRequestURI();
             
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", request.getHeader("Authorization"));
