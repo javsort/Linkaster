@@ -16,7 +16,7 @@ import com.linkaster.userService.model.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // Find a user by its role
-    @Query("SELECT u FROM User u WHERE u.role = :role")
+    @Query("SELECT u FROM User u WHERE u.role.role = :role")
     public List<User> findByRole(@Param("role") String role);
 
     // Find a user by its username

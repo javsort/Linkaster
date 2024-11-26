@@ -6,8 +6,9 @@ import 'teacher_chat_selection_page.dart';
 import 'teacher_profile_page.dart';
 import 'teacher_settings_page.dart';
 import 'teacher_timetable_page.dart';
-import 'teacher_files_page.dart';
-import 'teacher_login_page.dart'; // Import your LoginPage
+import 'teacher_feedback_page.dart';
+import 'teacher_logIn_page.dart'; // Import your LoginPage
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LinkasterHome extends StatefulWidget {
   @override
@@ -16,6 +17,30 @@ class LinkasterHome extends StatefulWidget {
 
 class LinkasterHomeState extends State<LinkasterHome> {
   int _currentIndex = 0;
+
+  // Token storage
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthToken();
+  }
+
+  Future<void> _checkAuthToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('authToken');
+    print('Token: $token');
+
+    if (token == null || token!.isEmpty) {
+      // Redirect to the login page if token is not available
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => TeacherLoginPage()),
+      );
+    }
+  }
+
   final TextEditingController moduleNameController = TextEditingController();
   final TextEditingController moduleCodeController = TextEditingController();
   final TextEditingController classTimeController = TextEditingController();
@@ -47,19 +72,25 @@ class LinkasterHomeState extends State<LinkasterHome> {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => SettingsPage()));
         break;
-      case 'Files':
+      case 'Feedback':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => FilesPage()),
+          MaterialPageRoute(builder: (context) => TeacherFeedbackPage()),
         );
         break;
       case 'Logout':
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
+        _handleLogout();
         break;
     }
+  }
+
+  Future<void> _handleLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('authToken'); // Remove the stored token
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => TeacherLoginPage()),
+    );
   }
 
   Future<void> _launchMoodle() async {
@@ -272,7 +303,7 @@ class LinkasterHomeState extends State<LinkasterHome> {
             onSelected: _onMenuOptionSelected,
             itemBuilder: (BuildContext context) => [
               PopupMenuItem(value: 'Settings', child: Text('Settings')),
-              PopupMenuItem(value: 'Files', child: Text('Files')),
+              PopupMenuItem(value: 'Feedback', child: Text('Feedback')),
               PopupMenuItem(value: 'Logout', child: Text('Logout')),
             ],
           ),
@@ -282,19 +313,28 @@ class LinkasterHomeState extends State<LinkasterHome> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
-        type: BottomNavigationBarType.fixed,
-        items: [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.announcement), label: 'Announcements'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
+            icon: Icon(Icons.assignment),
+            label: 'Announcements',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_sharp), label: 'Group Chats'),
+            icon: Icon(Icons.chat),
+            label: 'Private Chats',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month), label: 'Timetable'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            icon: Icon(Icons.group),
+            label: 'Group Chats',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.schedule),
+            label: 'Timetable',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Profile',
+          ),
         ],
-        selectedItemColor: Theme.of(context).colorScheme.secondary,
-        unselectedItemColor: Colors.grey,
       ),
     );
   }

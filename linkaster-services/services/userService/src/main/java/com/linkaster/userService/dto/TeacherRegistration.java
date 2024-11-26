@@ -1,7 +1,15 @@
 package com.linkaster.userService.dto;
 
-// Teacher registration -> what we expect to receive from logicGateway when a TEACHER Registers
-public class TeacherRegistration extends UserRegistration {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-    private String teacherId;  
+
+// Teacher registration -> what we expect to receive from logicGateway when a TEACHER Registers
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+public class TeacherRegistration extends UserRegistration {
+    
+    private String subject;
 }

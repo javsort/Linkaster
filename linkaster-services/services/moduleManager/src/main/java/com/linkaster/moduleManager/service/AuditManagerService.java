@@ -1,51 +1,66 @@
 package com.linkaster.moduleManager.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.moduleManager.model.ClassModule;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 @Service
 @Transactional
 @Slf4j
 public class AuditManagerService {
 
+    private final String log_header = "AuditManagerService --- ";
+
     @Autowired
     private ModuleRepository moduleRepository;
 
-    public String[] getAllAudit() {
-        log.info("Getting all audit records");
-        // Logic to get all audit records
-        return new String[0]; // Replace with actual implementation
+
+    public List<String> getStudentsByModule(long moduleId) {
+        log.info(log_header + "Getting students for module: " + moduleId);
+        // Logic to get students for a module
+
+        return null; // Replace with actual implementation
     }
 
-    public String getAuditById(long id) {
-        log.info("Getting audit record by ID: {}", id);
-        // Logic to get an audit record by ID
-        return "Audit record"; // Replace with actual implementation
-    }
 
-    public String addAudit() {
-        log.info("Adding audit record");
-        // Logic to add an audit student to module
-        return "Audit record added"; // Replace with actual implementation
-    }
+    // Called by the student service - INTERSERVICE COMMUNICATION
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(String studentId) {
+        // From all the modules the student is enrolled in, get the teachers (moduleOwnerId -> userId -> teacher)
+        log.info(log_header + "Getting teachers for student: {}", studentId);
 
-    public String deleteAudit(long id) {
-        log.info("Deleting audit record by ID: {}", id);
-        // Logic to delete an audit student of module
-        return "Audit record deleted"; // Replace with actual implementation
-    }
+        List<Long> teachers = new ArrayList<>();
 
-    public String updateAudit(long id) {
-        log.info("Updating audit record by ID: {}", id);
-        // Logic to update an audit student of module
-        return "Audit record updated"; // Replace with actual implementation
-    }
+        moduleRepository.findAll().forEach(module -> {
+            // Check if module is a class module
+            if(module instanceof ClassModule){
 
+                // Check if student is enrolled in this module
+                if (module.getStudentList().contains(studentId)) {
+                    log.info(log_header + "Student {} is enrolled in module {}", studentId, module.getId());
+                    
+                    // Get the teacher for this module and add to teachers list
+                    teachers.add(module.getModuleOwnerId());
+                }
+            }
+        });
+
+        if (teachers.isEmpty()) {
+            log.info(log_header + "No teachers found for student: {}", studentId);
+            return ResponseEntity.notFound().build();
+
+        } else {
+            log.info(log_header + "Teachers found for student: {}", studentId);
+            return ResponseEntity.ok(teachers);
+
+        }
+    }
 }

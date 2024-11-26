@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
-import './home_screen.dart';
+import './home_screen.dart'; // LinkasterHome as HomeScreen
 import 'register_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../config/config.dart'; // AppConfig for API base URL
+import 'package:shared_preferences/shared_preferences.dart'; // Add for token storage
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool isLoading = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -107,16 +117,7 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        //MISSING: Add login logic here
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LinkasterHome(),
-                          ),
-                          (route) => false,
-                        );
-                      },
+                      onPressed: () => _handleLogin(context),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -126,7 +127,11 @@ class LoginPage extends StatelessWidget {
                         foregroundColor: Colors.white,
                         textStyle: TextStyle(fontSize: 18.0),
                       ),
-                      child: Text('Login'),
+                      child: isLoading
+                          ? CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : Text('Login'),
                     ),
                   ],
                 ),
@@ -137,5 +142,73 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _handleLogin(BuildContext context) async {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter your email and password'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final String? token =
+        await loginUser(emailController.text, passwordController.text);
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (token != null) {
+      // Save token locally
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('authToken', token);
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LinkasterHome()),
+        (route) => false,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Invalid email or password'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<String?> loginUser(String email, String password) async {
+    final url = Uri.parse("${AppConfig.apiBaseUrl}/api/auth/student/login");
+    print('Base URL: ${AppConfig.apiBaseUrl}');
+    print('Logging in to: $url');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "userEmail": email,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return responseData['token']; // Return the token
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error logging in: $e');
+      return null;
+    }
   }
 }

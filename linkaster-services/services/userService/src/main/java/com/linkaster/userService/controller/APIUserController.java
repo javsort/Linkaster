@@ -11,22 +11,27 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.linkaster.userService.dto.UserRegistration;
 import com.linkaster.userService.model.User;
 
 /*
  * This interface defines the API endpoints for the User Controller.
  */
+
+@RequestMapping("/api/user")
 public interface APIUserController {
     // Home endpoint
     @GetMapping("")
     public String home();
 
-    // CreateUser endpoint
+    // CreateUser endpoint -> ADMIN ACCESS ONLY
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/createUser/{roleName}")
     @ResponseStatus(HttpStatus.OK)
-    public String createUser(@ModelAttribute User userInfo, @PathVariable String role);
+    public String createUser(@ModelAttribute UserRegistration regRequest, @PathVariable String role);
 
     // DeleteUser endpoint
     @DeleteMapping("/deleteUser")
@@ -45,13 +50,13 @@ public interface APIUserController {
     public User getUser(@PathVariable Long id);
 
     // GetAllUsers endpoint
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAllUsers")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers();
 
     // GetUsersByRole endpoint
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getUsersByRole( @PathVariable String role);

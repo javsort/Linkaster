@@ -1,0 +1,153 @@
+name: 'linkaster-backend'
+
+# DO NOT UNCOMMENT THE SERVICES THAT ARE NOT READY YET
+
+services:
+  # Link for logic gateway service: http://logic-gateway:8080/
+  logic-gateway:
+    build:
+      context: ../linkaster-services/services/logicGateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+    environment:
+      - SERVER_PORT=8080
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+  user-service:
+    build:
+      context: ../linkaster-services/services/userService
+    ports:
+      - "8081:8081"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8081
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+#  timetable-service:
+#    build:
+#      context: ../linkaster-services/services/timetableService
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8082
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+#
+#  reserve-service:
+#    build:
+#      context: ../linkaster-services/services/reserveService
+#    ports:
+#      - "8083:8083"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8083
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+#
+#  notification-service:
+#    build:
+#      context: ../linkaster-services/services/notifHandler
+#    ports:
+#      - "8084:8084"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8084
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+
+  module-manager:
+    build:
+      context: ../linkaster-services/services/moduleManager
+    ports:
+      - "8085:8085"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8085
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+  message-handler:
+    build:
+      context: ../linkaster-services/services/messageHandler
+    ports:
+      - "8086:8086"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8086
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+#  feedback-service:
+#    build:
+#      context: ../linkaster-services/services/feedbackService
+#    ports:
+#      - "8087:8087"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8087
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+
+#  cabinet-service:
+#    build:
+#      context: ../linkaster-services/services/cabinetService
+#    ports:
+#      - "8088:8088"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8088
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+
+  linkaster-MySQL:
+    container_name: "Linkaster-SQL"
+    image: "mysql:8.0"
+    ports:
+      - "3306:3306"
+    networks:
+    - linkaster-network
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_DATABASE=linkaster
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=linkaster
+      - MYSQL_PASSWORD=password
+    volumes:
+      - ./sql/roles.sql:/docker-entrypoint-initdb.d/roles.sql
+      - ./sql/users.sql:/docker-entrypoint-initdb.d/users.sql
+
+networks:
+  linkaster-network:
+    driver: bridge

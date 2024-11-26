@@ -1,15 +1,18 @@
 package com.linkaster.moduleManager.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.moduleManager.dto.ModuleCreate;
+import com.linkaster.moduleManager.model.ClassModule;
+import com.linkaster.moduleManager.model.ClubModule;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -19,88 +22,142 @@ public class ModuleManagerService {
     @Autowired
     private ModuleRepository moduleRepository;
 
-    public Module createModule(Module module) {
-        log.info("Creating module: {}", module);
-        //Generate a unique ID for the module
-        module.setId(moduleRepository.count() + 1);
+    private final String log_header = "ModuleManagerService --- ";
+
+    public Module createModule(ModuleCreate module) {
+        log.info(log_header + "Creating module: " + module);
+
+        //Check if exists
+        Module existingModule = moduleRepository.findByCode(module.getModuleCode());
 
         //Check that the module does not already exist
-        if (moduleRepository.existsById(module.getId())) {
-            log.error("Module with ID {} already exists", module.getId());
+        if (existingModule != null) {
+            log.error(log_header + "Module with ID: '" +  existingModule.getId() + "'' already exists");
             return null;
         }
-        //Check that code is unique
-        if (moduleRepository.findByCode(module.getCode()) != null) {
-            log.error("Module with code {} already exists", module.getCode());
-            return null;
-        }
+
         //Check that date and time(start time and end time) is valid 
         // CHECK PROBLEM: A MODULE CAN HAVEMULTIPLE START AND END TIMES but they need to check that specfic stat time goes with specific end time
         /*if(module.getStartTime().isAfter(module.getEndTime())) {
-            log.error("Start time is after end time");
+            log.error(log_header + "Start time is after end time");
             return null;
         }
         */
 
-        createModuleChat(module.getId());
-        createStudentChat(module.getId());
+        Module newModule;
 
-        // If all checks pass, save the module
-        return moduleRepository.save(module);
+        // Create module from DTO
+        switch (module.getType()) {
+            case "class_module":
+                // If the module is a class module
+                newModule = ClassModule.builder()
+                        .moduleCode(module.getModuleCode())
+                        .name(module.getName())
+                        .description(module.getDescription())
+                        .type(module.getType())
+                        .startTime(module.getStartTime())
+                        .endTime(module.getEndTime())
+                        .teacherId(module.getTeacherId())
+                        .teacherName(module.getTeacherName())
+                        .build();
+                // If all checks pass, save the module
+                moduleRepository.save(newModule);
+                break;
+
+            case "club_module":
+                // If the module is a club module
+                newModule = ClubModule.builder()
+                        .moduleCode(module.getModuleCode())
+                        .name(module.getName())
+                        .description(module.getDescription())
+                        .type(module.getType())
+                        .startTime(module.getStartTime())
+                        .endTime(module.getEndTime())
+                        .clubLeaderStudentId(module.getClubLeaderStudentId())
+                        .clubLeader(module.getClubLeader())
+                        .build();
+                // If all checks pass, save the module
+                moduleRepository.save(newModule);
+                break;
+
+            default:
+                log.error(log_header + "Invalid module type");
+                return null;
+        }
+
+        // Create chats on the way out
+        createModuleChat(newModule.getId());
+
+        log.info(log_header + "Module successfully created: " + newModule);
+        return newModule;
     }
 
-    public Module updateModule(long id, Module module) {
-        log.info("Updating module: {}", module);
+    public boolean updateModule(long id, ModuleCreate module) {
 
         //Check that the module exists
         if (!moduleRepository.existsById(id)) {
-            log.error("Module with ID {} does not exist", id);
-            return null;
+            log.error(log_header + "Module with ID: " + id +" does not exist");
+            return false;
         }
-        //Check that code is unique or the same to the previous one
-        if (moduleRepository.findByCode(module.getCode()) != null && moduleRepository.findByCode(module.getCode()).getId() != id) {
-            log.error("Module with code {} already exists", module.getCode());
-            return null;
+        
+        Module existingModule = moduleRepository.findById(id).orElse(null);
+
+        log.info(log_header + "Updating module: " + existingModule.getName());
+        
+        //Check if code changed and check if the new one is already in use
+        Module tempModule = moduleRepository.findByCode(existingModule.getModuleCode());
+        
+        //Check that the module does not already exist
+        if (tempModule != null) {
+            // If a tempModule is returned, check if it is the same as the module being updated
+            if (tempModule.getId() != existingModule.getId()) {
+                log.error(log_header + "Module with code '" + existingModule.getModuleCode() +"' already exists");
+                return false;
+            }
         }
+
         //Check that date and time is valid
         // CHECK PROBLEM: A MODULE CAN HAVE MULTIPLE START AND END TIMES but they need to check that specfic stat time goes with specific end time
         /* 
             if(module.getStartTime().isAfter(module.getEndTime())) {
-                log.error("Start time is after end time");
+                log.error(log_header + "Start time is after end time");
                 return null;
             }
         */
 
-        return moduleRepository.save(module);
+        moduleRepository.save(existingModule);
+        return true;
     }
 
-    public void deleteModule(long id) {
-        log.info("Deleting module by ID: {}", id);
+    public boolean deleteModule(long id) {
+
+        //Check that the module exists
+        if (!moduleRepository.existsById(id)) {
+            log.error(log_header + "Module with ID: '"+ id +"' does not exist");
+            return false;
+        }
+
+        log.info(log_header + "Deleting module by ID: " + id);
         // If it exists, delete the module
         moduleRepository.deleteById(id);
+        return true;
     }
 
-    public boolean createStudentChat (long id) {
-        log.info("Creating student chat for module {} and student {}", id);
-        // Logic to create a student chat
-        //Pass to message service
-        return false; // Replace with actual implementation
-    }
-
+    // Ping messaging service to create a chat for the module
     public boolean createModuleChat (long id) {
-        log.info("Creating Module chat for module {} and teacher {}", id);
+        log.info(log_header + "Creating Module chat for module: " + id);
         // Logic to create a teacher chat
         //Pass to message service
-        return false; // Replace with actual implementation
+        return true; // Replace with actual implementation
     }
 
     public List<Module> getAllModules() {
-        log.info("Getting all modules");
+        log.info(log_header + "Getting all modules");
         return moduleRepository.findAll();
     }
 
     public Module getModuleById(long id) {
-        log.info("Getting module by ID: {}", id);
+        log.info(log_header + "Getting module by ID: " + id);
         return moduleRepository.findById(id).orElse(null);
     }
    

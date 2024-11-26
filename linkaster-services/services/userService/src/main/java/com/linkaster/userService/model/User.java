@@ -9,12 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /*
  * This is the User entity class. It represents a user in the system.
@@ -22,6 +24,7 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Setter
 @Getter
 @Entity
@@ -34,8 +37,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name= "username", unique= true, nullable= false)
-    private String username;
+    @Column(name= "first_name", unique= true, nullable= false)
+    private String firstName;
+
+    @Column(name= "last_name", unique= true, nullable= false)
+    private String lastName;
 
     @Column(name= "password")
     private String password;
@@ -44,9 +50,16 @@ public class User {
     private String email;
 
     @ManyToOne(fetch= FetchType.EAGER)
-    @JoinColumn(name="role_id")
+    @JoinColumn(name="role", referencedColumnName="role")
     private Role role;
 
-    @Column(name="key_pair")
-    private KeyPair keyPair;
+    // Public Key as a Base64-encoded string
+    @Lob
+    @Column(name = "public_key", columnDefinition = "LONGTEXT")
+    private String publicKey;
+
+    // Private Key as a Base64-encoded string
+    @Lob
+    @Column(name = "private_key", columnDefinition = "LONGTEXT")
+    private String privateKey;
 }

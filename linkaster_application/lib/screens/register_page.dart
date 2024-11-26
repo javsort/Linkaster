@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import login page
+import 'logIn_page.dart'; // Import login page
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../screensTeacher/teacher_register_page.dart'; // Import teacher registration page
+import '../config/config.dart'; // Import AppConfig class
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -245,7 +248,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _handleRegister(BuildContext context) {
+  void _handleRegister(BuildContext context) async {
     if (nameController.text.isEmpty ||
         surnameController.text.isEmpty ||
         idController.text.isEmpty ||
@@ -255,20 +258,112 @@ class _RegisterPageState extends State<RegisterPage> {
         selectedYear == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Please fill in all the fields'),
-            backgroundColor: Colors.red),
+          content: Text('Please fill in all the fields'),
+          backgroundColor: Colors.red,
+        ),
       );
-    } else if (passwordController.text.length < 6) {
+      return;
+    }
+
+    if (passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Password must be at least 6 characters long'),
-            backgroundColor: Colors.orange),
+          content: Text('Password must be at least 6 characters long'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isPasswordVisible = false;
+    });
+
+    final bool isRegistered = await registerUser(
+      nameController.text,
+      surnameController.text,
+      idController.text,
+      emailController.text,
+      passwordController.text,
+      selectedProgram!,
+      selectedYear!,
+    );
+
+    if (isRegistered) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Registration successful. Please log in.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Navigate to the login page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } else {
-      // POST request to register user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Registration failed. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+  Future<bool> registerUser(
+    String name,
+    String surname,
+    String id,
+    String email,
+    String password,
+    String program,
+    String year,
+  ) async {
+    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/auth/student/register');
+
+    try {
+      print('Registering user at: $url');
+      print('Request Body: ${jsonEncode({
+            "name": name,
+            "surname": surname,
+            "userEmail": email,
+            "password": password,
+            "studentId": id,
+            "year": 3,
+            "studyProg": program,
+            "subject": ""
+          })}');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "name": name,
+          "surname": surname,
+          "userEmail": email,
+          "password": password,
+          "studentId": id,
+          "year": 3,
+          "studyProg": program,
+          "subject": ""
+        }),
+      );
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print('Registration successful');
+        return true;
+      } else {
+        print('Registration failed with status code: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error during registration: $e');
+      return false;
     }
   }
 }

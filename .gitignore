@@ -10,6 +10,8 @@ buildNumber.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
 
+.vscode/
+
 # Eclipse m2e generated files
 # Eclipse Core
 .project
@@ -17,7 +19,9 @@ buildNumber.properties
 .classpath
 
 .idea/
+/linkaster-services/services/logicGateway/src/resources/.LCKapplication.yml~
 
+/.vscode
 
 /linkaster-services/services/cabinetService/cabinetService.iml
 /linkaster-services/services/feedbackService/feedbackService.iml
@@ -29,5 +33,28 @@ buildNumber.properties
 /linkaster-services/services/userService/userService.iml
 
 
+linkaster-services\services\unifiedService\src\main\java\com\linkaster\unifiedService\UnifiedServiceApplication.java
+linkaster-services\services\unifiedService\src\main\resources\application.yml
+linkaster-services\services\unifiedService\src\test\java\com\linkaster\unifiedService\UnifiedServiceApplicationTests.java
+linkaster-services\services\unifiedService\Dockerfile
+linkaster-services\services\unifiedService\pom.xml
+
 linkaster-services\services\timetableService\timetableService.iml
 linkaster-services/linkaster-services.iml
+
+
+# Front-end ignore:
+# Ignore auto-generated files
+linkaster_application/windows/flutter/generated_plugin_registrant.dart
+linkaster_application/windows/flutter/generated_plugin_registrant.h
+linkaster_application/windows/flutter/generated_plugins.cmake
+
+linkaster_application/linux/flutter/generated_plugin_registrant.dart
+linkaster_application/linux/flutter/generated_plugin_registrant.h
+linkaster_application/linux/flutter/generated_plugins.mk
+
+linkaster_application/macos/flutter/generated_plugin_registrant.dart
+linkaster_application/macos/flutter/generated_plugin_registrant.h
+linkaster_application/macos/flutter/generated_plugins.xcconfig
+
+linkaster_application/pubspec.lock

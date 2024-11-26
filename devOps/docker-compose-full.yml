@@ -1,0 +1,66 @@
+name: 'linkaster_application'
+
+services:
+  # Front-end service
+  flutter-web:
+    build: 
+      context: ../linkaster_application
+      dockerfile: Dockerfile
+    ports:
+      - "8077:80"
+    restart: unless-stopped
+    environment:
+      - BACKEND_GATEWAY_URL=http://logic-gateway:8080
+    networks:
+      - linkaster-network
+
+  # Back-end services
+  logic-gateway:
+    build:
+      context: ../linkaster-services/services/logicGateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+    environment:
+      - SERVER_PORT=8080
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+  user-service:
+    build:
+      context: ../linkaster-services/services/userService
+    ports:
+      - "8081:8081"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8081
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+  linkaster-MySQL:
+    container_name: "Linkaster-SQL"
+    image: "mysql:8.0"
+    ports:
+      - "3306:3306"
+    networks:
+    - linkaster-network
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_DATABASE=linkaster
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=linkaster
+      - MYSQL_PASSWORD=password
+    volumes:
+      - ./sql/roles.sql:/docker-entrypoint-initdb.d/roles.sql
+      - ./sql/users.sql:/docker-entrypoint-initdb.d/users.sql
+
+networks:
+  linkaster-network:
+    driver: bridge

@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import '../widget/user_status.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'announcement_page.dart';
+import 'package:http/http.dart' as http;
 import 'chat_selection_page.dart';
 import 'library_page.dart';
 import 'profile_page.dart';
 import 'settings_page.dart';
 import 'feedback_page.dart';
 import 'timetable_page.dart';
-import 'files_page.dart';
-import 'login_page.dart'; // Import your LoginPage
+import 'logIn_page.dart'; // Import your LoginPage
+import '../config/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LinkasterHome extends StatefulWidget {
   @override
@@ -18,6 +20,30 @@ class LinkasterHome extends StatefulWidget {
 
 class LinkasterHomeState extends State<LinkasterHome> {
   int _currentIndex = 0;
+
+  // Token storage
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthToken();
+  }
+
+  Future<void> _checkAuthToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('authToken');
+    print('Token: $token');
+
+    if (token == null || token!.isEmpty) {
+      // Redirect to the login page if token is not available
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
+
   final TextEditingController moduleNameController = TextEditingController();
   final TextEditingController moduleCodeController = TextEditingController();
   final TextEditingController classTimeController = TextEditingController();
@@ -52,12 +78,6 @@ class LinkasterHomeState extends State<LinkasterHome> {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => SettingsPage()));
         break;
-      case 'Files':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => FilesPage()),
-        );
-        break;
       case 'Feedback':
         Navigator.push(
           context,
@@ -76,6 +96,8 @@ class LinkasterHomeState extends State<LinkasterHome> {
   Future<void> _launchMoodle() async {
     const url =
         'https://portal.lancaster.ac.uk/portal/my-area/modules'; // Replace with your Moodle URL
+
+    print('Pinging the following address: $url');
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -189,7 +211,7 @@ class LinkasterHomeState extends State<LinkasterHome> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     Navigator.pop(context);
                   },
                   child: Text('Cancel'),
@@ -263,6 +285,21 @@ class LinkasterHomeState extends State<LinkasterHome> {
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
+            icon: Text('Status', style: TextStyle(color: Colors.white)),
+            onPressed: () async {
+              // Fetch user status
+              final response =
+                  await http.get(Uri.parse('http://localhost:8080/api/status'));
+              if (response.statusCode == 200) {
+                print('Status: ${response.body}');
+              } else {
+                print('Failed to fetch status');
+              }
+            },
+          ),
+
+          SizedBox(width: 10), // Add space between Moodle and next buttons
+          IconButton(
             icon: Text('Moodle', style: TextStyle(color: Colors.white)),
             onPressed: _launchMoodle,
           ),
@@ -283,7 +320,6 @@ class LinkasterHomeState extends State<LinkasterHome> {
             onSelected: _onMenuOptionSelected,
             itemBuilder: (BuildContext context) => [
               PopupMenuItem(value: 'Settings', child: Text('Settings')),
-              PopupMenuItem(value: 'Files', child: Text('Files')),
               PopupMenuItem(value: 'Feedback', child: Text('Feedback')),
               PopupMenuItem(value: 'Logout', child: Text('Logout')),
             ],
