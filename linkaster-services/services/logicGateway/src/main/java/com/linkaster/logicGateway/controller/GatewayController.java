@@ -38,6 +38,9 @@ public class GatewayController implements APIGatewayController {
     @Value("${address.module.url}")
     private String moduleServiceUrl;
 
+    @Value("${address.message.url}")
+    private String messageServiceUrl;
+
     private final String log_header = "GatewayController --- ";
 
     // END: Endpoints
@@ -120,7 +123,7 @@ public class GatewayController implements APIGatewayController {
         // Essentially same behavior, will reduce once functionality is fully implemented
         if(uri.equals("/api/message/establishSocket")){
             log.info(log_header + "Establishing websocket connection through messaging service... ");
-            String targetUrl = userServiceUrl + request.getRequestURI();
+            String targetUrl = messageServiceUrl + request.getRequestURI();
             
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", request.getHeader("Authorization"));

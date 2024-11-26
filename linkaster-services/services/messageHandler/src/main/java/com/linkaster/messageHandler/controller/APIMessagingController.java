@@ -12,7 +12,7 @@ import com.linkaster.messageHandler.dto.PrivateMessageDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
 
-@RequestMapping("/api/messaging")
+@RequestMapping("/api/message")
 public interface APIMessagingController {
 
     @GetMapping("")

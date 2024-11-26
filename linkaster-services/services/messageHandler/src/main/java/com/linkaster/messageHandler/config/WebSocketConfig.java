@@ -10,12 +10,17 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 import com.linkaster.messageHandler.webSocket.WebSocketOverseer;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Configuration
 @EnableWebSocketMessageBroker
+@Slf4j
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Value("${address.logicGateway.url}")
     private String logicGatewayUrl;
+
+    private final String log_header = "WebSocketConfig --- ";
 
     // 'Tis I, the overseer of the web socket.
     private final WebSocketOverseer webSocketOverseer;
@@ -27,6 +32,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        log.info(log_header + "Registering Stomp Endpoints for registry: " + registry);
+
         registry.addEndpoint("/ws")
                 .addInterceptors(webSocketOverseer)
                 .setAllowedOrigins("*")     // Allow all origins -> To change with logicGatewayUrl  
