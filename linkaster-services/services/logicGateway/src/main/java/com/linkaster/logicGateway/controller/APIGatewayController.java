@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.linkaster.logicGateway.dto.UserLogin;
 import com.linkaster.logicGateway.dto.UserRegistration;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /*
  * This interface defines the API endpoints for the Gateway Controller.
  */
@@ -31,5 +33,16 @@ public interface APIGatewayController {
     @PostMapping("/auth/{user_type}/register")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> register(@RequestBody UserRegistration regRequest, @PathVariable("user_type") String user_type);
+
+    // Special access. Only one authorization to enabling websocket for messaging:
+    @GetMapping("/message/**")
+    public ResponseEntity<?> forwardToMessageService(HttpServletRequest request);
+
+    // Access to services through gateway
+    @GetMapping("/user/**")
+    public ResponseEntity<?> forwardToUserService(HttpServletRequest request);
+
+    @GetMapping("/module/**")
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request); 
 
 }

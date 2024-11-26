@@ -8,7 +8,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -107,8 +106,61 @@ public class GatewayController implements APIGatewayController {
         }
     }
 
+
+    // Forward requests to messageService
+    // All paths going into /message/** will be forwarded to the messageService
+    @Override
+    public ResponseEntity<?> forwardToMessageService(HttpServletRequest request) {
+        /*
+         * SPECIAL ENDPOINT -> /message/establishSocket -> Returns a websocket, diff from regular answer
+         */
+
+        String uri = request.getRequestURI();
+
+        // Essentially same behavior, will reduce once functionality is fully implemented
+        if(uri.equals("/api/message/establishSocket")){
+            log.info(log_header + "Establishing websocket connection through messaging service... ");
+            String targetUrl = userServiceUrl + request.getRequestURI();
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", request.getHeader("Authorization"));
+
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+
+            // Forward the request
+            ResponseEntity<?> response = restTemplate.exchange(
+                targetUrl,
+                HttpMethod.valueOf(request.getMethod()),
+                entity,
+                String.class
+            );
+
+            return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+
+        } else {
+            log.info(log_header + "Forwarding request to messageService: " + request.getRequestURI());
+            String targetUrl = userServiceUrl + request.getRequestURI();
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", request.getHeader("Authorization"));
+
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+
+            // Forward the request
+            ResponseEntity<String> response = restTemplate.exchange(
+                targetUrl,
+                HttpMethod.valueOf(request.getMethod()),
+                entity,
+                String.class
+            );
+
+            return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+        }
+    }
+
     // Forward requests to userService
-    @GetMapping("/user/**")
+    // All paths going into /user/** will be forwarded to the moduleService
+    @Override
     public ResponseEntity<?> forwardToUserService(HttpServletRequest request) {
 
         log.info(log_header + "Forwarding request to userService: " + request.getRequestURI());
@@ -131,7 +183,8 @@ public class GatewayController implements APIGatewayController {
     }
 
     // Forward requests to moduleService
-    @GetMapping("/module/**")
+    // All paths going into /module/** will be forwarded to the moduleService
+    @Override
     public ResponseEntity<?> forwardToModuleService(HttpServletRequest request) {
 
         log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());

@@ -9,6 +9,8 @@ import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.MessageRetrieval;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @RequestMapping("/api/messaging")
 public interface APIMessagingController {
@@ -30,6 +32,9 @@ public interface APIMessagingController {
 
     @PostMapping("/retrieveMessage")
     public String retrieveMessage(@RequestBody MessageRetrieval toRetrieve);
+
+    @GetMapping("/establishSocket")
+    public String establishSocket(HttpServletRequest request);
     
     
 }

@@ -66,5 +66,13 @@
       <scope>test</scope>
     </dependency>
 
+
+    <!-- Service exclusive dependencies -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-websocket</artifactId>
+        <version>3.4.0</version>
+    </dependency>
+
   </dependencies>
 </project>
