@@ -26,7 +26,7 @@ public class WebSocketMessageController {
     }
 
     @MessageMapping("/sendPrivate")
-    @SendTo("/topic/private")
+    @SendTo("/topic/private/${chatId}")
     public PrivateMessage sendPrivateMessage(PrivateMessageDTO messageObj, SimpMessageHeaderAccessor headerAccessor) {
         // Get the sender Id from the JWT token
         long senderId = Long.parseLong(headerAccessor.getSessionAttributes().get("userId").toString());

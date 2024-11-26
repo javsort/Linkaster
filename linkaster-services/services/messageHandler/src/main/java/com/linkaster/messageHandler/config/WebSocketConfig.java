@@ -36,8 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         registry.addEndpoint("/ws")
                 .addInterceptors(webSocketOverseer)
-                .setAllowedOrigins("*")     // Allow all origins -> To change with logicGatewayUrl  
-                .withSockJS();
+                .setAllowedOrigins("*");     // Allow all origins -> To change with logicGatewayUrl 
     }
 
     @Override
