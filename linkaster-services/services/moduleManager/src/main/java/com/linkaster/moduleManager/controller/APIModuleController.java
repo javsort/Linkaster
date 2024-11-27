@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.linkaster.moduleManager.dto.ModuleCreate;
+import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 
@@ -82,8 +83,7 @@ public interface APIModuleController {
 
     @GetMapping("/getAllAnnouncements")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<EventModel>> getAllAnnouncements();
-
+    public Iterable<Announcement> getAllAnnouncementsByModuleId();
     /* 
     @GetMapping("/updateTimetable")
     @ResponseStatus(HttpStatus.OK)

@@ -9,12 +9,13 @@ import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface ModuleRepository extends JpaRepository<Module, Long> {
-    
-    // find module by code
-    @Query("SELECT m FROM Module m WHERE m.moduleCode = :moduleCode")
-    public Module findByCode(@Param("moduleCode") String moduleCode);
 
-    // check if module exists by code
-    boolean existsByCode(String code);
-    
-}   
+    // Find module by module code
+    @Query("SELECT m FROM Module m WHERE m.moduleCode = :moduleCode")
+    Module findByModuleCode(@Param("moduleCode") String moduleCode);
+
+    // Check if a module exists by module code
+    boolean existsByModuleCode(String moduleCode);
+
+}
+

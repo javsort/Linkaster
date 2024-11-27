@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -44,6 +45,7 @@ public class Module {
     @Column(name = "module_code", unique = true, nullable = false)
     private String moduleCode;    
 
+    @ElementCollection
     @Column(name = "studentList")
     private List<Long> studentList;
 

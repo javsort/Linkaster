@@ -38,14 +38,14 @@ public class JoinCodeManagerService {
 
     public Module getModuleByCode(String code) {
         log.info(log_header + "Getting join code by ID: " + code);
-        return moduleRepository.findByCode(code);
+        return moduleRepository.findByModuleCode(code);
     }
 
     public boolean validateJoinCode(String joinCode) {
         log.info(log_header + "Validating join code: " + joinCode);
     
         // Check if the join code exists in the repository
-        boolean exists = moduleRepository.existsByCode(joinCode);
+        boolean exists = moduleRepository.findByModuleCode(joinCode) != null;
     
         log.info(log_header + "Join code " + joinCode + " is " + (exists ? "valid" : "invalid"));
     
@@ -64,7 +64,7 @@ public class JoinCodeManagerService {
         }
     
         // Step 2: Retrieve the module
-        Module module = moduleRepository.findByCode(joinCode);
+        Module module = moduleRepository.findByModuleCode(joinCode);
         if (module == null) {
             log.error(log_header + "Module not found for join code: " + joinCode);
             return false; // Module does not exist

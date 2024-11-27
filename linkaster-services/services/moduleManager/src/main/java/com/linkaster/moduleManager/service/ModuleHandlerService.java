@@ -91,39 +91,32 @@ public class ModuleHandlerService {
         return announcement;
     }
 
-    public Announcement getAllAnnouncements(){
+    public Iterable<Announcement> getAllAnnouncements() {
         log.info(log_header + "Fetching all announcements");
-        // Logic to get all announcements
-        announcementRepository.findAll();
-        return null;
+        return announcementRepository.findAll(); // Return the result from the repository
     }
-
-    public Announcement getAllAnnouncementsByUserId(long userId){
+    
+    public Iterable<Announcement> getAllAnnouncementsByUserId(long userId) {
         log.info(log_header + "Fetching all announcements for user: " + userId);    
-        // Logic to get all announcements
-        announcementRepository.findByUserId(userId);
-        return null;
+        return announcementRepository.findByOwnerId(userId); // Return the result from the repository
     }
+    
 
 
     public Module leaveModule(long moduleId, long studentId) {
         log.info(log_header + "Student: " + studentId + " leaving module: " + moduleId);
-        // Logic to remove a student from a module
-        if (moduleRepository.existsById(moduleId)) {
-            // Check if the module exists
-           if (moduleRepository.findById(moduleId).get().getStudentList().contains(studentId)) {
-               // Check if the student is in the module
-               Module module = moduleRepository.findById(moduleId).get();
-               module.getStudentList().remove(studentId);
-               moduleRepository.save(module);
-               return module;
-            // Logic to remove a student from a module
-        } else {
+        Optional<Module> moduleOptional = moduleRepository.findById(moduleId);
+        if (moduleOptional.isEmpty()) {
             log.error(log_header + "Module with ID: '" + moduleId + "'' does not exist");
             return null;
         }
+        Module module = moduleOptional.get();
+        if (module.getStudentList().contains(studentId)) {
+            module.getStudentList().remove(studentId);
+            moduleRepository.save(module);
+            return module;
         } else {
-            log.error(log_header + "Module with ID: '" + moduleId + "'' does not exist");
+            log.error(log_header + "Student: " + studentId + " is not enrolled in module: " + moduleId);
             return null;
         }
     }

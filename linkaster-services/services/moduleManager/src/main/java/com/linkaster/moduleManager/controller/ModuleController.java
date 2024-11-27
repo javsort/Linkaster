@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.moduleManager.dto.ModuleCreate;
+import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.service.AuditManagerService;
@@ -101,9 +102,9 @@ public class ModuleController implements APIModuleController {
 
     @Override
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAnnouncement(@PathVariable long moduleId, @PathVariable long userId, @RequestBody String announcement) {
+    public String createAnnouncement(@PathVariable long moduleId, @PathVariable long ownerId, @RequestBody String announcement) {
         // Logic to create a new announcement
-        moduleHandlerService.createAnnouncement(moduleId, announcement, userId);
+        moduleHandlerService.createAnnouncement(moduleId, announcement, ownerId);
         return "New announcement created successfully";
     }
 
@@ -117,9 +118,9 @@ public class ModuleController implements APIModuleController {
 
 
     @Override
-    public ResponseEntity<Iterable<EventModel>> getAllAnnouncements() {
+    public Iterable<Announcement> getAllAnnouncementsByModuleId() {
         // Logic to get all announcements
-        return null;
+        return moduleHandlerService.getAllAnnouncements();
     }
 
     /*

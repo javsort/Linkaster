@@ -14,6 +14,6 @@ public interface EventRepository extends JpaRepository<EventModel, Long> {
     public List<EventModel> findByModuleId(Long moduleId);
 
     // get events by userid
-    public List<EventModel> findByUserId(Long userId);
+    public List<EventModel> findByOwnerId(Long ownerId);
 
 }   
