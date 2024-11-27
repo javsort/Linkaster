@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:linkaster_application/config/config.dart';
+import 'package:http/http.dart' as http;
+
 
 class FeedbackPage extends StatefulWidget {
   @override
@@ -8,6 +13,7 @@ class FeedbackPage extends StatefulWidget {
 class _FeedbackPageState extends State<FeedbackPage> {
   String? selectedRecipient;
   bool isAnonymous = false;
+  String? feedbackInput;
   final TextEditingController feedbackController = TextEditingController();
 
   final List<String> recipients = [
@@ -21,8 +27,40 @@ class _FeedbackPageState extends State<FeedbackPage> {
   void _submitFeedback() {
     String feedback = feedbackController.text;
     if (selectedRecipient != null && feedback.isNotEmpty) {
+//added:
+      //split the selected recipient into recipient name and recipient module:
+      List<String> recipientParts = selectedRecipient?.split(' - ') ?? [];
+      if (recipientParts.length == 2) {
+      String recipientName = recipientParts[0];
+      String recipientModule = recipientParts[1];
+
       // Handle feedback submission logic here
       // You can save to a database or display a confirmation message
+      //feedback contains: feedbackID, recipientID, senderID, anonymous, moduleID, and contents
+      Future<bool> registerFeedback(
+        int feedbackID,
+        String recipientID,
+        String senderID,
+        bool anonymous, 
+        String moduleID,
+        String contents,
+        ) async {
+          final response = await http.post(
+            Uri.parse('${AppConfig.apiBaseUrl}/'), //insert correct path
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+            //need to be updated:
+              "feedbackID": 0,
+              "recipientID": 0,
+              "senderID": 0,
+              "anonymous": isAnonymous,
+              "moduleID": 0,
+              "cotents": feedbackInput
+            })
+          );
+          return false;
+        }
+//end
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Feedback submitted successfully!')),
       );
@@ -31,10 +69,11 @@ class _FeedbackPageState extends State<FeedbackPage> {
         selectedRecipient = null;
         isAnonymous = false;
       });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill in all fields before submitting.')),
-      );
+        );
+      }
     }
   }
 
@@ -100,6 +139,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
+                //add saving feedback text as feedbackInput
               ),
             ),
             SizedBox(height: 20),

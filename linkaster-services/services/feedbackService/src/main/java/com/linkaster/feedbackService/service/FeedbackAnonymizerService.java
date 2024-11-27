@@ -1,13 +1,13 @@
 package com.linkaster.feedbackService.service;
 
 import org.springframework.stereotype.Service;
-import com.linkaster.feedbackService.model.FeedbackModel;
+import com.linkaster.feedbackService.model.Feedback;
 
 
-// changes the stored name to "anonymous"
+// changes the stored id to 0, indicating anonymous student
 @Service
 public class FeedbackAnonymizerService {
-    public void anonymizeFeedback(FeedbackModel feedback) {
-        feedback.setSenderName("Anonymous");
+    public void anonymizeFeedback(Feedback feedback) {
+        feedback.setSenderID(0);
     }
 }
