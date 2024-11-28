@@ -9,6 +9,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
 
@@ -71,5 +73,11 @@ public class MessageKeyMaster {
     /*
      * Group Chat extra functionality -> Hybrid Encryption
      */
+    public SecretKey generateGroupChatKey() throws Exception {
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(256); 
+
+        return  keyGen.generateKey();
+    }
 
 }

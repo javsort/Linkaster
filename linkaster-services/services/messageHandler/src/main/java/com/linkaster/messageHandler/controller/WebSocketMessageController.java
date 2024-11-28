@@ -6,7 +6,9 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
+import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
+import com.linkaster.messageHandler.model.GroupMessage;
 import com.linkaster.messageHandler.model.PrivateMessage;
 import com.linkaster.messageHandler.service.PrivateMessagingManagerService;
 
@@ -43,5 +45,15 @@ public class WebSocketMessageController {
         }
 
         return encryptedMessage;
+    }
+
+    @MessageMapping("/sendGroup")
+    @SendTo("/topic/group/{groupId}")
+    public GroupMessage sendPublicMessage(GroupMessageDTO messageObj, SimpMessageHeaderAccessor headerAccessor){
+        
+        
+        GroupMessage encryptionPair = new GroupMessage();
+
+        return encryptionPair;
     }
 }

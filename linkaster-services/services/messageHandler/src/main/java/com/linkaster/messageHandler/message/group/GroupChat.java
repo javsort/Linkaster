@@ -43,8 +43,8 @@ public class GroupChat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupChatId;
 
-    @Column(name = "AESKeyEncrypted")
-    private String AESKeyEncrypted;
+    @Column(name = "AESKey")
+    private String AESKey;
 
     @Column(name = "moduleId")
     private long moduleId;

@@ -25,20 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PrivateMessagingManagerService {
 
-
-    @Autowired
     private PrivateMessageRepository privateMessageRepository;
 
-    
-    @Autowired
     private PrivateChatRepository privateChatRepository;
 
-    @Autowired
     private MessageKeyMaster keyMaster;
 
     private final String log_header = "PrivateMessagingManagerService --- ";
 
     // Constructor
+    @Autowired
     public PrivateMessagingManagerService(PrivateMessageRepository privateMessageRepository, PrivateChatRepository privateChatRepository, MessageKeyMaster keyMaster) {
         this.privateMessageRepository = privateMessageRepository;
         this.privateChatRepository = privateChatRepository;
@@ -59,6 +55,9 @@ public class PrivateMessagingManagerService {
         return true;
     }
 
+
+
+    
     public PrivateMessage sendMessage(PrivateMessageDTO messageObj, long senderId){
         // Unwrap the message object
         long privateChatId = messageObj.getPrivateChatId();
