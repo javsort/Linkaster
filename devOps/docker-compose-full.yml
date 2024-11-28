@@ -161,11 +161,12 @@ services:
       - MYSQL_USER=linkaster
       - MYSQL_PASSWORD=password
     volumes:
-      - ./sql/announcements.sql:/docker-entrypoint-initdb.d/announcements.sql
-      - ./sql/events.sql:/docker-entrypoint-initdb.d/events.sql
-      - ./sql/modules.sql:/docker-entrypoint-initdb.d/modules.sql
-      - ./sql/roles.sql:/docker-entrypoint-initdb.d/roles.sql
-      - ./sql/users.sql:/docker-entrypoint-initdb.d/users.sql
+      - ./sql/001_roles.sql:/docker-entrypoint-initdb.d/001_roles.sql
+      - ./sql/002_users.sql:/docker-entrypoint-initdb.d/002_users.sql
+      - ./sql/003_modules.sql:/docker-entrypoint-initdb.d/003_modules.sql
+      - ./sql/004_events.sql:/docker-entrypoint-initdb.d/004_events.sql
+      - ./sql/005_announcements.sql:/docker-entrypoint-initdb.d/005_announcements.sql
+      - ./sql/006_chats.sql:/docker-entrypoint-initdb.d/006_chats.sql
       
     
     

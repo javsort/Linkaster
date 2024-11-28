@@ -50,7 +50,7 @@ public class WebSocketOverseer implements HandshakeInterceptor {
         log.info(log_header + "Before Handshake - Request: " + request.getURI());
 
         
-        //  ---     Testing on URI query STARTS
+        /*  ---     Testing on URI query STARTS
 
         // Retrieve userId from uri query
         URI uri = request.getURI();
@@ -86,12 +86,12 @@ public class WebSocketOverseer implements HandshakeInterceptor {
         if (chatId == null) {
             log.error(log_header + "Bad Request: 'chatId' was not received as part of the uri. Conisder thyself rejected!");
             throw new RuntimeException("Bad Request: 'chatId' was not received as a header");   // Reject the connection
-        }
+        }*/
         
         //  ---     Testing on URI query ENDS
 
 
-        /* CURRENTLY DISABLED FOR TESTING    
+        // CURRENTLY DISABLED FOR TESTING    
         // Get the token from the request
         String token = request.getHeaders().getFirst("Authorization");
         if (token == null || !token.startsWith("Bearer ")) {
@@ -118,8 +118,6 @@ public class WebSocketOverseer implements HandshakeInterceptor {
             log.error(log_header + "Bad Request: 'chatId' was not received as a header. Conisder thyself rejected!");
             throw new RuntimeException("Bad Request: 'chatId' was not received as a header");   // Reject the connection
         }
-
-        */
 
         log.info(log_header + "I oversee that: \nThe userId is: " + userId + " and, \nChatId is: " + chatId);
 
