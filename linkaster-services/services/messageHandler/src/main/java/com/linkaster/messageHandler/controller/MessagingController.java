@@ -1,20 +1,49 @@
 package com.linkaster.messageHandler.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.MessageRetrieval;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
+import com.linkaster.messageHandler.message.p2p.PrivateChat;
+import com.linkaster.messageHandler.repository.PrivateChatRepository;
+import com.linkaster.messageHandler.repository.PrivateMessageRepository;
+import com.linkaster.messageHandler.security.JwtTokenProvider;
 
-import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 public class MessagingController implements APIMessagingController {
+
+    private final String log_header = "MessagingController --- ";
+
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PrivateChatRepository privateChatRepository;
+    private final PrivateMessageRepository privateMessageRepository;
+
+    @Autowired
+    public MessagingController(JwtTokenProvider jwtTokenProvider, PrivateChatRepository privateChatRepository, PrivateMessageRepository privateMessageRepository){
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.privateChatRepository = privateChatRepository;
+        this.privateMessageRepository = privateMessageRepository;
+    }
     
     @Override
     public String home(){
         return "Welcome to the Messaging Service!";
+    }
+
+    @Override
+    public ResponseEntity<Iterable<PrivateChat>> getAllPrivateChats(){
+        List<PrivateChat> privateChats = privateChatRepository.findAll();
+
+        return ResponseEntity.ok(privateChats);
     }
 
     @Override
@@ -47,6 +76,30 @@ public class MessagingController implements APIMessagingController {
 
         
         return "Message Retrieved!";
+    }
+
+    // Authorize and return WebSocket Addr
+    @Override
+    public String establishSocket(HttpServletRequest request){
+        log.info(log_header + "Establishing WebSocket connection for user: " + request.getHeader("Authorization"));
+        // Get Auth Header
+        String authHeader = request.getHeader("Authorization");
+
+        // Check if authHeader is valid
+        if(authHeader == null || authHeader.isEmpty()){
+            return "Unauthorized! Please provide a valid JWT token in the Authorization header.";
+        }
+
+        String token = authHeader.substring(7);
+        // Check if token is valid
+        if(!jwtTokenProvider.validateToken(token)){
+            return "Unauthorized! Please provide a valid JWT token in the Authorization header.";
+        }
+
+        String userId = jwtTokenProvider.getClaims(token, "id");
+
+
+        return String.format( "Socket authorized! Connect to WebSocket URL: ws://message-handler-service/ws with your JWT token.");
     }
 
     // Private Messaging Actions

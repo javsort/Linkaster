@@ -105,5 +105,10 @@ public class PrivateChat {
 
         return actorMetadata;
     }
+
+    // Check if the user is part of the chat
+    public boolean isUserInChat(long userId){
+        return user1.getUserId() == userId || user2.getUserId() == userId;
+    }
     
 }
