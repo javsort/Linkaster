@@ -6,11 +6,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.moduleManager.dto.ModuleCreate;
+import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.service.AuditManagerService;
@@ -48,6 +51,11 @@ public class ModuleController implements APIModuleController {
         return "Welcome to the Module Service!";
     }
 
+    @Override
+    public String status() {
+        return "Module Service is up and running!";
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @Override
     public Module createModule(ModuleCreate module) {
@@ -81,7 +89,7 @@ public class ModuleController implements APIModuleController {
 
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public List<String> getStudentsByModule(long moduleId) {
+    public List<Long> getStudentsByModule(long moduleId) {
         // Example logic; replace with actual implementation
         return auditManagerService.getStudentsByModule(moduleId);
     }
@@ -94,65 +102,42 @@ public class ModuleController implements APIModuleController {
     @Override
     public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId) {
         // Logic for a student to leave a module
+        moduleHandlerService.leaveModule(moduleId, studentId);
     }
 
     @Override
-    public String newAssignment() {
-        // Logic to create a new assignment
-        return "New assignment created successfully";
-    }
-
-    @Override
-    public void deleteAssignment() {
-        // Logic to delete an assignment
-    }
-
-    @Override
-    public boolean updateAssignment() {
-        // Logic to update an assignment
-        return true;
-    }
-
-    @Override
-    public ResponseEntity<Iterable<EventModel>> getAllAssignments() {
-        // Logic to get all assignments
-        return null;
-    }
-
-    @Override
-    public String newAnnouncement() {
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createAnnouncement(@PathVariable long moduleId, @PathVariable long ownerId, @RequestBody String announcement) {
         // Logic to create a new announcement
+        moduleHandlerService.createAnnouncement(moduleId, announcement, ownerId);
         return "New announcement created successfully";
     }
 
+
     @Override
-    public boolean deleteAnnouncement() {
+    public boolean deleteAnnouncement(@PathVariable long announcementId, @PathVariable long moduleId) {
         // Logic to delete an announcement
+        moduleHandlerService.deleteAnnouncement(announcementId, moduleId);
         return true;
     }
 
-    @Override
-    public boolean updateAnnouncement() {
-        // Logic to update an announcement
-        return true;
-    }
 
     @Override
-    public ResponseEntity<Iterable<EventModel>> getAllAnnouncements() {
+    public Iterable<Announcement> getAllAnnouncementsByModuleId() {
         // Logic to get all announcements
-        return null;
+        return moduleHandlerService.getAllAnnouncements();
     }
 
+    /*
     @Override
     public boolean updateTimetable(Integer time, Date date) {
-        // Logic to update the timetable
-        log.info(log_header + "Timetable updated successfully");
-        return true;
+        return timetableIntegratorService.updateTimetable(time, date);
     }
+    */
 
     // Called by the student service - INTERSERVICE COMMUNICATION
     @Override
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(String studentId) {
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(Long studentId) {
         log.info(log_header + "Getting teachers for student: {}", studentId);
         return auditManagerService.getTeachersByStudent(studentId);
     }

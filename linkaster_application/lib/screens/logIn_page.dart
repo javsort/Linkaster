@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import './home_screen.dart';
+import './home_screen.dart'; // LinkasterHome as HomeScreen
 import 'register_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/config.dart'; // AppConfig for API base URL
+import 'package:shared_preferences/shared_preferences.dart'; // Add for token storage
 
 class LoginPage extends StatefulWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final bool isLoading = false;
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -119,16 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        //MISSING: Add login logic here
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LinkasterHome(),
-                          ),
-                          (route) => false,
-                        );
-                      },
+                      onPressed: () => _handleLogin(context),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -138,7 +127,11 @@ class _LoginPageState extends State<LoginPage> {
                         foregroundColor: Colors.white,
                         textStyle: TextStyle(fontSize: 18.0),
                       ),
-                      child: Text('Login'),
+                      child: isLoading
+                          ? CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : Text('Login'),
                     ),
                   ],
                 ),
@@ -166,14 +159,18 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
 
-    final success =
+    final String? token =
         await loginUser(emailController.text, passwordController.text);
 
     setState(() {
       isLoading = false;
     });
 
-    if (success) {
+    if (token != null) {
+      // Save token locally
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('authToken', token);
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => LinkasterHome()),
@@ -189,30 +186,29 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<bool> loginUser(String email, String password) async {
-    final url = Uri.parse('http://logic-gateway:8080/api/student/login');
+  Future<String?> loginUser(String email, String password) async {
+    final url = Uri.parse("${AppConfig.apiBaseUrl}/api/auth/student/login");
+    print('Base URL: ${AppConfig.apiBaseUrl}');
+    print('Logging in to: $url');
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'email': email,
-          'password': password,
+          "userEmail": email,
+          "password": password,
         }),
       );
 
       if (response.statusCode == 200) {
-        // Assuming the backend returns a token or some success message
         final responseData = jsonDecode(response.body);
-        print('Login successful: ${responseData['token']}');
-        return true;
+        return responseData['token']; // Return the token
       } else {
-        print('Login failed: ${response.statusCode}');
-        return false;
+        return null;
       }
     } catch (e) {
       print('Error logging in: $e');
-      return false;
+      return null;
     }
   }
 }
