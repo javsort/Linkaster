@@ -150,6 +150,7 @@ services:
       - ./sql/003_modules.sql:/docker-entrypoint-initdb.d/003_modules.sql
       - ./sql/004_events.sql:/docker-entrypoint-initdb.d/004_events.sql
       - ./sql/005_announcements.sql:/docker-entrypoint-initdb.d/005_announcements.sql
+      - ./sql/006_chats.sql:/docker-entrypoint-initdb.d/006_chats.sql
 
 networks:
   linkaster-network:

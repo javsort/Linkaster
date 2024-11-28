@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.linkaster.messageHandler.dto.ActorMetadata;
 import com.linkaster.messageHandler.dto.PrivateChatReg;
+import com.linkaster.messageHandler.dto.PrivateMessageDTO;
 import com.linkaster.messageHandler.message.p2p.PrivateChat;
 import com.linkaster.messageHandler.model.PrivateMessage;
 import com.linkaster.messageHandler.repository.PrivateChatRepository;
@@ -58,14 +59,19 @@ public class PrivateMessagingManagerService {
         return true;
     }
 
-    public boolean sendMessage(long privateChatId, String message, long senderId){
+    public PrivateMessage sendMessage(PrivateMessageDTO messageObj, long senderId){
+        // Unwrap the message object
+        long privateChatId = messageObj.getPrivateChatId();
+        String message = messageObj.getMessage();
+        
+        log.info(log_header + "Handling private message for chat Id: " + privateChatId);
 
         // Get the private chat
         PrivateChat privateChat = privateChatRepository.findById(privateChatId).orElse(null);
 
         if(privateChat == null){
             log.error(log_header + "Error: Private chat with id: '" + privateChatId + "' not found");
-            return false;
+            return null;
         }
 
         // Get destinatary's public key
@@ -75,7 +81,7 @@ public class PrivateMessagingManagerService {
         
         if(encPublic == null){
             log.error(log_header + "Error: Sender's public key not found");
-            return false;
+            return null;
         }
 
         String encryptedMessage = null;
@@ -85,7 +91,7 @@ public class PrivateMessagingManagerService {
 
         } catch (Exception e){
             log.error(log_header + "Error during message encryption: " + e.getMessage());
-            return false;
+            return null;
         }
 
         // Create a new message
@@ -99,19 +105,26 @@ public class PrivateMessagingManagerService {
         // Save the new message
         privateMessageRepository.save(newMessage);
 
-        log.info(log_header + "Sending a message to private chat with id: '" + privateChatId + "'");
+        log.info(log_header + "Sending a message to private chat with id: '" + privateChatId + "'...");
 
-        return false;
+        return newMessage;
     }
 
-    public Iterable<PrivateMessage> getMessagesFromUser(long user1, long user2){
-        log.info(log_header + "Retrieving messages between userId: '" + user1 + "'' and userId:'" + user2 + "'");
+    public Iterable<PrivateMessage> getPrivateChat(long privateChatId){
+
+        log.info(log_header + "Retrieving messages from private chat with id: '" + privateChatId + "'");
+
 
         // Get the private chat
-        PrivateChat privateChat = privateChatRepository.findByUser1AndUser2(user1, user2);
+        PrivateChat privateChat = privateChatRepository.findById(privateChatId).orElse(null);
 
-        long privateChatId = privateChat.getPrivateChatId();
+        if(privateChat == null){
+            log.error(log_header + "Error: Private chat with id: '" + privateChatId + "' not found");
+            return null;
+        }
 
+        // Retrieve a reasonable amount of messages
+        
         // Get the messages
         Iterable<PrivateMessage> messages = privateMessageRepository.findByPrivateChatId(privateChatId);
 
