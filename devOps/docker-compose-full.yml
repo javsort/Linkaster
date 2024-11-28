@@ -43,6 +43,35 @@ services:
     networks:
       - linkaster-network
 
+  module-manager:
+    build:
+      context: ../linkaster-services/services/moduleManager
+    ports:
+      - "8085:8085"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8085
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+  message-handler:
+    build:
+      context: ../linkaster-services/services/messageHandler
+    ports:
+      - "8086:8086"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8086
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+
   linkaster-MySQL:
     container_name: "Linkaster-SQL"
     image: "mysql:8.0"
@@ -58,8 +87,14 @@ services:
       - MYSQL_USER=linkaster
       - MYSQL_PASSWORD=password
     volumes:
+      - ./sql/announcements.sql:/docker-entrypoint-initdb.d/announcements.sql
+      - ./sql/events.sql:/docker-entrypoint-initdb.d/events.sql
+      - ./sql/modules.sql:/docker-entrypoint-initdb.d/modules.sql
       - ./sql/roles.sql:/docker-entrypoint-initdb.d/roles.sql
       - ./sql/users.sql:/docker-entrypoint-initdb.d/users.sql
+      
+    
+    
 
 networks:
   linkaster-network:

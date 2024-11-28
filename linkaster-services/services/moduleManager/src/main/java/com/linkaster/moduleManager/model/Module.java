@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -44,23 +45,19 @@ public class Module {
     @Column(name = "module_code", unique = true, nullable = false)
     private String moduleCode;    
 
+    @ElementCollection
     @Column(name = "studentList")
-    private List<String> studentList;
+    private List<Long> studentList;
 
     @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<EventModel> eventsAndAnnouncements;
+    private List<EventModel> events;
+
+    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Announcement> announcements;
 
     @Column(name = "type")
     private String type;
 
-    @Column(name = "description")
-    private String description;
-    
-    @Column(name = "startTime")
-    private String startTime;
-
-    @Column(name = "endTime")
-    private String endTime;
 
     // Add groupchat's RSA key here
 }

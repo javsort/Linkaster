@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.linkaster.moduleManager.dto.ModuleCreate;
+import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 
@@ -23,6 +24,9 @@ public interface APIModuleController {
 
     @GetMapping("")
     public String home();
+
+    @GetMapping("/status")
+    public String status();
 
     @PostMapping("/createModule")
     @ResponseStatus(HttpStatus.CREATED)
@@ -56,66 +60,41 @@ public interface APIModuleController {
 
     @GetMapping("/getStudentsByModule/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> getStudentsByModule(@PathVariable long moduleId);
+    public List<Long> getStudentsByModule(@PathVariable long moduleId);
 
 
+    
     @GetMapping("/joinModulebyCode/{code}")
     @ResponseStatus(HttpStatus.OK)
     public boolean joinModuleByCode(@PathVariable String code, @RequestParam long studentId);
-
+    
 
     @GetMapping("/leaveModule/{moduleId}/{studentId}")
     @ResponseStatus(HttpStatus.OK)
     public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId);
 
 
-    @GetMapping("/newAssignment")
-    @ResponseStatus(HttpStatus.OK)
-    public String newAssignment();
-
-
-    @GetMapping("/deleteAssignment")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteAssignment();
-
-
-    @GetMapping("/updateAssignment")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean updateAssignment();
-
-
-    @GetMapping("/getAllAssignments")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<EventModel>> getAllAssignments();
-
-
-    @GetMapping("/newAnnouncement")
-    @ResponseStatus(HttpStatus.OK)
-    public String newAnnouncement();
+    @GetMapping("/createAnnouncement")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createAnnouncement(@PathVariable long moduleId, @PathVariable long userId, @RequestBody String announcement);
 
 
     @GetMapping("/deleteAnnouncement")
     @ResponseStatus(HttpStatus.OK)
-    public boolean deleteAnnouncement();
-
-
-    @GetMapping("/updateAnnouncement")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean updateAnnouncement();
+    public boolean deleteAnnouncement(@PathVariable long announcementId, @PathVariable long moduleId);
 
 
     @GetMapping("/getAllAnnouncements")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<EventModel>> getAllAnnouncements();
-
-
+    public Iterable<Announcement> getAllAnnouncementsByModuleId();
+    /* 
     @GetMapping("/updateTimetable")
     @ResponseStatus(HttpStatus.OK)
     public boolean updateTimetable(@RequestParam Integer time, @RequestParam Date date);
-
+    */
     
     // Called by the student service - INTERSERVICE COMMUNICATION
     @GetMapping("/student/{studentId}/teachers")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@PathVariable String studentId);
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@PathVariable Long studentId);
 }
