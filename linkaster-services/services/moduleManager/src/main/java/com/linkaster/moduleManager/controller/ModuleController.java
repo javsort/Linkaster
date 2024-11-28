@@ -51,6 +51,11 @@ public class ModuleController implements APIModuleController {
         return "Welcome to the Module Service!";
     }
 
+    @Override
+    public String status() {
+        return "Module Service is up and running!";
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @Override
     public Module createModule(ModuleCreate module) {

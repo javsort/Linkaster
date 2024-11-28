@@ -25,6 +25,9 @@ public interface APIModuleController {
     @GetMapping("")
     public String home();
 
+    @GetMapping("/status")
+    public String status();
+
     @PostMapping("/createModule")
     @ResponseStatus(HttpStatus.CREATED)
     public Module createModule(@RequestBody ModuleCreate module);
