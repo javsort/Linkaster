@@ -1,5 +1,7 @@
 package com.linkaster.messageHandler.webSocket;
 
+import java.net.URI;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,49 @@ public class WebSocketOverseer implements HandshakeInterceptor {
             Map<String, Object> attributes) throws Exception {
         log.info(log_header + "Before Handshake - Request: " + request.getURI());
 
-            
+        
+        //  ---     Testing on URI query STARTS
+
+        // Retrieve userId from uri query
+        URI uri = request.getURI();
+        String query = uri.getQuery();
+
+        Map<String, String> queryMap = Arrays.stream(query.split("&"))
+                .map(s -> s.split("="))
+                .collect(java.util.stream.Collectors.toMap(a -> a[0], a -> a[1]));
+
+        String token = queryMap.get("Authorization");
+        String chatId = queryMap.get("chatId");
+    
+        // Get the token from the request
+        if (token == null || !token.startsWith("Bearer ")) {
+            log.error(log_header + "Bad Request: Missing token. Conisder thyself rejected!");
+            throw new RuntimeException("Bad Request: Missing token");   // Reject the connection
+        }
+
+        // Validate the token
+        token = token.substring(7);
+
+        if(!jwtTokenProvider.validateToken(token)){
+            log.error(log_header + "Bad Request: Token is invalid. Conisder thyself rejected!");
+            throw new RuntimeException("Bad Request: Token is invalid");   // Reject the connection
+        }
+
+        log.info(log_header + "The overseed token proofs itself worthy! \nGetting the userId from the token...");
+
+        // Get userId from token
+        long userId = Long.parseLong(jwtTokenProvider.getClaims(token, "id"));
+
+        // Retrieve chatID from headers
+        if (chatId == null) {
+            log.error(log_header + "Bad Request: 'chatId' was not received as part of the uri. Conisder thyself rejected!");
+            throw new RuntimeException("Bad Request: 'chatId' was not received as a header");   // Reject the connection
+        }
+        
+        //  ---     Testing on URI query ENDS
+
+
+        /* CURRENTLY DISABLED FOR TESTING    
         // Get the token from the request
         String token = request.getHeaders().getFirst("Authorization");
         if (token == null || !token.startsWith("Bearer ")) {
@@ -75,8 +119,9 @@ public class WebSocketOverseer implements HandshakeInterceptor {
             throw new RuntimeException("Bad Request: 'chatId' was not received as a header");   // Reject the connection
         }
 
-        log.info(log_header + "I oversee that: \nThe userId is: " + userId + " and, \nChatId is: " + chatId);
+        */
 
+        log.info(log_header + "I oversee that: \nThe userId is: " + userId + " and, \nChatId is: " + chatId);
 
         // Get PrivateChat obj
         PrivateChat privateChat = privateChatRepository.findById(chatId).orElse(null);

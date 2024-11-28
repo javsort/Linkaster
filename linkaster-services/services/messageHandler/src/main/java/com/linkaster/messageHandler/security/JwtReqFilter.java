@@ -30,6 +30,15 @@ public class JwtReqFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
+        String path = request.getRequestURI();
+        if(path.equals("/ws/**") 
+        || path.equals("/ws")
+        || path.equals("/app/sendPrivate") 
+        || path.equals("/topic/private/{chatId}")){
+
+            filterChain.doFilter(request, response);
+            }
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 

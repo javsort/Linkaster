@@ -13,6 +13,7 @@ if "%1"=="" (
     echo    package    - Package the project
     echo    validate   - Validate the project
     echo    test       - Run all tests
+    echo    testWlogs  - Run all tests with full logging
     echo    clean      - Clean the project
     echo    help       - Show usage
     echo.
@@ -39,6 +40,10 @@ if "%1"=="build" (
     cd ../../linkaster-services
     call mvnw.cmd test
 
+) else if "%1"=="testWlogs" (
+    cd ../../linkaster-services
+    call mvnw.cmd test -X
+
 ) else if "%1"=="clean" (
     cd ../../linkaster-services
     call mvnw.cmd clean
@@ -53,6 +58,7 @@ if "%1"=="build" (
     echo    package    - Package the project
     echo    validate   - Validate the project
     echo    test       - Run all tests
+    echo    testWlogs  - Run all tests with full logging
     echo    clean      - Clean the project
     echo    help       - Show usage
     echo.
