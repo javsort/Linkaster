@@ -1,4 +1,4 @@
-package com.linkaster.messageHandler.message.group;
+package com.linkaster.messageHandler.model.group;
 // group -> group chat
 
 import java.util.Map;
@@ -61,5 +61,9 @@ public class GroupChat {
     @MapKeyColumn(name = "user_id")
     @Column(name = "public_key")
     private Map<Long, String> groupMembers;
+
+    public void addMember(long userId, String publicKey){
+        groupMembers.put(userId, publicKey);
+    }
 
 }

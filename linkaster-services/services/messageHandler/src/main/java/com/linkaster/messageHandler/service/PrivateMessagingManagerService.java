@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.linkaster.messageHandler.dto.ActorMetadata;
-import com.linkaster.messageHandler.dto.PrivateChatReg;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
-import com.linkaster.messageHandler.message.p2p.PrivateChat;
-import com.linkaster.messageHandler.model.PrivateMessage;
+import com.linkaster.messageHandler.model.ActorMetadata;
+import com.linkaster.messageHandler.model.p2p.PrivateChat;
+import com.linkaster.messageHandler.model.p2p.PrivateChatReg;
+import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 import com.linkaster.messageHandler.repository.PrivateChatRepository;
 import com.linkaster.messageHandler.repository.PrivateMessageRepository;
 import com.linkaster.messageHandler.util.MessageKeyMaster;

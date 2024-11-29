@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import com.linkaster.messageHandler.dto.ActorMetadata;
-import com.linkaster.messageHandler.message.p2p.PrivateChat;
+import com.linkaster.messageHandler.model.ActorMetadata;
+import com.linkaster.messageHandler.model.p2p.PrivateChat;
 import com.linkaster.messageHandler.repository.PrivateChatRepository;
 import com.linkaster.messageHandler.security.JwtTokenProvider;
 

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Controller;
 
 import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
-import com.linkaster.messageHandler.model.GroupMessage;
-import com.linkaster.messageHandler.model.PrivateMessage;
+import com.linkaster.messageHandler.model.group.GroupMessage;
+import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 import com.linkaster.messageHandler.service.PrivateMessagingManagerService;
 
 import lombok.extern.slf4j.Slf4j;
