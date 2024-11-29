@@ -1,33 +1,17 @@
 import 'package:flutter/material.dart';
-import '../widget/user_status.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../widget/user_status.dart'; // Import your custom widget for the status indicator
+import '../config/config.dart'; // Import your config file
 
 class ProfilePage extends StatefulWidget {
-  final String name;
-  final String surname;
-  final String studentID;
-  final String studyYear;
-  final String program;
-  final String email;
-  final String avatar;
+  final String? token;
   final UserStatus status;
-  // Optional fields
-  final String? instagram;
-  final String? linkedin;
-  final String? phone;
 
   const ProfilePage({
     Key? key,
-    required this.name,
-    required this.surname,
-    required this.studentID,
-    required this.studyYear,
-    required this.program,
-    required this.email,
+    required this.token,
     required this.status,
-    this.avatar = 'https://example.com/default-avatar.jpg',
-    this.instagram,
-    this.linkedin,
-    this.phone,
   }) : super(key: key);
 
   @override
@@ -51,20 +35,77 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    initializeControllers();
     currentStatus = widget.status;
+    initializeControllers(); // Initialize empty controllers
+    fetchStudentData(); // Fetch data from the server
   }
 
-  void initializeControllers() {
-    nameController = TextEditingController(text: widget.name);
-    surnameController = TextEditingController(text: widget.surname);
-    studentIDController = TextEditingController(text: widget.studentID);
-    studyYearController = TextEditingController(text: widget.studyYear);
-    programController = TextEditingController(text: widget.program);
-    emailController = TextEditingController(text: widget.email);
-    instagramController = TextEditingController(text: widget.instagram ?? '');
-    linkedinController = TextEditingController(text: widget.linkedin ?? '');
-    phoneController = TextEditingController(text: widget.phone ?? '');
+  void initializeControllers({
+    String name = '',
+    String surname = '',
+    String studentID = '',
+    String studyYear = '',
+    String program = '',
+    String email = '',
+    String instagram = '',
+    String linkedin = '',
+    String phone = '',
+  }) {
+    nameController = TextEditingController(text: name);
+    surnameController = TextEditingController(text: surname);
+    studentIDController = TextEditingController(text: studentID);
+    studyYearController = TextEditingController(text: studyYear);
+    programController = TextEditingController(text: program);
+    emailController = TextEditingController(text: email);
+    instagramController = TextEditingController(text: instagram);
+    linkedinController = TextEditingController(text: linkedin);
+    phoneController = TextEditingController(text: phone);
+  }
+
+  Future<void> fetchStudentData() async {
+    final url = Uri.parse(
+        '${AppConfig.apiBaseUrl}/api/student'); // Replace with your actual API URL
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer ${widget.token}',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        setState(() {
+          initializeControllers(
+            name: data['name'] ?? '',
+            surname: data['surname'] ?? '',
+            studentID: data['studentID'] ?? '',
+            studyYear: data['studyYear'] ?? '',
+            program: data['program'] ?? '',
+            email: data['email'] ?? '',
+            instagram: data['instagram'] ?? '',
+            linkedin: data['linkedin'] ?? '',
+            phone: data['phone'] ?? '',
+          );
+        });
+      } else {
+        _showError('Failed to load student data. (${response.statusCode})');
+      }
+    } catch (e) {
+      _showError('An error occurred while fetching data.');
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -81,11 +122,17 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  void _toggleStatus() {
+  void _toggleEdit() {
     setState(() {
-      currentStatus = currentStatus == UserStatus.available
-          ? UserStatus.busy
-          : UserStatus.available;
+      isEditing = !isEditing;
+      if (!isEditing) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Changes saved successfully!'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     });
   }
 
@@ -140,11 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
               )
             : ListTile(
                 leading: Icon(icon, color: Theme.of(context).primaryColor),
-                title: Text(label,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    )),
+                title: Text(label),
                 subtitle: Text(
                   controller.text.isEmpty ? 'Not provided' : controller.text,
                   style: TextStyle(
@@ -153,101 +196,37 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                dense: true,
               ),
       ),
     );
   }
 
   Widget _buildAvatarSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.white,
-            Theme.of(context).primaryColor.withOpacity(0.2),
-          ],
+    return Column(
+      children: [
+        SizedBox(height: 20),
+        CircleAvatar(
+          radius: 60,
+          backgroundImage:
+              NetworkImage('https://example.com/default-avatar.jpg'),
         ),
-      ),
-      child: Column(
-        children: [
-          SizedBox(height: 20),
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.white,
-                child: CircleAvatar(
-                  radius: 57,
-                  backgroundImage: NetworkImage(widget.avatar),
-                ),
-              ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: GestureDetector(
-                  onTap: isEditing ? _toggleStatus : null,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                        ),
-                      ],
-                    ),
-                    padding: EdgeInsets.all(3),
-                    child: StatusIndicator(
-                      status: currentStatus,
-                      size: 20,
-                      withAnimation: !isEditing,
-                    ),
-                  ),
-                ),
-              ),
-              if (isEditing)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 18,
-                    child: IconButton(
-                      icon: Icon(Icons.camera_alt,
-                          size: 18, color: Theme.of(context).primaryColor),
-                      onPressed: () {
-                        // TODO: Implement image picker
-                      },
-                    ),
-                  ),
-                ),
-            ],
+        SizedBox(height: 16),
+        Text(
+          "${nameController.text} ${surnameController.text}",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).primaryColor,
           ),
-          SizedBox(height: 16),
-          Text(
-            "${nameController.text} ${surnameController.text}",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
-            ),
+        ),
+        Text(
+          programController.text,
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).primaryColor,
           ),
-          Text(
-            programController.text,
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-          SizedBox(height: 20),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -266,13 +245,11 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildAvatarSection(),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionTitle('Academic Information'),
                   _buildInfoTile(
@@ -314,57 +291,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-            if (isEditing)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          isEditing = false;
-                          initializeControllers();
-                          currentStatus = widget.status;
-                        });
-                      },
-                      icon: Icon(Icons.close),
-                      label: Text('Cancel'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      ),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: _toggleEdit,
-                      icon: Icon(Icons.check),
-                      label: Text('Save Changes'),
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
           ],
         ),
       ),
     );
-  }
-
-  void _toggleEdit() {
-    setState(() {
-      isEditing = !isEditing;
-      if (!isEditing) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Changes saved successfully!'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    });
   }
 }

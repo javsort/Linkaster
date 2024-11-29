@@ -6,7 +6,13 @@ class GroupChatPage extends StatefulWidget {
   final GroupChat chat;
   final GroupChatInfo chatInfo;
 
-  GroupChatPage({Key? key, required this.chat, required this.chatInfo})
+  String? token;
+
+  GroupChatPage(
+      {Key? key,
+      required this.chat,
+      required this.chatInfo,
+      required this.token})
       : super(key: key);
 
   @override
@@ -38,6 +44,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
 
   @override
   void initState() {
+    print('PR Token: ${widget.token}');
     super.initState();
     moduleNameController =
         TextEditingController(text: widget.chatInfo.moduleName);
