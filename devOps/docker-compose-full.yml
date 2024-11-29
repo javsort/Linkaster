@@ -90,19 +90,19 @@ services:
 #    networks:
 #      - linkaster-network
 
-#  module-manager:
-#    build:
-#      context: ../linkaster-services/services/moduleManager
-#    ports:
-#      - "8085:8085"
-#    depends_on:
-#      - linkaster-MySQL
-#    environment:
-#      - SERVER_PORT=8085
-#    env_file:
-#      - .env
-#    networks:
-#      - linkaster-network
+  module-manager:
+    build:
+      context: ../linkaster-services/services/moduleManager
+    ports:
+      - "8085:8085"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8085
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
 
 #  message-handler:
 #    build:

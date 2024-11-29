@@ -3,8 +3,9 @@ import '../models/chat.dart';
 
 class PrivateChatPage extends StatelessWidget {
   final Chat chat;
+  String? token;
 
-  PrivateChatPage({required this.chat});
+  PrivateChatPage({required this.chat, required this.token});
 
   // Sample messages for demonstration
   final List<Map<String, dynamic>> messages = [
@@ -18,6 +19,7 @@ class PrivateChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('PR Token: $token');
     return Scaffold(
       appBar: AppBar(
         title: Row(
