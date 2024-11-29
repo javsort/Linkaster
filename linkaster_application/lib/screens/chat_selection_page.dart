@@ -7,6 +7,7 @@ import 'private_chats_page.dart';
 
 class ChatSelectionPage extends StatelessWidget {
   final bool isPrivateChat;
+  final String? token; // Token passed to ChatSelectionPage
 
   // Replace these with your actual data
   final List<Chat> privateChats = [
@@ -37,7 +38,9 @@ class ChatSelectionPage extends StatelessWidget {
         avatar: 'url_to_group_avatar1'),
   ];
 
-  ChatSelectionPage({Key? key, required this.isPrivateChat}) : super(key: key);
+  ChatSelectionPage(
+      {Key? key, required this.isPrivateChat, required this.token})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +73,8 @@ class ChatSelectionPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PrivateChatPage(chat: chat),
+                    builder: (context) =>
+                        PrivateChatPage(chat: chat, token: token), // Pass token
                   ),
                 );
               },
@@ -84,36 +88,24 @@ class ChatSelectionPage extends StatelessWidget {
               title: Text(groupChat.chatname),
               subtitle: Text('${groupChat.message} - ${groupChat.time}'),
               onTap: () {
-                final groupChat = groupChats[index];
-                // Create a GroupChatInfo object dynamically based on the GroupChat data
                 final groupChatInfo = GroupChatInfo(
                   chatname: groupChat.chatname,
                   name: groupChat.name,
                   time: groupChat.time,
-                  moduleName:
-                      "Module Name", // You should replace these with actual data if available
+                  moduleName: "Module Name", // Replace with actual data
                   moduleTime: "Module Time",
                   moduleCode: "Module Code",
-                  studentsList: [
-                    "Jorge",
-                    "Javier",
-                    "Marcos",
-                    "Marlene"
-                  ], // Replace with actual student data
-                  teachersList: [
-                    "Aakash",
-                    "Fabio"
-                  ], // Replace with actual teacher data
+                  studentsList: ["Jorge", "Javier", "Marcos", "Marlene"],
+                  teachersList: ["Aakash", "Fabio"],
                 );
 
-                // Navigate to GroupChatPage
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => GroupChatPage(
                       chat: groupChat,
-                      chatInfo:
-                          groupChatInfo, // Pass the dynamically created GroupChatInfo
+                      chatInfo: groupChatInfo,
+                      token: token, // Pass token
                     ),
                   ),
                 );
@@ -147,13 +139,12 @@ class ChatSelectionPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                // Handle selecting a contact, for example:
-                final selectedChat =
-                    privateChats[0]; // You can use a dynamic search result here
+                final selectedChat = privateChats[0];
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PrivateChatPage(chat: selectedChat),
+                    builder: (context) =>
+                        PrivateChatPage(chat: selectedChat, token: token),
                   ),
                 );
                 Navigator.pop(context);

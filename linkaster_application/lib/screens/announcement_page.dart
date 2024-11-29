@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AnnouncementPage extends StatelessWidget {
+class AnnouncementPage extends StatefulWidget {
+  String? token;
+
+  AnnouncementPage({required this.token});
+
+  @override
+  _AnnouncementPageState createState() => _AnnouncementPageState();
+}
+
+class _AnnouncementPageState extends State<AnnouncementPage> {
+  String? token;
+
   // Sample messages to simulate announcements
-  final List<Map<String, String>> messages = [
+  List<Map<String, String>> messages = [
     {
       "sender": "Professor Smith",
       "message": "Don't forget to submit your assignments by Friday!",
@@ -12,17 +24,6 @@ class AnnouncementPage extends StatelessWidget {
       "sender": "Professor Johnson",
       "message": "The exam schedule has been updated. Please check the portal.",
       "time": "11:15 AM",
-    },
-    {
-      "sender": "Professor Lee",
-      "message":
-          "Extra credit opportunity available! Check the details in your email.",
-      "time": "1:30 PM",
-    },
-    {
-      "sender": "Professor Kim",
-      "message": "Class will be held online next week due to maintenance.",
-      "time": "2:45 PM",
     },
   ];
 
@@ -34,6 +35,47 @@ class AnnouncementPage extends StatelessWidget {
     'Robotics Club',
     'Web Development'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _retrieveToken();
+  }
+
+  Future<void> _retrieveToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('authToken');
+      print('Retrieved token: $token');
+    });
+
+    // Fetch announcements or perform actions based on the token
+    if (token != null) {
+      _fetchAnnouncements();
+    }
+  }
+
+  Future<void> _fetchAnnouncements() async {
+    // Simulate API call using token
+    // Here, replace with your API call logic
+    print("Fetching announcements with token: $token");
+
+    // Example: Update the list of messages from API response
+    setState(() {
+      messages.addAll([
+        {
+          "sender": "Professor Lee",
+          "message": "Extra credit opportunity available! Check your email.",
+          "time": "1:30 PM",
+        },
+        {
+          "sender": "Professor Kim",
+          "message": "Class will be held online next week due to maintenance.",
+          "time": "2:45 PM",
+        },
+      ]);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +119,9 @@ class AnnouncementPage extends StatelessWidget {
     );
   }
 
-  // Function to show a dialog to add a new announcement
   void _showAddAnnouncementDialog(BuildContext context) {
     final TextEditingController messageController = TextEditingController();
-    String? selectedClass; // Variable to hold selected class/club
+    String? selectedClass;
 
     showDialog(
       context: context,
@@ -94,7 +135,9 @@ class AnnouncementPage extends StatelessWidget {
                 hint: Text('Select Class/Club'),
                 value: selectedClass,
                 onChanged: (String? newValue) {
-                  selectedClass = newValue;
+                  setState(() {
+                    selectedClass = newValue;
+                  });
                 },
                 items: classes.map((String className) {
                   return DropdownMenuItem<String>(
@@ -115,16 +158,26 @@ class AnnouncementPage extends StatelessWidget {
               onPressed: () {
                 if (selectedClass != null &&
                     messageController.text.isNotEmpty) {
-                  // Add your logic to handle saving the announcement here
+                  // Save announcement with token validation logic here
                   print(
-                      'Class: $selectedClass, Message: ${messageController.text}');
+                      'Class: $selectedClass, Message: ${messageController.text}, Token: $token');
                   Navigator.of(context).pop();
+
+                  // Update the UI with new announcement
+                  setState(() {
+                    messages.add({
+                      "sender": "You",
+                      "message": messageController.text,
+                      "time": "Now",
+                    });
+                  });
                 } else {
-                  // Optionally, show a snackbar or alert if validation fails
+                  // Show error if validation fails
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content:
-                            Text('Please select a class and enter a message.')),
+                      content:
+                          Text('Please select a class and enter a message.'),
+                    ),
                   );
                 }
               },

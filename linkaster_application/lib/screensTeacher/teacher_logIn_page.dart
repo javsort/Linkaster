@@ -178,7 +178,7 @@ class _TeacherLoginPageState extends State<TeacherLoginPage> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "email": email,
+          "userEmail": email,
           "password": password,
         }),
       );
