@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class GroupChatReg {
-    private String moduleId;
+    private long moduleId;
     private String moduleName;
     private long ownerUserId;
 }

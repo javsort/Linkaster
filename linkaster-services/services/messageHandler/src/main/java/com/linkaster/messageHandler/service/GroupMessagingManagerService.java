@@ -1,8 +1,6 @@
 
 package com.linkaster.messageHandler.service;
 
-import javax.crypto.SecretKey;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,12 +35,21 @@ public class GroupMessagingManagerService {
     // THIS IS PINGED BY MODULE MANAGER EVERY TIME A NEW MODULE IS CREATED
     public boolean createChatForModule(GroupChatReg newChat) throws Exception {
 
-        String moduleId = newChat.getModuleId();
+        long moduleId = newChat.getModuleId();
         String moduleName = newChat.getModuleName();
         long ownerUserId = newChat.getOwnerUserId();
 
-        // Generate an AES Key for the module
-        SecretKey moduleAESKey = keyMaster.generateGroupChatKey();
+        // Generate & Encrypt the Module's AES Key with the application's public key
+        byte[] encryptedModuleAESKey = keyMaster.encryptAESKeyWithAppPublicKey();
+
+
+        // Create a new group chat
+        GroupChat newGroupChat = new GroupChat();
+        newGroupChat.setEncryptedModuleAESKey(encryptedModuleAESKey);
+        newGroupChat.setModuleName(moduleName);
+        newGroupChat.setModuleId(moduleId);
+        newGroupChat.setOwnerUserId(ownerUserId);
+
 
         log.info(log_header + "Creating new chat for module: ");
         return true;
@@ -68,6 +75,7 @@ public class GroupMessagingManagerService {
 
         long userToJoinId = newUser.getUserId();
         String userToJoinPubKey = newUser.getPublicKey();
+
         return true;
     }
 }
