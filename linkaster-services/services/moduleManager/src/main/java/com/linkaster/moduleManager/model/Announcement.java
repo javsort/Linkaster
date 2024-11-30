@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 @Setter
 @Getter
 @Entity
-@Table (name = "module_announcements")
+@Table (name = "announcements")
 public class Announcement {
 
     @Id

@@ -17,5 +17,9 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
     // Check if a module exists by module code
     boolean existsByModuleCode(String moduleCode);
 
+    // Find modules by Student ID
+    @Query("SELECT m FROM Module m WHERE :studentId MEMBER OF m.studentList")
+    Iterable <Module> findAllByStudentId(@Param("studentId") Long studentId);
+
 }
 

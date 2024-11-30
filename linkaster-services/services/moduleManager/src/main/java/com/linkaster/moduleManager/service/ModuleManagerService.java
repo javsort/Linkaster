@@ -166,6 +166,13 @@ public class ModuleManagerService {
         return moduleRepository.findById(id).orElse(null);
     }
 
+    public List<Module> getModulesByStudent(long studentId) {
+        log.info(log_header + "Getting modules for student: " + studentId);
+        List<Module> modules = new ArrayList<>();
+        moduleRepository.findAllByStudentId(studentId).forEach(modules::add);
+        return modules;
+    }
+
     public List<EventModel> getModuleEvents(long id) {
         log.info(log_header + "Getting events for module: " + id);
         return eventRepository.findByModuleId(id);  // Return the actual events

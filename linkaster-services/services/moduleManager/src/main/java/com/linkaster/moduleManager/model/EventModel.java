@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table (name = "module_events")
+@Table (name = "events")
 public class EventModel {
 
     @Id

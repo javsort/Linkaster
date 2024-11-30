@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -58,17 +59,17 @@ public class ModuleController implements APIModuleController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @Override
-    public Module createModule(ModuleCreate module) {
+    public Module createModule(@RequestBody ModuleCreate module) {
         return moduleManagerService.createModule(module);
     }
 
     @Override
-    public boolean deleteModule(long id) {
+    public boolean deleteModule(@RequestBody long id) {
         return moduleManagerService.deleteModule(id);
     }
 
     @Override
-    public boolean updateModule(long id, ModuleCreate module) {
+    public boolean updateModule(@RequestBody long id, @RequestBody ModuleCreate module) {
         return moduleManagerService.updateModule(id, module);
     }
 
@@ -78,36 +79,36 @@ public class ModuleController implements APIModuleController {
     }
 
     @Override
-    public Module getModuleById(long id) {
+    public Module getModuleById(@RequestBody long id) {
         return moduleManagerService.getModuleById(id);
-    }
-
-    @Override
-    public boolean assignTeacher(long moduleId, long teacherId) {
-        return moduleHandlerService.assignTeacher(moduleId, teacherId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public List<Long> getStudentsByModule(long moduleId) {
+    public List<Long> getStudentsByModule(@RequestBody long moduleId) {
         // Example logic; replace with actual implementation
         return auditManagerService.getStudentsByModule(moduleId);
     }
 
     @Override
-    public boolean joinModuleByCode(String joinCode, long studentId) {
+    public List<Module> getModulesByStudent(@PathVariable long studentId) {
+        return moduleManagerService.getModulesByStudent(studentId);
+    }
+
+    @Override
+    public boolean joinModuleByCode(@RequestBody String joinCode, @RequestBody long studentId) {
         return joinCodeManagerService.joinModuleByCode(joinCode, studentId);
     }
 
     @Override
-    public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId) {
+    public void leaveModule(@RequestBody long moduleId, @RequestBody long studentId) {
         // Logic for a student to leave a module
         moduleHandlerService.leaveModule(moduleId, studentId);
     }
 
     @Override
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAnnouncement(@PathVariable long moduleId, @PathVariable long ownerId, @RequestBody String announcement) {
+    public String createAnnouncement(@RequestBody long moduleId, @RequestBody long ownerId, @RequestBody String announcement) {
         // Logic to create a new announcement
         moduleHandlerService.createAnnouncement(moduleId, announcement, ownerId);
         return "New announcement created successfully";
@@ -115,7 +116,7 @@ public class ModuleController implements APIModuleController {
 
 
     @Override
-    public boolean deleteAnnouncement(@PathVariable long announcementId, @PathVariable long moduleId) {
+    public boolean deleteAnnouncement(@RequestBody long announcementId, @RequestBody long moduleId) {
         // Logic to delete an announcement
         moduleHandlerService.deleteAnnouncement(announcementId, moduleId);
         return true;
@@ -123,11 +124,16 @@ public class ModuleController implements APIModuleController {
 
 
     @Override
-    public Iterable<Announcement> getAllAnnouncementsByModuleId() {
+    public Iterable<Announcement> getAllAnnouncementsByModuleId(@RequestBody long moduleId) {
         // Logic to get all announcements
         return moduleHandlerService.getAllAnnouncements();
     }
 
+    @Override
+    public Iterable<Announcement> getAllAnnouncementsByUserId(@RequestBody long studentId) {
+        // Logic to get all announcements by user
+        return moduleHandlerService.getAllAnnouncementsByStudent(studentId);
+    }
     /*
     @Override
     public boolean updateTimetable(Integer time, Date date) {
@@ -137,7 +143,7 @@ public class ModuleController implements APIModuleController {
 
     // Called by the student service - INTERSERVICE COMMUNICATION
     @Override
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(Long studentId) {
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@RequestBody Long studentId) {
         log.info(log_header + "Getting teachers for student: {}", studentId);
         return auditManagerService.getTeachersByStudent(studentId);
     }

@@ -7,6 +7,10 @@ import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 import com.linkaster.moduleManager.repository.AnnouncementRepository;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.transaction.Transactional;
@@ -26,20 +30,6 @@ public class ModuleHandlerService {
     private final String log_header = "ModuleHandlerService --- ";
 
     // Admin Tasks
-
-    public boolean assignTeacher(long moduleId, long teacherId) {
-        log.info(log_header + "Assigning teacher: '" + teacherId + "'' to module: " + moduleId);
-        // Logic to assign a teacher to a module
-        
-
-        return true; // Replace with actual implementation
-    }
-
-    public Module unassignTeacher(long moduleId, long teacherId) {
-        log.info(log_header + "Unassigning teacher: '" + teacherId + "'' to module: " + moduleId);
-        // Logic to unassign a teacher from a module
-        return null; // Replace with actual implementation
-    }
 
     public Announcement createAnnouncement(long moduleId, String announcement, long ownerId) {
         log.info(log_header + "Creating announcement for module: " + moduleId);
@@ -96,10 +86,27 @@ public class ModuleHandlerService {
         return announcementRepository.findAll(); // Return the result from the repository
     }
     
-    public Iterable<Announcement> getAllAnnouncementsByUserId(long userId) {
-        log.info(log_header + "Fetching all announcements for user: " + userId);    
-        return announcementRepository.findByOwnerId(userId); // Return the result from the repository
+    public List<Announcement> getAllAnnouncementsByStudent(long studentId) {
+        log.info("Fetching all announcements for user: " + studentId);
+        
+        // Find the modules the student is enrolled in
+        Iterable<Module> modules = moduleRepository.findAllByStudentId(studentId);
+    
+        // Find the announcements for each module
+        List<Announcement> announcements = new ArrayList<>();
+        if (modules != null) {
+            for (Module module : modules) {
+                List<Announcement> moduleAnnouncements = announcementRepository.findAllByModuleId(module.getId());
+                if (moduleAnnouncements != null) {
+                    announcements.addAll(moduleAnnouncements);
+                }
+            }
+        }
+    
+        return announcements;
     }
+    
+
     
 
 
