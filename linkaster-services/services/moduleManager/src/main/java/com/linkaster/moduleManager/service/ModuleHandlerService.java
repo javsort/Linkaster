@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.moduleManager.model.Module;
+import com.linkaster.moduleManager.dto.AnnouncementCreate;
 import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 import com.linkaster.moduleManager.repository.AnnouncementRepository;
@@ -31,7 +32,11 @@ public class ModuleHandlerService {
 
     // Admin Tasks
 
-    public Announcement createAnnouncement(long moduleId, String announcement, long ownerId) {
+    public Announcement createAnnouncement(AnnouncementCreate announcementCreate) {
+        long moduleId = announcementCreate.getModuleId();
+        String announcement = announcementCreate.getMessage();
+        long ownerId = announcementCreate.getOwner_id();
+
         log.info(log_header + "Creating announcement for module: " + moduleId);
 
         // Validate module existence
@@ -42,9 +47,8 @@ public class ModuleHandlerService {
         }
 
         // Create the announcement
-        Module module = moduleOptional.get();
+        
         Announcement newAnnouncement = new Announcement();
-        newAnnouncement.setModule(module);
         newAnnouncement.setMessage(announcement);
         newAnnouncement.setDate(new java.sql.Date(System.currentTimeMillis())); // Current date
         newAnnouncement.setTime(java.time.LocalTime.now().toString()); // Current time
@@ -70,7 +74,7 @@ public class ModuleHandlerService {
         Announcement announcement = announcementOptional.get();
 
         // Validate the module
-        if (announcement.getModule().getId() != moduleId) {
+        if (announcement.getModuleId() != moduleId) {
             log.error(log_header + "Announcement does not belong to module ID " + moduleId);
             throw new IllegalArgumentException("Announcement does not belong to the specified module");
         }
@@ -106,9 +110,6 @@ public class ModuleHandlerService {
         return announcements;
     }
     
-
-    
-
 
     public Module leaveModule(long moduleId, long studentId) {
         log.info(log_header + "Student: " + studentId + " leaving module: " + moduleId);

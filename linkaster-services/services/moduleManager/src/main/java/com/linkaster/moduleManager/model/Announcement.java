@@ -29,7 +29,7 @@ public class Announcement {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "announcement_module_id", nullable = false)
-    private Module module;
+    private long moduleId;
 
     @Column(name = "announcement_message")
     private String message;

@@ -20,6 +20,6 @@ public class AnnouncementCreate {
     private long owner_id;
     private String time;
     private Date date;
-    private Module moduleId;
+    private long moduleId;
 
 }

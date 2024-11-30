@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.dto.AnnouncementCreate;
 import com.linkaster.moduleManager.dto.EventCreate;
-
+import com.linkaster.moduleManager.dto.JoinModuleCreate;
 
 
 import com.linkaster.moduleManager.model.Announcement;
@@ -69,7 +69,7 @@ public interface APIModuleController {
     
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
-    public boolean joinModuleByCode(@RequestBody String code, @RequestBody long studentId);
+    public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule);
     
 
     @PostMapping("/leave")
@@ -79,7 +79,7 @@ public interface APIModuleController {
 
     @PostMapping("/announcement")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAnnouncement(@RequestBody long moduleId, @RequestBody long userId, @RequestBody String announcement);
+    public String createAnnouncement(@RequestBody AnnouncementCreate announcement);
 
 
     @DeleteMapping("/announcement/id")

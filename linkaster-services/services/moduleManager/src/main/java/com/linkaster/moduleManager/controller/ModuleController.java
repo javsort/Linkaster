@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.moduleManager.dto.ModuleCreate;
+import com.linkaster.moduleManager.dto.AnnouncementCreate;
+import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
@@ -96,8 +98,8 @@ public class ModuleController implements APIModuleController {
     }
 
     @Override
-    public boolean joinModuleByCode(@RequestBody String joinCode, @RequestBody long studentId) {
-        return joinCodeManagerService.joinModuleByCode(joinCode, studentId);
+    public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule) {
+        return joinCodeManagerService.joinModuleByCode(joinModule);
     }
 
     @Override
@@ -108,9 +110,9 @@ public class ModuleController implements APIModuleController {
 
     @Override
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAnnouncement(@RequestBody long moduleId, @RequestBody long ownerId, @RequestBody String announcement) {
+    public String createAnnouncement(@RequestBody AnnouncementCreate announcement) {
         // Logic to create a new announcement
-        moduleHandlerService.createAnnouncement(moduleId, announcement, ownerId);
+        moduleHandlerService.createAnnouncement(announcement);
         return "New announcement created successfully";
     }
 

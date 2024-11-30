@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.model.ClassModule;
 import com.linkaster.moduleManager.model.ClubModule;
 import com.linkaster.moduleManager.model.Module;
@@ -54,7 +55,10 @@ public class JoinCodeManagerService {
     
     
     // INTERSERVICE COMMUNICATION - Called by the student service
-    public boolean joinModuleByCode(String joinCode, long studentId) {
+    public boolean joinModuleByCode(JoinModuleCreate joinModuleCreate) {
+        String joinCode = joinModuleCreate.getCode();
+        long studentId = joinModuleCreate.getStudentId();
+
         log.info(log_header + "Student " + studentId + " attempting to join module with join code: " + joinCode);
     
         // Step 1: Validate the join code
