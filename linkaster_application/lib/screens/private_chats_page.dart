@@ -1,35 +1,102 @@
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/status.dart' as status;
+import 'package:web_socket_channel/io.dart';
 import '../models/chat.dart';
+import 'dart:convert';
 
-class PrivateChatPage extends StatelessWidget {
+class PrivateChatPage extends StatefulWidget {
   final Chat chat;
-  String? token;
+  final String? token;
 
   PrivateChatPage({required this.chat, required this.token});
 
-  // Sample messages for demonstration
-  final List<Map<String, dynamic>> messages = [
-    {"isSent": true, "message": "Hello! How are you?", "time": "10:01 AM"},
-    {
-      "isSent": false,
-      "message": "I'm good, thanks! How about you?",
-      "time": "10:02 AM"
-    },
-  ];
+  @override
+  _PrivateChatPageState createState() => _PrivateChatPageState();
+}
+
+class _PrivateChatPageState extends State<PrivateChatPage> {
+  late WebSocketChannel _channel;
+  late List<Map<String, dynamic>> messages;
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    messages = [];
+    _connectToWebSocket();
+  }
+
+  @override
+  void dispose() {
+    _channel.sink.close(status.goingAway);
+    super.dispose();
+  }
+
+  void _connectToWebSocket() {
+    final uri = Uri.parse("ws://localhost:8086/ws");
+    _channel = WebSocketChannel.connect(uri);
+
+    // Send AUTH message immediately
+    final authMessage = {
+      "type": "AUTH",
+      "token": widget.token,
+      "chatId": "1",
+    };
+    _channel.sink.add(jsonEncode(authMessage));
+
+    // Listen for messages
+    _channel.stream.listen(
+      (message) {
+        print("Received: $message");
+        setState(() {
+          messages.add({
+            'isSent': false,
+            'message': message,
+            'time': DateTime.now().toLocal().toString().split(' ')[1],
+          });
+        });
+      },
+      onError: (error) => print("WebSocket Error: $error"),
+      onDone: () => print("WebSocket connection closed."),
+    );
+  }
+
+  void _sendMessage() {
+    final message = _messageController.text.trim();
+    if (message.isNotEmpty) {
+      final payload = {
+        "privateChatId": "1",
+        "message": message,
+        "type": "PRIVATE"
+      };
+
+      _channel.sink.add(jsonEncode(payload));
+
+      setState(() {
+        messages.add({
+          'isSent': true,
+          'message': message,
+          'time': DateTime.now().toLocal().toString().split(' ')[1],
+        });
+      });
+
+      _messageController.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    print('PR Token: $token');
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(chat.avatar),
+              backgroundImage: NetworkImage(widget.chat.avatar),
               radius: 20,
             ),
             SizedBox(width: 10),
-            Text(chat.name),
+            Text(widget.chat.name),
           ],
         ),
         backgroundColor: Theme.of(context).primaryColor,
@@ -81,9 +148,9 @@ class PrivateChatPage extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          // Expanded TextField for entering a message
           Expanded(
             child: TextField(
+              controller: _messageController,
               decoration: InputDecoration(
                 hintText: 'Type a message',
                 border:
@@ -91,19 +158,15 @@ class PrivateChatPage extends StatelessWidget {
               ),
             ),
           ),
-          // Attachment icon button (for future functionality)
           IconButton(
             icon: Icon(Icons.attach_file, color: Colors.grey),
             onPressed: () {
               // TODO: Add functionality for attaching a file
             },
           ),
-          // Send icon button
           IconButton(
             icon: Icon(Icons.send, color: Colors.blue),
-            onPressed: () {
-              // TODO: Implement send message functionality
-            },
+            onPressed: _sendMessage,
           ),
         ],
       ),

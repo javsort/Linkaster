@@ -37,14 +37,14 @@ public class WebSocketMessageController {
         // BizLogic here
         log.info(log_header + "Handling private message for chat Id: " + chatId);
 
-        PrivateMessage encryptedMessage = privateMessagingManagerService.sendMessage(messageObj, senderId);
-
+        /* 
         if(encryptedMessage == null) {
             log.error(log_header + "Error sending message!");
             throw new RuntimeException("Error sending message!");
         }
 
-        return encryptedMessage;
+        return encryptedMessage;*/
+        return null;
     }
 
     @MessageMapping("/sendGroup")

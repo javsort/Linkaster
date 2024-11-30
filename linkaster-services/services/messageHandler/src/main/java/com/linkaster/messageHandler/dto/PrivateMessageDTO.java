@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class PrivateMessageDTO {
     private String message;
     private long privateChatId;
+    private String messageType;
 }

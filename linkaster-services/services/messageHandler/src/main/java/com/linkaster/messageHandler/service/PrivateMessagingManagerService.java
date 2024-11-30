@@ -25,11 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PrivateMessagingManagerService {
 
-    private PrivateMessageRepository privateMessageRepository;
+    private final PrivateMessageRepository privateMessageRepository;
 
-    private PrivateChatRepository privateChatRepository;
+    private final PrivateChatRepository privateChatRepository;
 
-    private MessageKeyMaster keyMaster;
+    private final MessageKeyMaster keyMaster;
 
     private final String log_header = "PrivateMessagingManagerService --- ";
 
@@ -41,6 +41,7 @@ public class PrivateMessagingManagerService {
         this.keyMaster = keyMaster;
     }
 
+    // Create a new private chat
     public boolean createPrivateChat(PrivateChatReg newChat){
         log.info(log_header + "Creating a new private chat between userId: '" + newChat.getUser1().getUserId() + "'' and userId:'" + newChat.getUser2().getUserId() + "'");
 
@@ -55,10 +56,31 @@ public class PrivateMessagingManagerService {
         return true;
     }
 
+    // Authenticate access to a private chat
+    public boolean authenticateChatAccess(long userId, long privateChatId){
+        log.info(log_header + "Authenticating access to private chat with id: '" + privateChatId + "' for user with id: '" + userId + "'");
 
+        // Get the private chat
+        PrivateChat privateChat = privateChatRepository.findById(privateChatId).orElse(null);
 
+        if(privateChat == null){
+            log.error(log_header + "Error: Private chat with id: '" + privateChatId + "' not found");
+            return false;
+        }
+
+        // Check if the user is part of the chat
+        if(privateChat.getUser1().getUserId() == userId || privateChat.getUser2().getUserId() == userId){
+            log.info(log_header + "User with id: '" + userId + "' has access to private chat with id: '" + privateChatId + "'");
+            return true;
+        }
+
+        log.error(log_header + "Error: User with id: '" + userId + "' does not have access to private chat with id: '" + privateChatId + "'");
+        return false;
+
+    }
     
-    public PrivateMessage sendMessage(PrivateMessageDTO messageObj, long senderId){
+    // Send a message to a private chat
+    public boolean sendMessage(PrivateMessageDTO messageObj, long senderId){
         // Unwrap the message object
         long privateChatId = messageObj.getPrivateChatId();
         String message = messageObj.getMessage();
@@ -70,7 +92,7 @@ public class PrivateMessagingManagerService {
 
         if(privateChat == null){
             log.error(log_header + "Error: Private chat with id: '" + privateChatId + "' not found");
-            return null;
+            return false;
         }
 
         // Get destinatary's public key
@@ -80,35 +102,36 @@ public class PrivateMessagingManagerService {
         
         if(encPublic == null){
             log.error(log_header + "Error: Sender's public key not found");
-            return null;
+            return false;
         }
 
-        String encryptedMessage = null;
         // Call KeyMaster to encrypt the message with destinatary's public key
         try {
-            encryptedMessage = keyMaster.encryptMessage(message, encPublic);
+            log.info(log_header + "Encrypting message with destinatary's public key...");
+            //String encryptedMessage = keyMaster.encryptMessage(message, encPublic);
+            
+            // Create a new message
+            PrivateMessage newMessage = new PrivateMessage();
+            newMessage.setPrivateChat(privateChat);
+            newMessage.setSenderId(senderId);
+            newMessage.setReceiverId(destinataryId);
+            newMessage.setEncryptedMessage(message);            // FOR TESTING PURPOSES
+            newMessage.setTimestamp(new java.sql.Date(System.currentTimeMillis()));
+
+            // Save the new message
+            privateMessageRepository.save(newMessage);
+
+            log.info(log_header + "Sending a message to private chat with id: '" + privateChatId + "'...");
+
+            return true;
 
         } catch (Exception e){
-            log.error(log_header + "Error during message encryption: " + e.getMessage());
-            return null;
+            log.error(log_header + "Error during message encryption: " + e.getMessage() + " - " + e.getCause());
+            return false;
         }
-
-        // Create a new message
-        PrivateMessage newMessage = new PrivateMessage();
-        newMessage.setPrivateChat(privateChat);
-        newMessage.setSenderId(senderId);
-        newMessage.setReceiverId(destinataryId);
-        newMessage.setEncryptedMessage(encryptedMessage);
-        newMessage.setTimestamp(new java.sql.Date(System.currentTimeMillis()));
-
-        // Save the new message
-        privateMessageRepository.save(newMessage);
-
-        log.info(log_header + "Sending a message to private chat with id: '" + privateChatId + "'...");
-
-        return newMessage;
     }
-
+   
+    // Retrieve messages from a private chat
     public Iterable<PrivateMessage> getPrivateChat(long privateChatId){
 
         log.info(log_header + "Retrieving messages from private chat with id: '" + privateChatId + "'");

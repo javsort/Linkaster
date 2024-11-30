@@ -58,6 +58,7 @@ public class GroupMessagingManagerService {
     public boolean addUserToGroupChat(UserInfo newUser, long moduleChatId){
         // Get relevant data from DTO
         long userId = newUser.getUserId();
+        String userPubKey = newUser.getPublicKey();
 
         // Verify & retrieve the groupChat for that module
         GroupChat groupChatToAdd = groupChatRepository.findById(moduleChatId).orElse(null);
@@ -66,15 +67,10 @@ public class GroupMessagingManagerService {
         }
 
         // Add the user to the groupChat
-        groupChatToAdd.addMember(newUser.getUserId(), newUser.getPublicKey());
+        groupChatToAdd.addMember(userId, userPubKey);
 
         log.info(log_header + "User with id: " + userId + " was added successfully to the '" + groupChatToAdd.getModuleName() + "' module.");
         groupChatRepository.save(groupChatToAdd);
-
-
-
-        long userToJoinId = newUser.getUserId();
-        String userToJoinPubKey = newUser.getPublicKey();
 
         return true;
     }
