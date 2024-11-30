@@ -1,4 +1,4 @@
-# Use official Dart image
+# Use official Flutter image
 FROM dart:stable AS build
 
 # Allow Flutter to run as root
@@ -18,20 +18,11 @@ RUN apt-get update && apt-get install -y \
 RUN git clone https://github.com/flutter/flutter.git /flutter
 ENV PATH="/flutter/bin:${PATH}"
 
-# Fix permissions for Flutter directories
-RUN chmod -R 777 /flutter
-
-# Create a user with proper permissions
-RUN useradd -ms /bin/bash flutteruser && \
-    chown -R flutteruser:flutteruser /flutter && \
-    mkdir -p /app && chown -R flutteruser:flutteruser /app
-
-# Switch to the newly created user
-USER flutteruser
+# Set working directory
 WORKDIR /app
 
 # Copy project files
-COPY --chown=flutteruser:flutteruser . .
+COPY . .
 
 # Enable web support
 RUN flutter doctor -v && flutter config --enable-web

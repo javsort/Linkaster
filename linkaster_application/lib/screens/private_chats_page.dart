@@ -49,13 +49,23 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
     _channel.stream.listen(
       (message) {
         print("Received: $message");
-        setState(() {
-          messages.add({
-            'isSent': false,
-            'message': message,
-            'time': DateTime.now().toLocal().toString().split(' ')[1],
-          });
-        });
+        try {
+          final decodedMessage = jsonDecode(message);
+          
+          if(decodedMessage.containsKey("message") && decodedMessage.containsKey("privateChatId")){
+            setState(() {
+              messages.add({
+                'isSent': false,
+                'message': decodedMessage['message'],
+                'time': DateTime.now().toLocal().toString().split(' ')[1],
+              });
+            });
+          } else {
+             print("Invalid message structure received: $decodedMessage");
+          }
+        } catch (e) {
+          print("Error decoding message: $e");
+        }
       },
       onError: (error) => print("WebSocket Error: $error"),
       onDone: () => print("WebSocket connection closed."),

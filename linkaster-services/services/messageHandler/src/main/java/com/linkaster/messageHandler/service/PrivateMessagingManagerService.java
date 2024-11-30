@@ -57,7 +57,7 @@ public class PrivateMessagingManagerService {
     }
 
     // Authenticate access to a private chat
-    public boolean authenticateChatAccess(long userId, long privateChatId){
+    public long authenticateChatAccess(long userId, long privateChatId){
         log.info(log_header + "Authenticating access to private chat with id: '" + privateChatId + "' for user with id: '" + userId + "'");
 
         // Get the private chat
@@ -65,22 +65,26 @@ public class PrivateMessagingManagerService {
 
         if(privateChat == null){
             log.error(log_header + "Error: Private chat with id: '" + privateChatId + "' not found");
-            return false;
+            return -1;
         }
 
-        // Check if the user is part of the chat
-        if(privateChat.getUser1().getUserId() == userId || privateChat.getUser2().getUserId() == userId){
+        // Check if the user is part of the chat -> return the other user's id
+        if(privateChat.getUser1().getUserId() == userId) {
             log.info(log_header + "User with id: '" + userId + "' has access to private chat with id: '" + privateChatId + "'");
-            return true;
+            return privateChat.getUser2().getUserId();
+        
+        } else if (privateChat.getUser2().getUserId() == userId){
+            log.info(log_header + "User with id: '" + userId + "' has access to private chat with id: '" + privateChatId + "'");
+            return privateChat.getUser1().getUserId();
         }
 
         log.error(log_header + "Error: User with id: '" + userId + "' does not have access to private chat with id: '" + privateChatId + "'");
-        return false;
+        return -1;
 
     }
     
     // Send a message to a private chat
-    public boolean sendMessage(PrivateMessageDTO messageObj, long senderId){
+    public PrivateMessage sendMessage(PrivateMessageDTO messageObj, long senderId){
         // Unwrap the message object
         long privateChatId = messageObj.getPrivateChatId();
         String message = messageObj.getMessage();
@@ -92,7 +96,7 @@ public class PrivateMessagingManagerService {
 
         if(privateChat == null){
             log.error(log_header + "Error: Private chat with id: '" + privateChatId + "' not found");
-            return false;
+            return null;
         }
 
         // Get destinatary's public key
@@ -102,7 +106,7 @@ public class PrivateMessagingManagerService {
         
         if(encPublic == null){
             log.error(log_header + "Error: Sender's public key not found");
-            return false;
+            return null;
         }
 
         // Call KeyMaster to encrypt the message with destinatary's public key
@@ -123,11 +127,11 @@ public class PrivateMessagingManagerService {
 
             log.info(log_header + "Sending a message to private chat with id: '" + privateChatId + "'...");
 
-            return true;
+            return newMessage;
 
         } catch (Exception e){
             log.error(log_header + "Error during message encryption: " + e.getMessage() + " - " + e.getCause());
-            return false;
+            return null;
         }
     }
    
