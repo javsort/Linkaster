@@ -6,8 +6,10 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
+import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
-import com.linkaster.messageHandler.model.PrivateMessage;
+import com.linkaster.messageHandler.model.group.GroupMessage;
+import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 import com.linkaster.messageHandler.service.PrivateMessagingManagerService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +37,23 @@ public class WebSocketMessageController {
         // BizLogic here
         log.info(log_header + "Handling private message for chat Id: " + chatId);
 
-        PrivateMessage encryptedMessage = privateMessagingManagerService.sendMessage(messageObj, senderId);
-
+        /* 
         if(encryptedMessage == null) {
             log.error(log_header + "Error sending message!");
             throw new RuntimeException("Error sending message!");
         }
 
-        return encryptedMessage;
+        return encryptedMessage;*/
+        return null;
+    }
+
+    @MessageMapping("/sendGroup")
+    @SendTo("/topic/group/{groupId}")
+    public GroupMessage sendPublicMessage(GroupMessageDTO messageObj, SimpMessageHeaderAccessor headerAccessor){
+        
+        
+        GroupMessage encryptionPair = new GroupMessage();
+
+        return encryptionPair;
     }
 }

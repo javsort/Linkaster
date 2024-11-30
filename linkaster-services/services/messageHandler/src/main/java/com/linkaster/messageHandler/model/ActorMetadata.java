@@ -1,4 +1,4 @@
-package com.linkaster.messageHandler.dto;
+package com.linkaster.messageHandler.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

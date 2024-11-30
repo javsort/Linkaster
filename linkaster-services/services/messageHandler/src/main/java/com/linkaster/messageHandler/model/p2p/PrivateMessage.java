@@ -1,8 +1,6 @@
-package com.linkaster.messageHandler.model;
+package com.linkaster.messageHandler.model.p2p;
 
 import java.sql.Date;
-
-import com.linkaster.messageHandler.message.p2p.PrivateChat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

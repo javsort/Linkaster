@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.MessageRetrieval;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
-import com.linkaster.messageHandler.message.p2p.PrivateChat;
+import com.linkaster.messageHandler.model.p2p.PrivateChat;
 import com.linkaster.messageHandler.repository.PrivateChatRepository;
 import com.linkaster.messageHandler.repository.PrivateMessageRepository;
 import com.linkaster.messageHandler.security.JwtTokenProvider;

@@ -58,4 +58,4 @@ address:
 
 # Set up connections to other services:
 server:
-  port: ${SERVER_PORT:8081}
+  port: ${SERVER_PORT:8086}

@@ -1,4 +1,4 @@
-package com.linkaster.messageHandler.model;
+package com.linkaster.messageHandler.model.group;
 
 import java.sql.Date;
 

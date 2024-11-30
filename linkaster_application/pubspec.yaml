@@ -44,7 +44,7 @@ dependencies:
 
   http: ^1.2.2
   shared_preferences: ^2.3.3
-  stomp_dart_client: ^2.1.0
+  web_socket_channel: ^3.0.1
 
  
 
