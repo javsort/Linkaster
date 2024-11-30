@@ -20,25 +20,25 @@ public class EventModel {
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "module_id", nullable = false)  
+    @JoinColumn(name = "event_module_id", nullable = false)  
     private Module module;
 
-    @Column(name = "name")
+    @Column(name = "event_name")
     private String name;
 
-    @Column(name = "startTime")
+    @Column(name = "event_start_time")
     private String startTime;
 
-    @Column(name = "endTime")
+    @Column(name = "event_end_time")
     private String endTime;
 
-    @Column(name = "date")
+    @Column(name = "event_date")
     private Date date;
 
-    @Column(name = "room")
+    @Column(name = "event_location")
     private String room;
 
-    @Column(name = "owner_id")
+    @Column(name = "event_owner_id")
     private Long ownerId;
 
 }

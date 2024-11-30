@@ -28,19 +28,19 @@ public class Announcement {
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "module_id", nullable = false)
+    @JoinColumn(name = "announcement_module_id", nullable = false)
     private Module module;
 
-    @Column(name = "message")
+    @Column(name = "announcement_message")
     private String message;
 
-    @Column(name = "date")
+    @Column(name = "announcement_date")
     private Date date;
 
-    @Column(name = "time")
+    @Column(name = "announcement_time")
     private String time;
 
-    @Column(name = "owner_id")
+    @Column(name = "announcement_owner_id")
     private Long ownerId;
     
 }

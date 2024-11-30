@@ -1,48 +1,43 @@
--- Create the users table
+-- Create the modules table
 CREATE TABLE modules (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     module_owner_id BIGINT,
     module_name VARCHAR(255) NOT NULL,
     module_code VARCHAR(255) UNIQUE,
     student_enrolled_ids JSON,
-    teacher_enrolled_ids JSON,
-    events JSON,
     module_type VARCHAR(255),
     FOREIGN KEY (module_owner_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Instert a module class and a module club
-INSERT INTO modules (module_owner_id, module_name, module_code, student_enrolled_ids, teacher_enrolled_ids, events, module_type)
-VALUES (3, 'Internet Application of Engineering', "123456", {2}, NULL, NULL, 'class'),
-       (3, 'Robotics', 123457, {2}, NULL, NULL, 'club');
+-- Insert a module class and a module club
+INSERT INTO modules (module_owner_id, module_name, module_code, student_enrolled_ids, module_type)
+VALUES 
+    (2, 'Internet Application of Engineering', '123456', '[2]', 'class'),
+    (2, 'Robotics', '123457', '[2]', 'club');
 
-
--- Crate class table
-CREATE TABLE classes (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY, -- This matches the "id" in the modules table
+-- Create class table
+CREATE TABLE class_modules (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    class_module_id BIGINT, -- This references the "id" in the modules table
     class_name VARCHAR(255) NOT NULL,
     class_owner_id BIGINT NOT NULL,
     class_teacher_ids JSON,
-    class_events JSON,
-
-    FOREIGN KEY (id) REFERENCES modules(id) ON DELETE CASCADE
-    );       
+    FOREIGN KEY (class_module_id) REFERENCES modules(id) ON DELETE CASCADE
+);       
 
 -- Insert a class
-INSERT INTO classes (class_name, class_owner_id, class_teacher_ids, class_events)
-VALUES ('Internet Application of Engineering', 3, NULL, NULL);
+INSERT INTO class_modules (class_module_id, class_name, class_owner_id, class_teacher_ids)
+VALUES (1, 'Internet Application of Engineering', 3, '[3]');
 
--- Crate club table
-CREATE TABLE clubs (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY, -- This matches the "id" in the modules table
+-- Create club table
+CREATE TABLE club_modules (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    club_module_id BIGINT, -- This references the "id" in the modules table
     club_name VARCHAR(255) NOT NULL,
     club_owner_id BIGINT NOT NULL,
-    club_events JSON,
-
-    FOREIGN KEY (id) REFERENCES modules(id) ON DELETE CASCADE
-    );
+    FOREIGN KEY (club_module_id) REFERENCES modules(id) ON DELETE CASCADE
+);
 
 -- Insert a club
-INSERT INTO clubs (club_name, club_owner_id, club_events)
-VALUES ('Robotics', 2, NULL, NULL);
-
+INSERT INTO club_modules (club_module_id, club_name, club_owner_id)
+VALUES (2, 'Robotics', 2);

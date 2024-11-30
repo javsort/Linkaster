@@ -20,10 +20,8 @@ public class ModuleCreate {
     private String name;
     private String moduleCode;
     private String type;
-    private List<Long> students;
-    private List<EventModel> events;
-    private List<Announcement> announcements;
-    private List<String> studentIds;
+    private List<Long> studentsId;
+    public List<Long> teachersId;
 
     // ClubModule only fields
     private String clubLeaderStudentId;

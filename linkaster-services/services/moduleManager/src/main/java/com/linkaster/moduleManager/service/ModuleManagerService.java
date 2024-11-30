@@ -54,9 +54,7 @@ public class ModuleManagerService {
                         .type(module.getType())
                         .teacherId(module.getTeacherId())
                         .teacherName(module.getTeacherName())
-                        .studentList(module.getStudentIds().stream().map(Long::valueOf).collect(Collectors.toList()))
-                        .events(module.getEvents() != null ? module.getEvents() : new ArrayList<>())  // Ensure non-null events
-                        .announcements(module.getAnnouncements() != null ? module.getAnnouncements() : new ArrayList<>())  // Ensure non-null announcements
+                        .studentList(module.getStudentsId().stream().map(Long::valueOf).collect(Collectors.toList()))
                         .build();
                 moduleRepository.save(newModule);
                 break;
@@ -69,9 +67,7 @@ public class ModuleManagerService {
                         .type(module.getType())
                         .clubLeaderStudentId(module.getClubLeaderStudentId())
                         .clubLeader(module.getClubLeader())
-                        .studentList(module.getStudentIds().stream().map(Long::valueOf).collect(Collectors.toList()))
-                        .events(module.getEvents() != null ? module.getEvents() : new ArrayList<>())  // Ensure non-null events
-                        .announcements(module.getAnnouncements() != null ? module.getAnnouncements() : new ArrayList<>())  // Ensure non-null announcements
+                        .studentList(module.getStudentsId().stream().map(Long::valueOf).collect(Collectors.toList()))
                         .build();
                 moduleRepository.save(newModule);
                 break;
@@ -125,11 +121,7 @@ public class ModuleManagerService {
         }
     
         // Update the list of students (common for both class and club modules)
-        existingModule.setStudentList(module.getStudentIds().stream().map(Long::valueOf).collect(Collectors.toList()));
-    
-        // Update events and announcements (ensure non-null values)
-        existingModule.setEvents(module.getEvents() != null ? module.getEvents() : new ArrayList<>());
-        existingModule.setAnnouncements(module.getAnnouncements() != null ? module.getAnnouncements() : new ArrayList<>());
+        existingModule.setStudentList(module.getStudentsId().stream().map(Long::valueOf).collect(Collectors.toList()));
     
         // Save the updated module
         moduleRepository.save(existingModule);

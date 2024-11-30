@@ -39,23 +39,17 @@ public class Module {
     @Column(name = "module_owner_id", unique = true, nullable = false)
     private long moduleOwnerId;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "module_name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "module_code", unique = true, nullable = false)
     private String moduleCode;    
 
     @ElementCollection
-    @Column(name = "studentList")
+    @Column(name = "student_enrolled_ids")
     private List<Long> studentList;
 
-    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<EventModel> events;
-
-    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Announcement> announcements;
-
-    @Column(name = "type")
+    @Column(name = "module_type")
     private String type;
 
 
