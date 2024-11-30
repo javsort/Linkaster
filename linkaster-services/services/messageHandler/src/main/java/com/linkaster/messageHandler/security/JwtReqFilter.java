@@ -31,7 +31,7 @@ public class JwtReqFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         String path = request.getRequestURI();
-        if(path.equals("/ws/**") 
+        /*if(path.equals("/ws/**") 
         || path.equals("/ws")
         || path.equals("/app/sendPrivate") 
         || path.equals("/topic/private/{chatId}")){
@@ -66,7 +66,7 @@ public class JwtReqFilter extends OncePerRequestFilter {
             
             log.error(log_header + "Unable to validate token - missing auth header");
             return;
-        }
+        }*/
 
         // Keep going with request
         filterChain.doFilter(request, response);

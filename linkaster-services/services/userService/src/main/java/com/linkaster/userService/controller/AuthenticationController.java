@@ -50,7 +50,13 @@ public class AuthenticationController implements APIAuthenticationController {
         || userEmail.equals("admin@example.com") 
         || userEmail.equals("teacher@example.com")
         || userEmail.equals("adminteacher@example.com")
-        || userEmail.equals("user1@example.com")){
+        || userEmail.equals("user1@example.com")
+        || userEmail.equals("user2@example.com")
+        || userEmail.equals("user3@example.com")
+        || userEmail.equals("user4@example.com")
+        || userEmail.equals("user5@example.com")
+        || userEmail.equals("user6@example.com")
+        ){
             Map<String, String> response = new HashMap<>();
 
             AuthUser adminUser = userAuthenticatorService.getAuthenticatedUser(userEmail);

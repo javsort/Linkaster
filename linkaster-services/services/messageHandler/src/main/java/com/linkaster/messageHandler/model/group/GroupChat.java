@@ -1,4 +1,4 @@
-package com.linkaster.messageHandler.message.group;
+package com.linkaster.messageHandler.model.group;
 // group -> group chat
 
 import java.util.Map;
@@ -43,8 +43,8 @@ public class GroupChat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupChatId;
 
-    @Column(name = "AESKeyEncrypted")
-    private String AESKeyEncrypted;
+    @Column(name = "encrypted_module_AESKey")
+    private byte[] encryptedModuleAESKey;
 
     @Column(name = "moduleId")
     private long moduleId;
@@ -61,5 +61,9 @@ public class GroupChat {
     @MapKeyColumn(name = "user_id")
     @Column(name = "public_key")
     private Map<Long, String> groupMembers;
+
+    public void addMember(long userId, String publicKey){
+        groupMembers.put(userId, publicKey);
+    }
 
 }

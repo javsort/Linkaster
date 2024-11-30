@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.MessageRetrieval;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
-import com.linkaster.messageHandler.message.p2p.PrivateChat;
+import com.linkaster.messageHandler.model.p2p.PrivateChat;
 
 import jakarta.servlet.http.HttpServletRequest;
 

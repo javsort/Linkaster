@@ -3,19 +3,18 @@ package com.linkaster.messageHandler.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import com.linkaster.messageHandler.webSocket.WebSocketOverseer;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
-@EnableWebSocketMessageBroker
+@EnableWebSocket
 @Slf4j
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketConfigurer {
 
     @Value("${address.logicGateway.url}")
     private String logicGatewayUrl;
@@ -30,19 +29,30 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         this.webSocketOverseer = webSocketOverseer;
     }
 
-    @Override
+    /*@Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         log.info(log_header + "Registering Stomp Endpoints for registry: " + registry);
 
         registry.addEndpoint("/ws")
-                .addInterceptors(webSocketOverseer)
-                .setAllowedOrigins("*");     // Allow all origins -> To change with logicGatewayUrl 
+                .setAllowedOriginPatterns("*") // Allow all origins -> To change with logicGatewayUrl
+                .withSockJS();
+                //.setAllowedOrigins("*")     // Allow all origins -> To change with logicGatewayUrl 
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registration) {
         registration.enableSimpleBroker("/topic");
         registration.setApplicationDestinationPrefixes("/app");
+    }*/
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        log.info(log_header + "Registering WebSocket Handlers for registry: " + registry);
+
+        registry.addHandler(webSocketOverseer, "/ws")
+                .setAllowedOriginPatterns("*"); // Allow all origins -> To change with logicGatewayUrl
+                //.withSockJS();
+                //.setAllowedOrigins("*")     // Allow all origins -> To change with logicGatewayUrl 
     }
 
 }

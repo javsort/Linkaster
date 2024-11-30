@@ -1,10 +1,9 @@
-package com.linkaster.messageHandler.message.p2p;
+package com.linkaster.messageHandler.model.p2p;
 // p2p -> private to private chat
 
 import java.util.List;
 
-import com.linkaster.messageHandler.dto.ActorMetadata;
-import com.linkaster.messageHandler.model.PrivateMessage;
+import com.linkaster.messageHandler.model.ActorMetadata;
 import com.linkaster.messageHandler.model.UserInfo;
 
 import jakarta.persistence.AttributeOverride;
