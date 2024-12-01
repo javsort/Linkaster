@@ -12,6 +12,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.linkaster.messageHandler.dto.GroupMessageDTO;
+import com.linkaster.messageHandler.dto.GroupMessageReturnDTO;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
 import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 import com.linkaster.messageHandler.security.JwtTokenProvider;
@@ -119,7 +121,11 @@ public class WebSocketOverseer extends TextWebSocketHandler {
         long longChatId = Long.parseLong(chatId);
 
         // Call GroupmessagingManagerService to authenticate user
-
+        if (!groupMessagingManagerService.authenticateChatAccess(userId, longChatId)) {
+            log.error(log_header + "User not authorized for chatId: " + chatId);
+            session.close(CloseStatus.BAD_DATA);
+            return false;
+        }
 
         log.info(log_header + "User authenticated successfully for chatId: " + chatId);
         session.getAttributes().put("authenticated", true);
@@ -171,7 +177,7 @@ public class WebSocketOverseer extends TextWebSocketHandler {
 
                 case "GROUP":
                     log.info(log_header + "Handling group message...");
-                    // Handle group message
+                    processPublic(session, payload, senderId);
                     break;
                 default:
                     log.error(log_header + "Invalid message type: " + messageType);
@@ -183,6 +189,9 @@ public class WebSocketOverseer extends TextWebSocketHandler {
         }
     }
 
+    /*
+     * I will process the public message.
+     */
     public void processPrivate(WebSocketSession session, Map<String, String> payload, long senderId) throws Exception {
         // Get the chatId from the session -> if private chat
         long privateChatId = Long.parseLong(session.getAttributes().get("chatId").toString());
@@ -241,114 +250,64 @@ public class WebSocketOverseer extends TextWebSocketHandler {
         activeSessions.remove(disconnUserId);
     }
 
-    /*@Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
-            Map<String, Object> attributes) throws Exception {
-        log.info(log_header + "Before Handshake - Request: " + request.getURI());
-
-        // Get the token from the request
-        String token = request.getHeaders().getFirst("Authorization");
-        if (token == null || !token.startsWith("Bearer ")) {
-            log.error(log_header + "Bad Request: Missing token. Conisder thyself rejected!");
-            throw new RuntimeException("Bad Request: Missing token");   // Reject the connection
-        }
-
-        // Validate the token
-        token = token.substring(7);
-
-        if(!jwtTokenProvider.validateToken(token)){
-            log.error(log_header + "Bad Request: Token is invalid. Conisder thyself rejected!");
-            throw new RuntimeException("Bad Request: Token is invalid");   // Reject the connection
-        }
-
-        log.info(log_header + "The overseed token proofs itself worthy! \nGetting the userId from the token...");
-
-        // Get userId from token
-        long userId = Long.parseLong(jwtTokenProvider.getClaims(token, "id"));
-
-        // Retrieve chatID from headers
-        String chatId = request.getHeaders().getFirst("chatId");
-        if (chatId == null) {
-            log.error(log_header + "Bad Request: 'chatId' was not received as a header. Conisder thyself rejected!");
-            throw new RuntimeException("Bad Request: 'chatId' was not received as a header");   // Reject the connection
-        }
-
-        log.info(log_header + "I oversee that: \nThe userId is: " + userId + " and, \nChatId is: " + chatId);
-
-        // Get PrivateChat obj
-        PrivateChat privateChat = privateChatRepository.findById(chatId).orElse(null);
-        if (privateChat == null) {
-            log.error(log_header + "Bad Request: private chat is non-existent. Conisder thyself rejected!");
-            throw new RuntimeException("Bad Request: private chat is non-existent.");   // Reject the connection
-        }
-
-        log.info(log_header + "I oversee that: the chat is found! \nChecking if the user is part of the chat...");
-
-        // Check if the user is part of the chat
-        if (!privateChat.isUserInChat(userId)) {
-            
-            throw new RuntimeException("Bad Request: user requesting chat access is not part of the chat.");   // Reject the connection
-        }
-
-        log.info(log_header + "I oversee that: the user is part of the chat! \nGetting the recipient's public key...");
-
-        // Return dest data -> public key
-        ActorMetadata dest = privateChat.getDestData(userId);
-        attributes.put("recipientPublicKey", dest.getPublicKey());
-        attributes.put("recipientId", dest.getUserId());
-        attributes.put("chatId", chatId);
-
-        log.info(log_header + "Consider thyself overseen! \nRecipient's public key: " + dest.getPublicKey() + " and, \nRecipient's Id: " + dest.getUserId());
-
-        return true;    // Accept the connection
-    }
-
-    /*@Override
-    public void afterHandshake(ServerHttpRequest arg0, ServerHttpResponse arg1, WebSocketHandler arg2, Exception arg3) {
-        // Do nothing
-    }
-
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        // Listen for the initial protocol message
-        session.getAttributes().put("authenticated", false); // Default to unauthenticated
-
-        session.setTextMessageHandler(message -> {
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, String> protocolMessage = mapper.readValue(message.getPayload(), Map.class);
-
-                if ("AUTH".equals(protocolMessage.get("type"))) {
-                    String token = protocolMessage.get("token");
-                    String chatId = protocolMessage.get("chatId");
-
-                    // Validate token
-                    if (!jwtTokenProvider.validateToken(token)) {
-                        session.close(CloseStatus.BAD_DATA);
-                        return;
-                    }
-
-                    // Optionally validate chatId (e.g., via a service)
-                    // Example: Check if the user has access to the chat ID
-                    String userId = jwtTokenProvider.getClaims(token, "id");
-                    if (!isValidChatAccess(userId, chatId)) {
-                        session.close(CloseStatus.BAD_DATA);
-                        return;
-                    }
-
-                    // Mark the session as authenticated
-                    session.getAttributes().put("authenticated", true);
-                    session.getAttributes().put("userId", userId);
-                    session.getAttributes().put("chatId", chatId);
-                } else {
-                    session.close(CloseStatus.BAD_DATA);
-                }
-            } catch (Exception e) {
-                log.error("Error during WebSocket authentication: " + e.getMessage());
-                session.close(CloseStatus.SERVER_ERROR);
-            }
-        });
-    }*/
-    
+    /*
+     * I will process the public message.
+     */
+    public void processPublic(WebSocketSession session, Map<String, String> payload, long senderId) throws Exception {
+        // Get the chatId from the session -> if group chat
+        long groupChatId = Long.parseLong(session.getAttributes().get("chatId").toString());
+                    
+        // Convert to DTO -> better for handling on the service layer
+        GroupMessageDTO incPublic = new GroupMessageDTO();
+        incPublic.setGroupChatId(groupChatId);
+        incPublic.setMessage(payload.get("message"));
+        incPublic.setSenderId(senderId);
         
+        log.info(log_header + "Sending message to GroupMessagingManagerService...");
+        GroupMessageReturnDTO toBroadcast = groupMessagingManagerService.sendMessage(incPublic);
+
+        // Send the message
+        if(toBroadcast != null){
+            log.info(log_header + "Message processed successfully! Broadcasting to group's connected users...");
+
+            // Broadcast the message to the group
+            broadcastToGroup(toBroadcast);
+
+        } else {
+            log.error(log_header + "Error sending message!");
+            session.close(CloseStatus.BAD_DATA);
+            throw new RuntimeException("Error sending message!");
+        }
+    
+    }
+    
+    public void broadcastToGroup(GroupMessageReturnDTO message) throws Exception {
+        long groupChatId = message.getGroupChatId();
+        String messageContent = message.getMessage();
+        long senderId = message.getSenderId();
+        String senderName = message.getSenderName();
+        
+        // Get all connected users
+        for (Map.Entry<Long, WebSocketSession> entry : activeSessions.entrySet()) {
+            long userId = entry.getKey();
+            WebSocketSession userSession = entry.getValue();
+            
+            // Check if the user is a member of the group
+            if(groupMessagingManagerService.authenticateChatAccess(userId, groupChatId) && userId != senderId){
+                if(userSession.isOpen()){
+                    log.info(log_header + "User with id: " + userId + " is a member of the group. Sending message...");
+                    // Send the message to the user
+                    GroupMessageReturnDTO messageToSend = new GroupMessageReturnDTO(messageContent, groupChatId, senderId, senderName);
+                    ObjectMapper mapper = new ObjectMapper();
+                    String messageJson = mapper.writeValueAsString(messageToSend);
+                    userSession.sendMessage(new TextMessage(messageJson));
+                    log.info(log_header + "Message sent to user with id: " + userId);
+
+                } else {
+                    log.error(log_header + "User with id: " + userId + " is not connected. Message will not be sent.");
+
+                }
+            }
+        }
+    }
 }
