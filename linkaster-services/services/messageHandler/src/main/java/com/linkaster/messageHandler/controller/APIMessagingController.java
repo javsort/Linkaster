@@ -3,6 +3,7 @@ package com.linkaster.messageHandler.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,14 @@ public interface APIMessagingController {
 
     @GetMapping("/establishSocket")
     public String establishSocket(HttpServletRequest request);
+
+    // Called before establishing websocket -> Sample of all private chats with minimal information for the user
+    @GetMapping("/private/all")
+    public ResponseEntity<?> getUsersPrivateChats(HttpServletRequest request);
+
+    // Called simultaneously as the websocket is established
+    @GetMapping("/private/{chatId}")
+    public ResponseEntity<?> getPrivateChat(@PathVariable Long chatId);
     
     
 }

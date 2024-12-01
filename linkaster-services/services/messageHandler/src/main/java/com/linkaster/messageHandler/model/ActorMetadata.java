@@ -14,4 +14,5 @@ import lombok.Setter;
 public class ActorMetadata {
     private String publicKey;
     private long userId;
+    private String name;
 }
