@@ -98,12 +98,6 @@ public class MessagingController implements APIMessagingController {
 
         String userId = jwtTokenProvider.getClaims(token, "id");
 
-
-        return String.format( "Socket authorized! Connect to WebSocket URL: ws://message-handler-service/ws with your JWT token.");
+        return String.format( "Socket authorized for user with id: '" + userId +"''. Connect to WebSocket URL: ws://message-handler-service/ws with your JWT token.");
     }
-
-    // Private Messaging Actions
-
-
-    // Group Messaging Actions
 }
