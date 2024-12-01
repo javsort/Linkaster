@@ -25,19 +25,18 @@ public class JwtReqFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         // Log the request
         log.info(log_header + "Request: " + request.getRequestURI() + " Method: " + request.getMethod());
-        log.info(log_header + "Request received with the following headers: '" + request.getHeaderNames() + "'");
+        log.info(log_header + "Request received with the following headers: '" + request.getHeaderNames().toString() + "'");
         log.info(log_header + "Authorization Header: '" + request.getHeader("Authorization") + "'");
 
         String authHeader = request.getHeader("Authorization");
 
         String path = request.getRequestURI();
-        /*if(path.equals("/ws/**") 
-        || path.equals("/ws")
-        || path.equals("/app/sendPrivate") 
-        || path.equals("/topic/private/{chatId}")){
-
+        if (path.startsWith("/ws") && "websocket".equalsIgnoreCase(request.getHeader("Upgrade"))) {
+            log.info("Request is a websocket request, skipping JWT validation");
+            // Keep going with request
             filterChain.doFilter(request, response);
-            }
+            return;
+        }
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
@@ -66,7 +65,7 @@ public class JwtReqFilter extends OncePerRequestFilter {
             
             log.error(log_header + "Unable to validate token - missing auth header");
             return;
-        }*/
+        }
 
         // Keep going with request
         filterChain.doFilter(request, response);

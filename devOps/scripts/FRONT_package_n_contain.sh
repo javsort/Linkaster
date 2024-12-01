@@ -10,4 +10,7 @@ docker-compose -f ../docker-compose-full.yml down
 docker-compose -f ../docker-compose-frontonly.yml down
 
 :: Build the frontend image and run it
-docker-compose -f ../docker-compose-frontonly.yml up --build
+docker-compose -f ../docker-compose-frontonly.yml build --no-cache
+
+:: Run the frontend container
+docker-compose -f ../docker-compose-frontonly.yml up

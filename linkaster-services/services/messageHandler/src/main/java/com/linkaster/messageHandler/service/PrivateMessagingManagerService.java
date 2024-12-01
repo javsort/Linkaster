@@ -1,9 +1,12 @@
 package com.linkaster.messageHandler.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.messageHandler.dto.PrivateChatDTO;
 import com.linkaster.messageHandler.dto.PrivateMessageDTO;
 import com.linkaster.messageHandler.model.ActorMetadata;
 import com.linkaster.messageHandler.model.p2p.PrivateChat;
@@ -91,7 +94,7 @@ public class PrivateMessagingManagerService {
         
         log.info(log_header + "Handling private message for chat Id: " + privateChatId);
 
-        // Get the private chat
+        // Get the private chat & update the last message date
         PrivateChat privateChat = privateChatRepository.findById(privateChatId).orElse(null);
 
         if(privateChat == null){
@@ -125,6 +128,9 @@ public class PrivateMessagingManagerService {
             // Save the new message
             privateMessageRepository.save(newMessage);
 
+            // Update the last message date
+            privateChat.setLastMessageDate(newMessage.getTimestamp());
+
             log.info(log_header + "Sending a message to private chat with id: '" + privateChatId + "'...");
 
             return newMessage;
@@ -134,9 +140,33 @@ public class PrivateMessagingManagerService {
             return null;
         }
     }
+
+    public ResponseEntity<?> getUsersPrivateChats(long userId){
+        log.info(log_header + "Retrieving private chats sample DTO's for user with id: '" + userId + "'");
+
+        // Get the private chats
+        Iterable<PrivateChat> privateChats = privateChatRepository.getUserChats(userId);
+
+        Iterable<PrivateChatDTO> privateChatsDTO = new ArrayList<>();
+        for(PrivateChat chat : privateChats){
+            ActorMetadata destinatary = chat.getDestData(userId);
+
+            PrivateChatDTO chatDTO = new PrivateChatDTO();
+            chatDTO.setPrivateChatId(chat.getPrivateChatId());
+            chatDTO.setSenderId(userId);
+            chatDTO.setDestinataryId(destinatary.getUserId());
+            chatDTO.setReceiverName(destinatary.getName());
+            chatDTO.setLastMessageDate(chat.getLastMessageDate());
+
+            ((ArrayList<PrivateChatDTO>) privateChatsDTO).add(chatDTO);
+        }
+        
+
+        return ResponseEntity.ok(privateChatsDTO);
+    }
    
     // Retrieve messages from a private chat
-    public Iterable<PrivateMessage> getPrivateChat(long privateChatId){
+    public ResponseEntity<?> getPrivateChat(long privateChatId){
 
         log.info(log_header + "Retrieving messages from private chat with id: '" + privateChatId + "'");
 
@@ -148,17 +178,15 @@ public class PrivateMessagingManagerService {
             log.error(log_header + "Error: Private chat with id: '" + privateChatId + "' not found");
             return null;
         }
-
-        // Retrieve a reasonable amount of messages
         
         // Get the messages
         Iterable<PrivateMessage> messages = privateMessageRepository.findByPrivateChatId(privateChatId);
 
-        return messages;
+        return ResponseEntity.ok(messages);
     }
 
     // Scheduled task to clean all private chats - runs at midnight on the first of every month
-    @Scheduled(cron = "0 0 0 1 * ?")
+    //@Scheduled(cron = "0 0 0 1 * ?")
     public void cleanChats(){
         log.info(log_header + "Cleaning all private chats");
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
-import 'package:web_socket_channel/io.dart';
 import '../models/chat.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class PrivateChatPage extends StatefulWidget {
   final Chat chat;
@@ -24,7 +24,40 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
   void initState() {
     super.initState();
     messages = [];
-    _connectToWebSocket();
+    _fetchExistingMessages().then((_) => _connectToWebSocket());
+  }
+
+  Future<void> _fetchExistingMessages() async {
+    final apiUrl =
+        "http://localhost:8080/api/message/private/${widget.chat.privateChatId}";
+    final token = widget.token;
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> fetchedMessages = jsonDecode(response.body);
+        setState(() {
+          messages = fetchedMessages.map((msg) {
+            return {
+              'isSent': msg['senderId'] == widget.chat.senderId,
+              'message': msg['encryptedMessage'],
+              'time': DateTime.parse(msg['timestamp'])
+                  .toLocal()
+                  .toString()
+                  .split(' ')[1],
+            };
+          }).toList();
+        });
+      } else {
+        print("Failed to load messages. Status: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching messages: $e");
+    }
   }
 
   @override
@@ -39,9 +72,9 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
 
     // Send AUTH message immediately
     final authMessage = {
-      "type": "AUTH",
+      "type": "PRIVATE_AUTH",
       "token": widget.token,
-      "chatId": "1",
+      "chatId": widget.chat.privateChatId.toString(),
     };
     _channel.sink.add(jsonEncode(authMessage));
 
@@ -51,8 +84,9 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
         print("Received: $message");
         try {
           final decodedMessage = jsonDecode(message);
-          
-          if(decodedMessage.containsKey("message") && decodedMessage.containsKey("privateChatId")){
+
+          if (decodedMessage.containsKey("message") &&
+              decodedMessage.containsKey("privateChatId")) {
             setState(() {
               messages.add({
                 'isSent': false,
@@ -61,7 +95,7 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
               });
             });
           } else {
-             print("Invalid message structure received: $decodedMessage");
+            print("Invalid message structure received: $decodedMessage");
           }
         } catch (e) {
           print("Error decoding message: $e");
@@ -76,7 +110,7 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
     final message = _messageController.text.trim();
     if (message.isNotEmpty) {
       final payload = {
-        "privateChatId": "1",
+        "privateChatId": widget.chat.privateChatId.toString(),
         "message": message,
         "type": "PRIVATE"
       };
@@ -102,11 +136,17 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(widget.chat.avatar),
+              backgroundColor: Colors.grey[300],
+              child: Text(
+                widget.chat.receiverName.isNotEmpty
+                    ? widget.chat.receiverName[0].toUpperCase()
+                    : "?",
+                style: TextStyle(color: Colors.black),
+              ),
               radius: 20,
             ),
             SizedBox(width: 10),
-            Text(widget.chat.name),
+            Text(widget.chat.receiverName),
           ],
         ),
         backgroundColor: Theme.of(context).primaryColor,

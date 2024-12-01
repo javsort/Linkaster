@@ -12,4 +12,7 @@ docker-compose -f ../docker-compose-frontonly.yml down
 ./run.bat package
 
 :: Build the docker images again and run the containers
-docker-compose -f ../docker-compose-full.yml up --build
+docker-compose -f ../docker-compose-full.yml build --no-cache
+
+:: Run the containers
+docker-compose -f ../docker-compose-full.yml up
