@@ -4,12 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.linkaster.messageHandler.dto.GroupMessageDTO;
-import com.linkaster.messageHandler.dto.MessageRetrieval;
-import com.linkaster.messageHandler.dto.PrivateMessageDTO;
 import com.linkaster.messageHandler.model.p2p.PrivateChat;
+import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 import com.linkaster.messageHandler.repository.PrivateChatRepository;
 import com.linkaster.messageHandler.repository.PrivateMessageRepository;
 import com.linkaster.messageHandler.security.JwtTokenProvider;
@@ -45,20 +44,9 @@ public class MessagingController implements APIMessagingController {
         return "Welcome to the Messaging Service!";
     }
 
-    @Override
-    public ResponseEntity<?> getUsersPrivateChats(HttpServletRequest request){
-        log.info(log_header + "Retrieving all private chats for user: " + request.getHeader("Authorization"));
-        
-        // Get user id from session attribute
-        long userId = request.getAttribute("id") != null ? Long.parseLong(request.getAttribute("id").toString()) : 0;
-
-        if(userId == 0){
-            return ResponseEntity.badRequest().body("Invalid user id. Please provide a valid user id in the request.");
-        }
-
-        return privateMessagingManagerService.getUsersPrivateChats(userId);
-    }
-
+    /*
+     * ADMIN REQUESTS
+     */
     @Override
     public ResponseEntity<Iterable<PrivateChat>> getAllPrivateChats(){
         List<PrivateChat> privateChats = privateChatRepository.findAll();
@@ -67,34 +55,39 @@ public class MessagingController implements APIMessagingController {
     }
 
     @Override
-    public String getAllMessages(){
+    public ResponseEntity<Iterable<PrivateMessage>> getAllPrivateMessages(){
+        List<PrivateMessage> privateMessages = privateMessageRepository.findAll();
 
-        return "All Messages Retrieved!";
+        return ResponseEntity.ok(privateMessages);
     }
 
     @Override
-    public String getMessage(){
+    public ResponseEntity<PrivateChat> getPrivateChat(@PathVariable Long id){
+        PrivateChat requestedChat = privateChatRepository.findById(id).orElse(null);
 
-        return "Message Retrieved!";
+        if(requestedChat == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(requestedChat);
     }
 
     @Override
-    public String sendMessage(PrivateMessageDTO messageToSend){
+    public ResponseEntity<PrivateMessage> getPrivateMessage(@PathVariable Long id){
+        PrivateMessage requestedMessage = privateMessageRepository.findById(id).orElse(null);
 
-        return "Message Sent!";
+        if(requestedMessage == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(requestedMessage);
     }
 
-    @Override
-    public String sendGroupMessage(GroupMessageDTO messageToSend){
 
-        return "Message Sent!";
-    }
 
-    @Override
-    public String retrieveMessage(MessageRetrieval toRetrieve){
-
-        return "Message Retrieved!";
-    }
+    /*
+     * Mortal being requests
+     */
 
     // Authorize and return WebSocket Address
     @Override
@@ -119,8 +112,49 @@ public class MessagingController implements APIMessagingController {
         return String.format( "Socket authorized for user with id: '" + userId +"''. Connect to WebSocket URL: ws://message-handler-service/ws with your JWT token.");
     }
 
+    /*
+     * Private Messaging
+     */
     @Override
-    public ResponseEntity<?> getPrivateChat(Long chatId){
+    public ResponseEntity<?> getUsersPrivateChats(HttpServletRequest request){
+        log.info(log_header + "Retrieving all private chats for user: " + request.getHeader("Authorization"));
+        
+        // Get user id from session attribute
+        long userId = request.getAttribute("id") != null ? Long.parseLong(request.getAttribute("id").toString()) : 0;
+
+        if(userId == 0){
+            return ResponseEntity.badRequest().body("Invalid user id. Please provide a valid user id in the request.");
+        }
+
+        return privateMessagingManagerService.getUsersPrivateChats(userId);
+    }
+
+    // UserVersion of request
+    @Override
+    public ResponseEntity<?> getUserPrivateChat(Long chatId){
         return privateMessagingManagerService.getPrivateChat(chatId);
+    }
+
+    /*
+     * Group Messaging
+     */
+    @Override
+    public ResponseEntity<?> getUsersGroupChats(HttpServletRequest request){
+        log.info(log_header + "Retrieving all group chats for user: " + request.getHeader("Authorization"));
+        
+        // Get user id from session attribute
+        long userId = request.getAttribute("id") != null ? Long.parseLong(request.getAttribute("id").toString()) : 0;
+
+        if(userId == 0){
+            return ResponseEntity.badRequest().body("Invalid user id. Please provide a valid user id in the request.");
+        }
+
+        return groupMessagingManagerService.getGroupChats4User(userId);
+    }
+
+    // UserVersion of request
+    @Override
+    public ResponseEntity<?> getUserGroupChat(Long chatId){
+        return groupMessagingManagerService.getUserGroupChat(chatId);
     }
 }

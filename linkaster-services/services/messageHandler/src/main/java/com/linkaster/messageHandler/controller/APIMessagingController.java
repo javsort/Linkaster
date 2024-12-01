@@ -4,14 +4,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.linkaster.messageHandler.dto.GroupMessageDTO;
-import com.linkaster.messageHandler.dto.MessageRetrieval;
-import com.linkaster.messageHandler.dto.PrivateMessageDTO;
 import com.linkaster.messageHandler.model.p2p.PrivateChat;
+import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -26,31 +22,47 @@ public interface APIMessagingController {
     @GetMapping("/getAllPrivateChats")
     public ResponseEntity<Iterable<PrivateChat>> getAllPrivateChats();
 
-    @GetMapping("/getAllMessages")
-    public String getAllMessages();
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getAllPrivateMessages")
+    public ResponseEntity<Iterable<PrivateMessage>> getAllPrivateMessages();
 
-    @GetMapping("/getMessage")
-    public String getMessage();
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getPrivateChat/{id}")
+    public ResponseEntity<PrivateChat> getPrivateChat(@PathVariable Long id);
 
-    @PostMapping("/send")
-    public String sendMessage(@RequestBody PrivateMessageDTO messageToSend);
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getPrivateMessage/{id}")
+    public  ResponseEntity<PrivateMessage> getPrivateMessage(@PathVariable Long id);
 
-    @PostMapping("/sendToGroup")
-    public String sendGroupMessage(@RequestBody GroupMessageDTO messageToSend);
-
-    @PostMapping("/retrieveMessage")
-    public String retrieveMessage(@RequestBody MessageRetrieval toRetrieve);
-
+    /*
+     * Establishing Websocket -> Called before establishing websocket for either private or group chat
+    */
     @GetMapping("/establishSocket")
     public String establishSocket(HttpServletRequest request);
 
+    
+    /*
+     * Private Messaging
+     */
     // Called before establishing websocket -> Sample of all private chats with minimal information for the user
     @GetMapping("/private/all")
     public ResponseEntity<?> getUsersPrivateChats(HttpServletRequest request);
 
     // Called simultaneously as the websocket is established
     @GetMapping("/private/{chatId}")
-    public ResponseEntity<?> getPrivateChat(@PathVariable Long chatId);
+    public ResponseEntity<?> getUserPrivateChat(@PathVariable Long chatId);
+
+    /*
+     * Group Messaging
+     */
+    // Called before establishing websocket -> Sample of all group chats with minimal information for the user
+    @GetMapping("/group/all")
+    public ResponseEntity<?> getUsersGroupChats(HttpServletRequest request);
+ 
+    // Called simultaneously as the websocket is established
+    @GetMapping("/group/{chatId}")
+    public ResponseEntity<?> getUserGroupChat(@PathVariable Long chatId);
+
     
     
 }

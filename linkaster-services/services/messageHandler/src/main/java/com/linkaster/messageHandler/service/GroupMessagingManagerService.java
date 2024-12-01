@@ -2,10 +2,14 @@
 package com.linkaster.messageHandler.service;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.messageHandler.dto.GroupChatDTO;
 import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.GroupMessageReturnDTO;
 import com.linkaster.messageHandler.model.UserInfo;
@@ -60,6 +64,10 @@ public class GroupMessagingManagerService {
         return true;
     }
 
+
+    /*
+     * Authenticate access to a group chat
+     */
     public boolean authenticateChatAccess(long userId, long moduleChatId) {
         // Retrieve the groupChat
         GroupChat groupChat = groupChatRepository.findById(moduleChatId).orElse(null);
@@ -108,7 +116,7 @@ public class GroupMessagingManagerService {
             GroupMessage newGroupMessage = new GroupMessage();
             newGroupMessage.setModuleId(groupChat.getModuleId());
             newGroupMessage.setSenderId(senderId);
-            newGroupMessage.setGroupChatId(moduleChatId);
+            newGroupMessage.setGroupChat(groupChat);
             newGroupMessage.setEncryptedMessage(encryptedMessage);
             newGroupMessage.setTimestamp(new Date(System.currentTimeMillis()));
     
@@ -125,6 +133,9 @@ public class GroupMessagingManagerService {
         }
     }
 
+    /*
+     * Add a user to a group chat
+     */
     public boolean addUserToGroupChat(UserInfo newUser, long moduleChatId){
         // Get relevant data from DTO
         long userId = newUser.getUserId();
@@ -143,5 +154,49 @@ public class GroupMessagingManagerService {
         groupChatRepository.save(groupChatToAdd);
 
         return true;
+    }
+
+    /*
+     * Access through endpoints with Controller
+     */
+
+    public ResponseEntity<Iterable<GroupChatDTO>> getGroupChats4User(long userId){
+        // Make groupChat DTO's for requester user
+
+        // Get the group chats
+        Iterable<GroupChat> groupChats = groupChatRepository.getGroupChats4User(userId);
+
+        List<GroupChatDTO> usersGroupChats = new ArrayList<>();
+        for(GroupChat chat : groupChats){
+            GroupChatDTO chatDTO = new GroupChatDTO(chat.getGroupChatId(), chat.getModuleId(), chat.getModuleName(), chat.getGroupMembers(), chat.getLastMessageDate());
+            usersGroupChats.add(chatDTO);
+        }
+
+        return ResponseEntity.ok(usersGroupChats);
+    }
+
+    public ResponseEntity<?> getUserGroupChat(long moduleChatId){
+        // Get the group chat
+        log.info(log_header + "Retrieving group chat with id: '" + moduleChatId + "'");
+
+        GroupChat requestedGroupChat = groupChatRepository.findById(moduleChatId).orElse(null);
+
+        if(requestedGroupChat == null){
+            log.error(log_header + "Error: Group chat with id: '" + moduleChatId + "' not found");
+            return null;
+        }
+
+        // Retrieve the groupChat's messages
+        Iterable<GroupMessage> messages = groupMessageRepository.findByGroupChatId(moduleChatId);
+
+        // Create a DTO for the groupChat
+        List<GroupMessageReturnDTO> groupsMessages = new ArrayList<>();
+
+        for(GroupMessage message : messages){
+            GroupMessageReturnDTO messageDTO = new GroupMessageReturnDTO(message.getEncryptedMessage(), message.getGroupChat().getGroupChatId(), message.getSenderId(), requestedGroupChat.getGroupMembers().get(message.getSenderId()));
+            groupsMessages.add(messageDTO);
+        }
+
+        return ResponseEntity.ok(groupsMessages);
     }
 }

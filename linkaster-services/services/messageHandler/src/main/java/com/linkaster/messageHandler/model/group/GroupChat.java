@@ -1,8 +1,10 @@
 package com.linkaster.messageHandler.model.group;
-// group -> group chat
 
+import java.sql.Date;
+import java.util.List;
 import java.util.Map;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -13,22 +15,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-
-/*
- * This is the GroupChat entity class. It represents a group chat in the system.
- * It uses AES encryption for the messages & the AES key is encrypted with each member's public Key.
- * -> Hybrid encryption
- * 
- * 
- * To be implemented in the future.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -36,22 +29,25 @@ import lombok.Setter;
 @Entity
 @Table(name = "group_chats")
 public class GroupChat {
-    
+
     @Id
     @Column(name = "group_chat_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupChatId;
 
-    @Column(name = "module_AESKey")
+    @Column(name = "last_message_date")
+    private Date lastMessageDate;
+
+    @Column(name = "module_AESKey", nullable = false)
     private String moduleAESKey;
 
-    @Column(name = "moduleId")
+    @Column(name = "moduleId", nullable = false)
     private long moduleId;
 
-    @Column(name = "moduleName")
+    @Column(name = "moduleName", nullable = false)
     private String moduleName;
 
-    @Column(name = "ownerUserId")
+    @Column(name = "ownerUserId", nullable = false)
     private long ownerUserId;
 
     // Map of group members - key is the user id, value is the user's public key
@@ -61,8 +57,12 @@ public class GroupChat {
     @Column(name = "public_key")
     private Map<Long, String> groupMembers;
 
-    public void addMember(long userId, String publicKey){
+    // Relationship to GroupMessage
+    @OneToMany(mappedBy = "groupChat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupMessage> groupMessages;
+
+    // Utility methods
+    public void addMember(long userId, String publicKey) {
         groupMembers.put(userId, publicKey);
     }
-
 }
