@@ -14,4 +14,7 @@ call docker-compose -f ../docker-compose-frontonly.yml down
 call ./run.bat package
 
 :: Build the docker images again and run the containers
-call docker-compose -f ../docker-compose-full.yml up --build
+call docker-compose -f ../docker-compose-full.yml build --no-cache
+
+:: Step 1: Build the frontend with no cache
+call docker-compose -f ../docker-compose-full.yml up

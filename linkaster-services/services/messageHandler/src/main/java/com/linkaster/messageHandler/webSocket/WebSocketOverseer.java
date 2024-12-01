@@ -60,30 +60,41 @@ public class WebSocketOverseer extends TextWebSocketHandler {
         String type = payload.get("type");
         log.info(log_header + "Handling authentication message of type: " + type);
 
-
-        // -> TO implement, TWO TYPES OF AUTH, ONE FOR PRIVATE AND ONE FOR GROUP !!!!!!!!!!!!!!
-        if (!"AUTH".equals(type)) {
-            log.error(log_header + "Invalid protocol message type for authentication: " + type);
-            session.close(CloseStatus.BAD_DATA);
-            return false;
-        }
-
+        // First, authenticate token, then assign chat-specific attributes
         String token = payload.get("token");
-        String chatId = payload.get("chatId");
-
-        if (token == null || chatId == null) {
-            log.error(log_header + "Missing token or chatId in AUTH message.");
+        long userId = Long.parseLong(jwtTokenProvider.getClaims(token, "id"));
+        
+        if (token == null) {
+            log.error(log_header + "Missing token in AUTH message.");
             session.close(CloseStatus.BAD_DATA);
             return false;
         }
 
         if (!jwtTokenProvider.validateToken(token)) {
-            log.error(log_header + "Invalid token.");
+            log.error(log_header + "The token provided is invalid: '" + token + "'");
             session.close(CloseStatus.BAD_DATA);
             return false;
         }
 
-        long userId = Long.parseLong(jwtTokenProvider.getClaims(token, "id"));
+        switch (type){
+            case "PRIVATE_AUTH":
+                log.info(log_header + "Private Authentication header detected. Handling private chat authentication...");
+                return handlePrivateAuthentication(session, payload, userId);
+
+            case "GROUP_AUTH":
+                log.info(log_header + "Group Authentication header detected. Handling group chat authentication...");
+                return handleGroupAuthentication(session, payload, userId);
+
+            default:
+                log.error(log_header + "Invalid protocol message type for authentication: " + type);
+                session.close(CloseStatus.BAD_DATA);
+                return false;
+        }
+    }
+
+    private boolean handlePrivateAuthentication(WebSocketSession session, Map<String, String> payload, long userId) throws Exception {
+        String chatId = payload.get("chatId");
+
         long longChatId = Long.parseLong(chatId);
 
         // Recipient id must be available for the rest of operations
@@ -100,6 +111,21 @@ public class WebSocketOverseer extends TextWebSocketHandler {
         session.getAttributes().put("userId", userId);
         session.getAttributes().put("chatId", chatId);
         session.getAttributes().put("recipientId", recipientId);
+        return true;
+    }
+
+    private boolean handleGroupAuthentication(WebSocketSession session, Map<String, String> payload, long userId) throws Exception {
+        String chatId = payload.get("chatId");
+        long longChatId = Long.parseLong(chatId);
+
+        // Call GroupmessagingManagerService to authenticate user
+
+
+        log.info(log_header + "User authenticated successfully for chatId: " + chatId);
+        session.getAttributes().put("authenticated", true);
+        session.getAttributes().put("userId", userId);
+        session.getAttributes().put("chatId", chatId);
+        // Add groupChat Attributes
         return true;
     }
 

@@ -39,7 +39,7 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
 
     // Send AUTH message immediately
     final authMessage = {
-      "type": "AUTH",
+      "type": "PRIVATE_AUTH",
       "token": widget.token,
       "chatId": "1",
     };
