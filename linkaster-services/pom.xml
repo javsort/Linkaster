@@ -135,6 +135,13 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
+                 <annotationProcessorPaths>                         <!--added lines to build on macOS -->
+                    <path>
+                        <groupId>org.projectlombok</groupId>        
+                        <artifactId>lombok</artifactId>
+                        <version>1.18.34</version>
+                    </path>
+                </annotationProcessorPaths>                         <!-- end -->
                 </configuration>
             </plugin>
 

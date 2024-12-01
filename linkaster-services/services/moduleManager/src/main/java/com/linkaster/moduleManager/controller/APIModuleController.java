@@ -11,12 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.service.annotation.PatchExchange;
 
 import com.linkaster.moduleManager.dto.AnnouncementCreate;
+import com.linkaster.moduleManager.dto.EventCreate;
 import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.Module;
+import com.linkaster.moduleManager.model.EventModel;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -33,31 +36,28 @@ public interface APIModuleController {
     @PostMapping("/create")
     public ResponseEntity<?> createModule(@RequestBody ModuleCreate module, HttpServletRequest request);
 
-    @DeleteMapping("/delete/id")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean deleteModule(@RequestBody long id);
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> deleteModule(@PathVariable long id);
 
-
-    @PostMapping("/update/id")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean updateModule(@RequestBody long id, @RequestBody ModuleCreate module);
-
+    @PostMapping("/update/{id}")
+    public ResponseEntity<?> updateModule(@PathVariable long id, @RequestBody ModuleCreate module);
 
     @GetMapping("/getAllModules")
     @ResponseStatus(HttpStatus.OK)
     public List<Module> getAllModules();
 
 
-    @GetMapping("/moduleId")
+    @GetMapping("/moduleId/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Module getModuleById(@RequestBody long id);
+    public Module getModuleById(@PathVariable long id);
 
 
-    @GetMapping("/students/moduleId")
+    @GetMapping("/modules/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Long> getStudentsByModule(@RequestBody long moduleId);
+    public List<Long> getStudentsByModule(@PathVariable long moduleId);
     
-    @GetMapping("/students")
+
+    @GetMapping("/students/{studentId}")
     @ResponseStatus(HttpStatus.OK)
     public List<Module> getModulesByStudent(@PathVariable long studentId);
     
@@ -66,28 +66,35 @@ public interface APIModuleController {
     public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule);
     
 
-    @PostMapping("/leave")
+    @PostMapping("/leave/{moduleId}/{studentId}")
     @ResponseStatus(HttpStatus.OK)
-    public void leaveModule(@RequestBody long moduleId, @RequestBody long studentId);
+    public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId);
 
 
     @PostMapping("/announcement")
-    @ResponseStatus(HttpStatus.CREATED)
-    public String createAnnouncement(@RequestBody AnnouncementCreate announcement);
+    public ResponseEntity<?> createAnnouncement(@RequestBody AnnouncementCreate announcement, HttpServletRequest request);
 
-
-    @DeleteMapping("/announcement/id")
+    @PostMapping("/announcement/{id}/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public boolean deleteAnnouncement(@RequestBody long announcementId, @RequestBody long moduleId);
+    public ResponseEntity<?> deleteAnnouncement(@PathVariable long announcementId, @RequestBody long moduleId);
 
 
-    @GetMapping("/announcement/moduleId")
-    @ResponseStatus(HttpStatus.OK)
-    public Iterable<Announcement> getAllAnnouncementsByModuleId(@RequestBody long moduleId);
-
-    @GetMapping("/announcement/user")
+    @GetMapping("/announcement/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Announcement> getAllAnnouncementsByUserId(@RequestBody long userId);
+
+
+    @PostMapping("/event")
+    public ResponseEntity<?> createEvent(@RequestBody EventCreate event, HttpServletRequest request);
+
+    @GetMapping("/events/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<EventModel> getAllEventsByUserId(@RequestBody long userId);
+
+    @GetMapping("/events/{moduleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> getAllEventsByModuleId(@RequestBody long moduleId);
+
     /* 
     @GetMapping("/updateTimetable")
     @ResponseStatus(HttpStatus.OK)
