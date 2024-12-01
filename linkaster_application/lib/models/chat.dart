@@ -1,13 +1,25 @@
 class Chat {
-  final String name;
-  final String lastMessage;
-  final String lastMessageTime;
-  final String avatar;
+  final int privateChatId;
+  final int senderId;
+  final int destinataryId;
+  final String receiverName;
+  final String lastMessageDate;
 
   Chat({
-    required this.name,
-    required this.lastMessage,
-    required this.lastMessageTime,
-    required this.avatar,
+    required this.privateChatId,
+    required this.senderId,
+    required this.destinataryId,
+    required this.receiverName,
+    required this.lastMessageDate,
   });
+
+  factory Chat.fromJson(Map<String, dynamic> json) {
+    return Chat(
+      privateChatId: json['privateChatId'],
+      senderId: json['senderId'],
+      destinataryId: json['destinataryId'],
+      receiverName: json['receiverName'],
+      lastMessageDate: json['lastMessageDate'],
+    );
+  }
 }

@@ -13,6 +13,8 @@ import com.linkaster.messageHandler.model.p2p.PrivateChat;
 import com.linkaster.messageHandler.repository.PrivateChatRepository;
 import com.linkaster.messageHandler.repository.PrivateMessageRepository;
 import com.linkaster.messageHandler.security.JwtTokenProvider;
+import com.linkaster.messageHandler.service.GroupMessagingManagerService;
+import com.linkaster.messageHandler.service.PrivateMessagingManagerService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -26,17 +28,35 @@ public class MessagingController implements APIMessagingController {
     private final JwtTokenProvider jwtTokenProvider;
     private final PrivateChatRepository privateChatRepository;
     private final PrivateMessageRepository privateMessageRepository;
+    private final PrivateMessagingManagerService privateMessagingManagerService;
+    private final GroupMessagingManagerService groupMessagingManagerService;
 
     @Autowired
-    public MessagingController(JwtTokenProvider jwtTokenProvider, PrivateChatRepository privateChatRepository, PrivateMessageRepository privateMessageRepository){
+    public MessagingController(JwtTokenProvider jwtTokenProvider, PrivateChatRepository privateChatRepository, PrivateMessageRepository privateMessageRepository, PrivateMessagingManagerService privateMessagingManagerService, GroupMessagingManagerService groupMessagingManagerService){
         this.jwtTokenProvider = jwtTokenProvider;
         this.privateChatRepository = privateChatRepository;
         this.privateMessageRepository = privateMessageRepository;
+        this.privateMessagingManagerService = privateMessagingManagerService;
+        this.groupMessagingManagerService = groupMessagingManagerService;
     }
     
     @Override
     public String home(){
         return "Welcome to the Messaging Service!";
+    }
+
+    @Override
+    public ResponseEntity<?> getUsersPrivateChats(HttpServletRequest request){
+        log.info(log_header + "Retrieving all private chats for user: " + request.getHeader("Authorization"));
+        
+        // Get user id from session attribute
+        long userId = request.getAttribute("id") != null ? Long.parseLong(request.getAttribute("id").toString()) : 0;
+
+        if(userId == 0){
+            return ResponseEntity.badRequest().body("Invalid user id. Please provide a valid user id in the request.");
+        }
+
+        return privateMessagingManagerService.getUsersPrivateChats(userId);
     }
 
     @Override
@@ -60,25 +80,23 @@ public class MessagingController implements APIMessagingController {
 
     @Override
     public String sendMessage(PrivateMessageDTO messageToSend){
-            
+
         return "Message Sent!";
     }
 
     @Override
     public String sendGroupMessage(GroupMessageDTO messageToSend){
 
-        
         return "Message Sent!";
     }
 
     @Override
     public String retrieveMessage(MessageRetrieval toRetrieve){
 
-        
         return "Message Retrieved!";
     }
 
-    // Authorize and return WebSocket Addr
+    // Authorize and return WebSocket Address
     @Override
     public String establishSocket(HttpServletRequest request){
         log.info(log_header + "Establishing WebSocket connection for user: " + request.getHeader("Authorization"));
@@ -99,5 +117,10 @@ public class MessagingController implements APIMessagingController {
         String userId = jwtTokenProvider.getClaims(token, "id");
 
         return String.format( "Socket authorized for user with id: '" + userId +"''. Connect to WebSocket URL: ws://message-handler-service/ws with your JWT token.");
+    }
+
+    @Override
+    public ResponseEntity<?> getPrivateChat(Long chatId){
+        return privateMessagingManagerService.getPrivateChat(chatId);
     }
 }

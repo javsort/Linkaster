@@ -2,6 +2,8 @@ package com.linkaster.messageHandler.model.p2p;
 
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +32,7 @@ public class PrivateMessage {
 
     @ManyToOne
     @JoinColumn(name = "private_chat_id", nullable = false)
+    @JsonBackReference
     private PrivateChat privateChat;
 
     @Column(name = "sender_id")
