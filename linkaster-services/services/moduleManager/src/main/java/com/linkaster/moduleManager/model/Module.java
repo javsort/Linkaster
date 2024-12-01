@@ -34,13 +34,19 @@ public class Module {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "module_owner_id", unique = true, nullable = false)
-    private long moduleOwnerId;
+    private Long moduleOwnerId;
+
+    @Column(name = "module_owner_name", unique = true, nullable = false)
+    private String moduleOwnerName;
+
+    @Column(name = "module_owner_type", unique = true, nullable = false)
+    private String moduleOwnerType;
 
     @Column(name = "module_name", unique = true, nullable = false)
-    private String name;
+    private String moduleName;
 
     @Column(name = "module_code", unique = true, nullable = false)
     private String moduleCode;    
@@ -51,7 +57,4 @@ public class Module {
 
     @Column(name = "module_type")
     private String type;
-
-
-    // Add groupchat's RSA key here
 }

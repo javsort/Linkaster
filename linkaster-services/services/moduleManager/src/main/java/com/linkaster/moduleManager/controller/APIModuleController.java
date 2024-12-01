@@ -1,6 +1,5 @@
 package com.linkaster.moduleManager.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,16 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-
-import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.dto.AnnouncementCreate;
-import com.linkaster.moduleManager.dto.EventCreate;
 import com.linkaster.moduleManager.dto.JoinModuleCreate;
-
-
+import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.model.Announcement;
-import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/api/module")
@@ -35,9 +31,7 @@ public interface APIModuleController {
     public String status();
 
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Module createModule(@RequestBody ModuleCreate module);
-
+    public ResponseEntity<?> createModule(@RequestBody ModuleCreate module, HttpServletRequest request);
 
     @DeleteMapping("/delete/id")
     @ResponseStatus(HttpStatus.OK)
@@ -49,7 +43,7 @@ public interface APIModuleController {
     public boolean updateModule(@RequestBody long id, @RequestBody ModuleCreate module);
 
 
-    @GetMapping("/all")
+    @GetMapping("/getAllModules")
     @ResponseStatus(HttpStatus.OK)
     public List<Module> getAllModules();
 

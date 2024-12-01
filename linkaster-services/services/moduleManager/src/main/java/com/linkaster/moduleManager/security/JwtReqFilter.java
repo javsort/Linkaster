@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,9 +25,11 @@ public class JwtReqFilter extends OncePerRequestFilter {
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         // Log the request
-        log.info(log_header + "Request: " + request.getRequestURI() + " Method: " + request.getMethod());
-        log.info(log_header + "Request received with the following headers: '" + request.getHeaderNames() + "'");
-        log.info(log_header + "Authorization Header: '" + request.getHeader("Authorization") + "'");
+        ContentCachingRequestWrapper requestWrap = new ContentCachingRequestWrapper(request);
+
+        log.info(log_header + "Request: " + requestWrap.getRequestURI() + " Method: " + requestWrap.getMethod());
+        log.info(log_header + "Request received with the following headers: '" + requestWrap.getHeaderNames() + "'");
+        log.info(log_header + "Authorization Header: '" + requestWrap.getHeader("Authorization") + "'");
 
         String authHeader = request.getHeader("Authorization");
 
@@ -46,9 +49,9 @@ public class JwtReqFilter extends OncePerRequestFilter {
             String role = "ROLE_" + jwtTokenProvider.getClaims(token, "role");
 
             // Add claims to the req attributes (opt, but would be [id, username, role])
-            request.setAttribute("id", id);
-            request.setAttribute("userEmail", userEmail);
-            request.setAttribute("role", role);
+            requestWrap.setAttribute("id", id);
+            requestWrap.setAttribute("userEmail", userEmail);
+            requestWrap.setAttribute("role", role);
 
             log.info(log_header + "Found the following tokens: \nid: " + id + "\nuserEmail: " + userEmail + "\nrole: " + role);
             
@@ -60,6 +63,6 @@ public class JwtReqFilter extends OncePerRequestFilter {
         }
 
         // Keep going with request
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(requestWrap, response);
     }
 }

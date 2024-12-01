@@ -1,23 +1,22 @@
 package com.linkaster.moduleManager.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.dto.AnnouncementCreate;
 import com.linkaster.moduleManager.dto.JoinModuleCreate;
+import com.linkaster.moduleManager.dto.ModuleCreate;
+import com.linkaster.moduleManager.dto.ModuleResponse;
 import com.linkaster.moduleManager.model.Announcement;
-import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.service.AuditManagerService;
 import com.linkaster.moduleManager.service.JoinCodeManagerService;
@@ -25,6 +24,7 @@ import com.linkaster.moduleManager.service.ModuleHandlerService;
 import com.linkaster.moduleManager.service.ModuleManagerService;
 import com.linkaster.moduleManager.service.TimetableIntegratorService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -61,8 +61,39 @@ public class ModuleController implements APIModuleController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @Override
-    public Module createModule(@RequestBody ModuleCreate module) {
-        return moduleManagerService.createModule(module);
+    public ResponseEntity<?> createModule(@RequestBody ModuleCreate module, HttpServletRequest request) {
+        // Get role for module creation user type
+        String creatorRole = request.getAttribute("role").toString();
+
+        
+
+        // Strip "ROLE_" from the role
+        creatorRole = creatorRole.substring(5);
+
+        // Create a new module
+        log.info(log_header + "Creating new module: " + module + " calling moduleManagerService...");
+        Module newModule = moduleManagerService.createModule(module, creatorRole);
+
+        // Create a response entity
+        if (newModule == null) { 
+            return ResponseEntity.badRequest().body("Module creation failed");
+        }
+
+        ModuleResponse response = new ModuleResponse(
+            newModule.getId(),
+            newModule.getModuleName(),
+            newModule.getModuleCode(),
+            newModule.getModuleOwnerName(),
+            newModule.getModuleOwnerType(),
+            newModule.getModuleOwnerId(),
+            newModule.getStudentList(),
+            newModule.getType()
+        );
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        log.info(log_header + "Module created successfully: " + response + " returning response entity...");
+        return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
     }
 
     @Override
