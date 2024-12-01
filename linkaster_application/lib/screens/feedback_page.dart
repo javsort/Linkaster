@@ -1,11 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:linkaster_application/config/config.dart';
 import 'package:http/http.dart' as http;
-
+import 'dart:convert';
 
 class FeedbackPage extends StatefulWidget {
+  final String? token; // Token passed to the FeedbackPage
+
+  const FeedbackPage({
+    Key? key,
+    required this.token,
+  }) : super(key: key);
+
   @override
   _FeedbackPageState createState() => _FeedbackPageState();
 }
@@ -24,57 +30,52 @@ class _FeedbackPageState extends State<FeedbackPage> {
     'Dr. Miller - Cyber Security',
   ];
 
-  void _submitFeedback() {
+  Future<void> _submitFeedback() async {
     String feedback = feedbackController.text;
-    if (selectedRecipient != null && feedback.isNotEmpty) {
-//added:
-      //split the selected recipient into recipient name and recipient module:
-      List<String> recipientParts = selectedRecipient?.split(' - ') ?? [];
-      if (recipientParts.length == 2) {
-      String recipientName = recipientParts[0];
-      String recipientModule = recipientParts[1];
 
-      // Handle feedback submission logic here
-      // You can save to a database or display a confirmation message
-      //feedback contains: feedbackID, recipientID, senderID, anonymous, moduleID, and contents
-      Future<bool> registerFeedback(
-        int feedbackID,
-        String recipientID,
-        String senderID,
-        bool anonymous, 
-        String moduleID,
-        String contents,
-        ) async {
-          final response = await http.post(
-            Uri.parse('${AppConfig.apiBaseUrl}/'), //insert correct path
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-            //need to be updated:
-              "feedbackID": 0,
-              "recipientID": 0,
-              "senderID": 0,
-              "anonymous": isAnonymous,
-              "moduleID": 0,
-              "cotents": feedbackInput
-            })
-          );
-          return false;
-        }
-//end
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Feedback submitted successfully!')),
-      );
-      feedbackController.clear();
-      setState(() {
-        selectedRecipient = null;
-        isAnonymous = false;
-      });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields before submitting.')),
+    if (selectedRecipient != null && feedback.isNotEmpty) {
+      try {
+        final url = Uri.parse(
+            'https://example.com/api/feedback'); // Replace with your actual API URL
+
+        final response = await http.post(
+          url,
+          headers: {
+            'Authorization':
+                'Bearer ${widget.token}', // Add token to the request
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'recipient': selectedRecipient,
+            'feedback': feedback,
+            'isAnonymous': isAnonymous,
+          }),
         );
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Feedback submitted successfully!')),
+          );
+          feedbackController.clear();
+          setState(() {
+            selectedRecipient = null;
+            isAnonymous = false;
+          });
+        } else {
+          _showError('Failed to submit feedback. (${response.statusCode})');
+        }
+      } catch (e) {
+        _showError('An error occurred while submitting feedback.');
       }
+    } else {
+      _showError('Please fill in all fields before submitting.');
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override

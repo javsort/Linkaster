@@ -33,7 +33,9 @@ logging:
       springframework.security: ${LOGGING_LEVEL_SPRING_SECURITY:DEBUG}
       springframework.web: ${LOGGING_LEVEL_SPRING_WEB:DEBUG}
       springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:DEBUG}
-
+      springframework.messaging: ${LOGGING_LEVEL_SPRING_MESSAGING:DEBUG}
+      springframework.web.socket: ${LOGGING_LEVEL_SPRING_WEBSOCKET:DEBUG}
+      
 address:
   user:
     url: ${USER_SERVICE_URL:http://localhost:8081}
@@ -56,4 +58,4 @@ address:
 
 # Set up connections to other services:
 server:
-  port: ${SERVER_PORT:8081}
+  port: ${SERVER_PORT:8086}

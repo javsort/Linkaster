@@ -1,16 +1,12 @@
-package com.linkaster.messageHandler.model;
+package com.linkaster.messageHandler.model.group;
 
 import java.sql.Date;
-
-import com.linkaster.messageHandler.message.p2p.PrivateChat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,23 +18,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "private_messages")
-public class PrivateMessage {
+@Table(name = "public_messages")
+public class GroupMessage {
     
     @Id
-    @Column(name = "private_message_id")
+    @Column(name = "group_message_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long privateMessageId;
+    private long groupMessageId;
 
-    @ManyToOne
-    @JoinColumn(name = "private_chat_id", nullable = false)
-    private PrivateChat privateChat;
+    @Column(name = "group_id")
+    private long groupId;
 
     @Column(name = "sender_id")
     private long senderId;
 
-    @Column(name = "receiver_id")
-    private long receiverId;
+    @Column(name = "group_chat_id")
+    private long groupChatId;
 
     @Column(name = "encrypted_message")
     private String encryptedMessage;
@@ -46,4 +41,5 @@ public class PrivateMessage {
     @Column(name = "timestamp")
     private Date timestamp;
 
+    
 }

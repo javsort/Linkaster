@@ -1,5 +1,6 @@
 package com.linkaster.logicGateway.controller;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,9 @@ public class GatewayController implements APIGatewayController {
     @Value("${address.module.url}")
     private String moduleServiceUrl;
 
+    @Value("${address.message.url}")
+    private String messageServiceUrl;
+
     private final String log_header = "GatewayController --- ";
 
     // END: Endpoints
@@ -47,9 +51,9 @@ public class GatewayController implements APIGatewayController {
     private final GatewayAuthService gatewayAuthService;
 
     @Autowired
-    public GatewayController(GatewayAuthService gatewayAuthService) {
+    public GatewayController(GatewayAuthService gatewayAuthService, RestTemplate restTemplate) {
         this.gatewayAuthService = gatewayAuthService;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -107,50 +111,84 @@ public class GatewayController implements APIGatewayController {
         }
     }
 
+
+    // Forward requests to messageService
+    // All paths going into /message/** will be forwarded to the messageService
+    @Override
+    public ResponseEntity<?> forwardToMessageService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
+        log.info(log_header + "Forwarding request to MessagingService: " + request);
+
+        /*
+         * SPECIAL ENDPOINT -> /message/establishSocket -> Returns a websocket, diff from regular answer
+        */
+        if(request.getRequestURI().equals("/api/message/establishSocket")) {
+            log.info(log_header + "Establishing websocket connection through messaging service... ");
+        }
+
+        String targetUrl = messageServiceUrl + request.getRequestURI();
+        return travelGate(request, targetUrl, requestBody, "User Handler Service");
+    }
+
     // Forward requests to userService
-    @GetMapping("/user/**")
-    public ResponseEntity<?> forwardToUserService(HttpServletRequest request) {
+    // All paths going into /user/** will be forwarded to the moduleService
+    @Override
+    public ResponseEntity<?> forwardToUserService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
 
         log.info(log_header + "Forwarding request to userService: " + request.getRequestURI());
         String targetUrl = userServiceUrl + request.getRequestURI();
+
         
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        // Forward the request
-        ResponseEntity<String> response = restTemplate.exchange(
-            targetUrl,
-            HttpMethod.valueOf(request.getMethod()),
-            entity,
-            String.class
-        );
-
-        return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+        return travelGate(request, targetUrl, requestBody, "User Handler Service");
     }
 
     // Forward requests to moduleService
-    @GetMapping("/module/**")
-    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request) {
+    // All paths going into /module/** will be forwarded to the moduleService
+    @Override
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
 
         log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());
         String targetUrl = moduleServiceUrl + request.getRequestURI();
+
+        return travelGate(request, targetUrl, requestBody, "Module Manager Service");
+    }
+
+    public ResponseEntity<?> travelGate(HttpServletRequest request, String targetUrl, String requestBody, String destinationService) {
+        log.info(log_header + "Request before processing data: " + request);
+
+        HttpHeaders headers = getHeaders(request);
+        HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
+
+        log.info(log_header + "Request headers: " + headers);
+        log.info(log_header + "Request body: " + requestBody);
+
+        log.info(log_header + "Forwarding request to '" + destinationService + "': " + targetUrl);
         
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
         // Forward the request
-        ResponseEntity<String> response = restTemplate.exchange(
-            targetUrl,
-            HttpMethod.valueOf(request.getMethod()),
-            entity,
-            String.class
-        );
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                targetUrl,
+                HttpMethod.valueOf(request.getMethod()),
+                entity,
+                String.class
+            );
+    
+            log.info("Response from '"+ destinationService +"'' : Body= '" + response.getBody() +  "'', Status= " + response.getStatusCode());
+    
+            return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+            
+        } catch (Exception e) {
+            log.error("Error while forwarding request to '" + destinationService + "'", e);
+            return ResponseEntity.status(500).body("An error occurred while forwarding the request.");
+        }
+    }
 
-        return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+    // Helper function to get headers from the request
+    public HttpHeaders getHeaders(HttpServletRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        Collections.list(request.getHeaderNames())
+            .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
     }
 
 }

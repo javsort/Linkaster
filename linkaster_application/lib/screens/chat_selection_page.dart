@@ -1,51 +1,71 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../models/chat.dart';
 import '../models/group_chat.dart';
-import '../models/group_chat_info.dart';
-import 'group_chats_page.dart';
 import 'private_chats_page.dart';
 
-class ChatSelectionPage extends StatelessWidget {
+class ChatSelectionPage extends StatefulWidget {
   final bool isPrivateChat;
+  final String? token;
 
-  // Replace these with your actual data
-  final List<Chat> privateChats = [
-    Chat(
-        name: 'John Doe',
-        lastMessage: 'Hey, how are you?',
-        lastMessageTime: '10:00 AM',
-        avatar: 'url_to_avatar1'),
-    Chat(
-        name: 'Jane Smith',
-        lastMessage: 'Let’s meet tomorrow',
-        lastMessageTime: '9:30 AM',
-        avatar: 'url_to_avatar2'),
-  ];
+  ChatSelectionPage({Key? key, required this.isPrivateChat, required this.token})
+      : super(key: key);
 
-  final List<GroupChat> groupChats = [
-    GroupChat(
-        chatname: 'Internet Application Engineering',
-        name: 'Jorge',
-        message: 'Don’t forget the deadline!',
-        time: 'Yesterday',
-        avatar: 'url_to_group_avatar1'),
-    GroupChat(
-        chatname: 'Group Project',
-        name: 'Group Project',
-        message: 'Don’t forget the deadline!',
-        time: 'Yesterday',
-        avatar: 'url_to_group_avatar1'),
-  ];
+  @override
+  _ChatSelectionPageState createState() => _ChatSelectionPageState();
+}
 
-  ChatSelectionPage({Key? key, required this.isPrivateChat}) : super(key: key);
+class _ChatSelectionPageState extends State<ChatSelectionPage> {
+  List<Chat> privateChats = [];
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isPrivateChat) {
+      _fetchPrivateChats();
+    }
+  }
+
+  Future<void> _fetchPrivateChats() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final apiUrl = "http://localhost:8080/api/message/private/all";
+    final token = widget.token;
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          privateChats = data.map((item) => Chat.fromJson(item)).toList();
+        });
+      } else {
+        print("Failed to fetch private chats: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching private chats: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isPrivateChat ? 'Private Chats' : 'Group Chats'),
+        title: Text(widget.isPrivateChat ? 'Private Chats' : 'Group Chats'),
         backgroundColor: Theme.of(context).primaryColor,
-        actions: isPrivateChat
+        actions: widget.isPrivateChat
             ? [
                 IconButton(
                   icon: Icon(Icons.add),
@@ -55,77 +75,41 @@ class ChatSelectionPage extends StatelessWidget {
               ]
             : [],
       ),
-      body: ListView.builder(
-        itemCount: isPrivateChat ? privateChats.length : groupChats.length,
-        itemBuilder: (context, index) {
-          if (isPrivateChat) {
-            final chat = privateChats[index];
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(chat.avatar),
-              ),
-              title: Text(chat.name),
-              subtitle: Text('${chat.lastMessage} - ${chat.lastMessageTime}'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PrivateChatPage(chat: chat),
-                  ),
-                );
-              },
-            );
-          } else {
-            final groupChat = groupChats[index];
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(groupChat.avatar),
-              ),
-              title: Text(groupChat.chatname),
-              subtitle: Text('${groupChat.message} - ${groupChat.time}'),
-              onTap: () {
-                final groupChat = groupChats[index];
-                // Create a GroupChatInfo object dynamically based on the GroupChat data
-                final groupChatInfo = GroupChatInfo(
-                  chatname: groupChat.chatname,
-                  name: groupChat.name,
-                  time: groupChat.time,
-                  moduleName:
-                      "Module Name", // You should replace these with actual data if available
-                  moduleTime: "Module Time",
-                  moduleCode: "Module Code",
-                  studentsList: [
-                    "Jorge",
-                    "Javier",
-                    "Marcos",
-                    "Marlene"
-                  ], // Replace with actual student data
-                  teachersList: [
-                    "Aakash",
-                    "Fabio"
-                  ], // Replace with actual teacher data
-                );
-
-                // Navigate to GroupChatPage
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GroupChatPage(
-                      chat: groupChat,
-                      chatInfo:
-                          groupChatInfo, // Pass the dynamically created GroupChatInfo
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: privateChats.length,
+              itemBuilder: (context, index) {
+                final chat = privateChats[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.grey[300],
+                    child: Text(
+                      chat.receiverName.isNotEmpty
+                          ? chat.receiverName[0].toUpperCase()
+                          : "?",
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
+                  title: Text(chat.receiverName),
+                  subtitle: Text('Last active: ${chat.lastMessageDate}'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PrivateChatPage(
+                          chat: chat,
+                          token: widget.token,
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 
-  // Show search dialog for creating a new chat
   void _showSearchDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -135,7 +119,7 @@ class ChatSelectionPage extends StatelessWidget {
           content: TextField(
             decoration: InputDecoration(hintText: 'Search by name'),
             onChanged: (query) {
-              // Handle search logic here (filter your contacts)
+              // Handle search logic here
             },
           ),
           actions: [
@@ -147,15 +131,6 @@ class ChatSelectionPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                // Handle selecting a contact, for example:
-                final selectedChat =
-                    privateChats[0]; // You can use a dynamic search result here
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PrivateChatPage(chat: selectedChat),
-                  ),
-                );
                 Navigator.pop(context);
               },
               child: Text('Search'),

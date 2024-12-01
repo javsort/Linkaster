@@ -1,8 +1,13 @@
 package com.linkaster.moduleManager.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.linkaster.moduleManager.dto.JoinModuleCreate;
+import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
@@ -18,28 +23,66 @@ public class JoinCodeManagerService {
 
     private final String log_header = "JoinCodeManagerService --- ";
 
-    public String[] getAllCodes() {
-        log.info(log_header + "Getting all join codes");
-        // Logic to get all join codes
-        return new String[0]; // Replace with actual implementation
-    }   
+    public List<String> getModuleCodes() {
+        log.info(log_header + "Fetching all module codes");
+        // Fetch all modules and map them to their codes
+        return moduleRepository.findAll()
+                            .stream()
+                            .map(Module::getModuleCode)
+                            .collect(Collectors.toList());
+    }
 
 
-    public String getModuleByCode(String code) {
+
+    public Module getModuleByCode(String code) {
         log.info(log_header + "Getting join code by ID: " + code);
-        // Logic to get a join code by ID
-        return "Join code"; // Replace with actual implementation
+        return moduleRepository.findByModuleCode(code);
     }
 
     public boolean validateJoinCode(String joinCode) {
         log.info(log_header + "Validating join code: " + joinCode);
-        // Logic to validate a join code
-        return false; // Replace with actual implementation
+    
+        // Check if the join code exists in the repository
+        boolean exists = moduleRepository.findByModuleCode(joinCode) != null;
+    
+        log.info(log_header + "Join code " + joinCode + " is " + (exists ? "valid" : "invalid"));
+    
+        return exists;
     }
+    
+    
+    // INTERSERVICE COMMUNICATION - Called by the student service
+    public boolean joinModuleByCode(JoinModuleCreate joinModuleCreate) {
+        String joinCode = joinModuleCreate.getCode();
+        long studentId = joinModuleCreate.getStudentId();
 
-    public boolean joinModuleByCode(String joinCode, long studentId) {
-        log.info(log_header + "Student " + studentId + " joining module with join code: " + joinCode);
-        // Logic to join a module using the join code
-        return false; // Replace with actual implementation
+        log.info(log_header + "Student " + studentId + " attempting to join module with join code: " + joinCode);
+    
+        // Step 1: Validate the join code
+        if (!validateJoinCode(joinCode)) {
+            log.warn(log_header + "Invalid join code: " + joinCode);
+            return false; // Join code is invalid
+        }
+    
+        // Step 2: Retrieve the module
+        Module module = moduleRepository.findByModuleCode(joinCode);
+        if (module == null) {
+            log.error(log_header + "Module not found for join code: " + joinCode);
+            return false; // Module does not exist
+        }
+    
+        // Step 3: Check if the student is already enrolled
+        if (module.getStudentList().contains(studentId)) {
+            log.info(log_header + "Student: " + studentId + " is already enrolled in module: \nId: '" + module.getId() + "'\nModule Name: '" + module.getModuleName() + "'");
+            return true; // Student is already enrolled
+        }
+    
+        // Step 4: Add the student to the module
+        module.getStudentList().add(studentId);
+        moduleRepository.save(module); // Save the updated module
+    
+        log.info(log_header + "Student " + studentId + " successfully joined module: " + module.getModuleName());
+        return true; // Successfully added the student
     }
+        
 }

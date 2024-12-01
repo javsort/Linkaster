@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -33,34 +34,27 @@ public class Module {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "module_owner_id", unique = true, nullable = false)
-    private long moduleOwnerId;
+    private Long moduleOwnerId;
 
-    @Column(name = "name", unique = true, nullable = false)
-    private String name;
+    @Column(name = "module_owner_name", unique = true, nullable = false)
+    private String moduleOwnerName;
+
+    @Column(name = "module_owner_type", unique = true, nullable = false)
+    private String moduleOwnerType;
+
+    @Column(name = "module_name", unique = true, nullable = false)
+    private String moduleName;
 
     @Column(name = "module_code", unique = true, nullable = false)
     private String moduleCode;    
 
-    @Column(name = "studentList")
-    private List<String> studentList;
+    @ElementCollection
+    @Column(name = "student_enrolled_ids")
+    private List<Long> studentList;
 
-    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<EventModel> eventsAndAnnouncements;
-
-    @Column(name = "type")
+    @Column(name = "module_type")
     private String type;
-
-    @Column(name = "description")
-    private String description;
-    
-    @Column(name = "startTime")
-    private String startTime;
-
-    @Column(name = "endTime")
-    private String endTime;
-
-    // Add groupchat's RSA key here
 }

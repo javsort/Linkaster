@@ -85,8 +85,15 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
 
+        // Allow all origins, methods and headers - for development purposes
+        configuration.addAllowedOriginPattern("*");
+
+        /*
+            End configuration:
+
         configuration.addAllowedOrigin("http://flutter-web:8077");
         configuration.addAllowedOrigin("http://localhost:8077");
+        */
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

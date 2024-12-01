@@ -1,21 +1,24 @@
 package com.linkaster.moduleManager.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.linkaster.moduleManager.dto.AnnouncementCreate;
+import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.dto.ModuleCreate;
-import com.linkaster.moduleManager.model.EventModel;
+import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.Module;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/api/module")
@@ -24,19 +27,20 @@ public interface APIModuleController {
     @GetMapping("")
     public String home();
 
-    @PostMapping("/createModule")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Module createModule(@RequestBody ModuleCreate module);
+    @GetMapping("/status")
+    public String status();
 
+    @PostMapping("/create")
+    public ResponseEntity<?> createModule(@RequestBody ModuleCreate module, HttpServletRequest request);
 
-    @PostMapping("/deleteModule/{id}")
+    @DeleteMapping("/delete/id")
     @ResponseStatus(HttpStatus.OK)
-    public boolean deleteModule(@PathVariable long id);
+    public boolean deleteModule(@RequestBody long id);
 
 
-    @PostMapping("/updateModule/{id}")
+    @PostMapping("/update/id")
     @ResponseStatus(HttpStatus.OK)
-    public boolean updateModule(@PathVariable long id, @RequestBody ModuleCreate module);
+    public boolean updateModule(@RequestBody long id, @RequestBody ModuleCreate module);
 
 
     @GetMapping("/getAllModules")
@@ -44,78 +48,54 @@ public interface APIModuleController {
     public List<Module> getAllModules();
 
 
-    @GetMapping("/getModuleById/{id}")
+    @GetMapping("/moduleId")
     @ResponseStatus(HttpStatus.OK)
-    public Module getModuleById(@PathVariable long id);
+    public Module getModuleById(@RequestBody long id);
 
 
-    @PostMapping("/assignTeacher")
+    @GetMapping("/students/moduleId")
     @ResponseStatus(HttpStatus.OK)
-    public boolean assignTeacher(@RequestParam long teacherUserId, @RequestParam long moduleId);
-
-
-    @GetMapping("/getStudentsByModule/{moduleId}")
+    public List<Long> getStudentsByModule(@RequestBody long moduleId);
+    
+    @GetMapping("/students")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> getStudentsByModule(@PathVariable long moduleId);
-
-
-    @GetMapping("/joinModulebyCode/{code}")
+    public List<Module> getModulesByStudent(@PathVariable long studentId);
+    
+    @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
-    public boolean joinModuleByCode(@PathVariable String code, @RequestParam long studentId);
+    public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule);
+    
 
-
-    @GetMapping("/leaveModule/{moduleId}/{studentId}")
+    @PostMapping("/leave")
     @ResponseStatus(HttpStatus.OK)
-    public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId);
+    public void leaveModule(@RequestBody long moduleId, @RequestBody long studentId);
 
 
-    @GetMapping("/newAssignment")
+    @PostMapping("/announcement")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createAnnouncement(@RequestBody AnnouncementCreate announcement);
+
+
+    @DeleteMapping("/announcement/id")
     @ResponseStatus(HttpStatus.OK)
-    public String newAssignment();
+    public boolean deleteAnnouncement(@RequestBody long announcementId, @RequestBody long moduleId);
 
 
-    @GetMapping("/deleteAssignment")
+    @GetMapping("/announcement/moduleId")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteAssignment();
+    public Iterable<Announcement> getAllAnnouncementsByModuleId(@RequestBody long moduleId);
 
-
-    @GetMapping("/updateAssignment")
+    @GetMapping("/announcement/user")
     @ResponseStatus(HttpStatus.OK)
-    public boolean updateAssignment();
-
-
-    @GetMapping("/getAllAssignments")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<EventModel>> getAllAssignments();
-
-
-    @GetMapping("/newAnnouncement")
-    @ResponseStatus(HttpStatus.OK)
-    public String newAnnouncement();
-
-
-    @GetMapping("/deleteAnnouncement")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean deleteAnnouncement();
-
-
-    @GetMapping("/updateAnnouncement")
-    @ResponseStatus(HttpStatus.OK)
-    public boolean updateAnnouncement();
-
-
-    @GetMapping("/getAllAnnouncements")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<EventModel>> getAllAnnouncements();
-
-
+    public Iterable<Announcement> getAllAnnouncementsByUserId(@RequestBody long userId);
+    /* 
     @GetMapping("/updateTimetable")
     @ResponseStatus(HttpStatus.OK)
     public boolean updateTimetable(@RequestParam Integer time, @RequestParam Date date);
-
+    */
     
     // Called by the student service - INTERSERVICE COMMUNICATION
     @GetMapping("/student/{studentId}/teachers")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@PathVariable String studentId);
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@RequestBody Long studentId);
 }

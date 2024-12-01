@@ -1,20 +1,133 @@
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/status.dart' as status;
 import '../models/chat.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class PrivateChatPage extends StatelessWidget {
+class PrivateChatPage extends StatefulWidget {
   final Chat chat;
+  final String? token;
 
-  PrivateChatPage({required this.chat});
+  PrivateChatPage({required this.chat, required this.token});
 
-  // Sample messages for demonstration
-  final List<Map<String, dynamic>> messages = [
-    {"isSent": true, "message": "Hello! How are you?", "time": "10:01 AM"},
-    {
-      "isSent": false,
-      "message": "I'm good, thanks! How about you?",
-      "time": "10:02 AM"
-    },
-  ];
+  @override
+  _PrivateChatPageState createState() => _PrivateChatPageState();
+}
+
+class _PrivateChatPageState extends State<PrivateChatPage> {
+  late WebSocketChannel _channel;
+  late List<Map<String, dynamic>> messages;
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    messages = [];
+    _fetchExistingMessages().then((_) => _connectToWebSocket());
+  }
+
+  Future<void> _fetchExistingMessages() async {
+    final apiUrl =
+        "http://localhost:8080/api/message/private/${widget.chat.privateChatId}";
+    final token = widget.token;
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> fetchedMessages = jsonDecode(response.body);
+        setState(() {
+          messages = fetchedMessages.map((msg) {
+            return {
+              'isSent': msg['senderId'] == widget.chat.senderId,
+              'message': msg['encryptedMessage'],
+              'time': DateTime.parse(msg['timestamp'])
+                  .toLocal()
+                  .toString()
+                  .split(' ')[1],
+            };
+          }).toList();
+        });
+      } else {
+        print("Failed to load messages. Status: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching messages: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _channel.sink.close(status.goingAway);
+    super.dispose();
+  }
+
+  void _connectToWebSocket() {
+    final uri = Uri.parse("ws://localhost:8086/ws");
+    _channel = WebSocketChannel.connect(uri);
+
+    // Send AUTH message immediately
+    final authMessage = {
+      "type": "PRIVATE_AUTH",
+      "token": widget.token,
+      "chatId": widget.chat.privateChatId.toString(),
+    };
+    _channel.sink.add(jsonEncode(authMessage));
+
+    // Listen for messages
+    _channel.stream.listen(
+      (message) {
+        print("Received: $message");
+        try {
+          final decodedMessage = jsonDecode(message);
+
+          if (decodedMessage.containsKey("message") &&
+              decodedMessage.containsKey("privateChatId")) {
+            setState(() {
+              messages.add({
+                'isSent': false,
+                'message': decodedMessage['message'],
+                'time': DateTime.now().toLocal().toString().split(' ')[1],
+              });
+            });
+          } else {
+            print("Invalid message structure received: $decodedMessage");
+          }
+        } catch (e) {
+          print("Error decoding message: $e");
+        }
+      },
+      onError: (error) => print("WebSocket Error: $error"),
+      onDone: () => print("WebSocket connection closed."),
+    );
+  }
+
+  void _sendMessage() {
+    final message = _messageController.text.trim();
+    if (message.isNotEmpty) {
+      final payload = {
+        "privateChatId": widget.chat.privateChatId.toString(),
+        "message": message,
+        "type": "PRIVATE"
+      };
+
+      _channel.sink.add(jsonEncode(payload));
+
+      setState(() {
+        messages.add({
+          'isSent': true,
+          'message': message,
+          'time': DateTime.now().toLocal().toString().split(' ')[1],
+        });
+      });
+
+      _messageController.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +136,17 @@ class PrivateChatPage extends StatelessWidget {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(chat.avatar),
+              backgroundColor: Colors.grey[300],
+              child: Text(
+                widget.chat.receiverName.isNotEmpty
+                    ? widget.chat.receiverName[0].toUpperCase()
+                    : "?",
+                style: TextStyle(color: Colors.black),
+              ),
               radius: 20,
             ),
             SizedBox(width: 10),
-            Text(chat.name),
+            Text(widget.chat.receiverName),
           ],
         ),
         backgroundColor: Theme.of(context).primaryColor,
@@ -79,9 +198,9 @@ class PrivateChatPage extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          // Expanded TextField for entering a message
           Expanded(
             child: TextField(
+              controller: _messageController,
               decoration: InputDecoration(
                 hintText: 'Type a message',
                 border:
@@ -89,19 +208,15 @@ class PrivateChatPage extends StatelessWidget {
               ),
             ),
           ),
-          // Attachment icon button (for future functionality)
           IconButton(
             icon: Icon(Icons.attach_file, color: Colors.grey),
             onPressed: () {
               // TODO: Add functionality for attaching a file
             },
           ),
-          // Send icon button
           IconButton(
             icon: Icon(Icons.send, color: Colors.blue),
-            onPressed: () {
-              // TODO: Implement send message functionality
-            },
+            onPressed: _sendMessage,
           ),
         ],
       ),

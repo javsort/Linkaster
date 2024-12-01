@@ -1,12 +1,14 @@
 package com.linkaster.userService.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Data
 // DTO for user registration -> what the user sends to the server
 public class UserRegistration {
     private String name;

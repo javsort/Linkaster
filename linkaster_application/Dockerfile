@@ -30,11 +30,11 @@ RUN flutter doctor -v && flutter config --enable-web
 # Clean the project (ensure a clean build)
 RUN flutter clean
 
-# Upgrade dependencies to the latest compatible versions
-RUN flutter pub upgrade
-
 # Get dependencies
 RUN flutter pub get
+
+# Upgrade dependencies to the latest compatible versions
+RUN flutter pub upgrade
 
 # Build for web
 RUN flutter build web --release

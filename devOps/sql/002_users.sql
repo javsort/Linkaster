@@ -16,7 +16,13 @@ INSERT INTO users (first_name, last_name, password, email, role, public_key, pri
 VALUES ('admin', 'lastname', 'admin_password', 'admin@example.com', 'ADMIN', NULL, NULL), 
        ('student','lastname', 'student_password', 'student@example.com', 'STUDENT', NULL, NULL),
        ('teacher','lastname', 'teacher_password', 'teacher@example.com', 'TEACHER', NULL, NULL),
-       ('adminteacher','lastname', 'adminteacher_password', 'adminteacher@example.com', 'ADMINTEACHER', NULL, NULL);
+       ('adminteacher','lastname', 'adminteacher_password', 'adminteacher@example.com', 'ADMINTEACHER', NULL, NULL),
+       ('User One', '5', 'user1_password', 'user1@example.com', 'STUDENT', 'user1_public_key_123', 'user1_private_key_123'),
+       ('User Two', '6', 'user2_password', 'user2@example.com', 'STUDENT', 'user2_public_key_456', 'user2_private_key_456'),
+       ('User Three', '7', 'user3_password', 'user3@example.com', 'STUDENT', 'user3_public_key_789', 'user3_private_key_789'),
+       ('User Four', '8', 'user4_password', 'user4@example.com', 'STUDENT', 'user4_public_key_101112', 'user4_private_key_101112'),
+       ('User Five', '9', 'user5_password', 'user5@example.com', 'STUDENT', 'user5_public_key_131415', 'user5_private_key_131415'),
+       ('User Six', '10', 'user6_password', 'user6@example.com', 'STUDENT', 'user6_public_key_161718', 'user6_private_key_161718');
 
 CREATE TABLE students (
     id BIGINT PRIMARY KEY, -- This matches the "id" in the users table

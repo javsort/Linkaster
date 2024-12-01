@@ -1,10 +1,11 @@
-package com.linkaster.messageHandler.message.p2p;
+package com.linkaster.messageHandler.model.p2p;
 // p2p -> private to private chat
 
+import java.sql.Date;
 import java.util.List;
 
-import com.linkaster.messageHandler.dto.ActorMetadata;
-import com.linkaster.messageHandler.model.PrivateMessage;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.linkaster.messageHandler.model.ActorMetadata;
 import com.linkaster.messageHandler.model.UserInfo;
 
 import jakarta.persistence.AttributeOverride;
@@ -42,7 +43,11 @@ public class PrivateChat {
     private long privateChatId;
 
     @OneToMany(mappedBy = "privateChat")
+    @JsonManagedReference
     private List<PrivateMessage> privateMessages;
+
+    @Column(name = "last_message_date")
+    private Date lastMessageDate;
 
     /*
      * UserInfo includes:
@@ -92,18 +97,27 @@ public class PrivateChat {
     public ActorMetadata getDestData(long userId){
         String keyToReturn = null;
         long userIdToReturn = 0;
+        String nameToReturn = null;
 
         if(user1.getUserId() == userId){
             keyToReturn = user2.getPublicKey();
             userIdToReturn = user2.getUserId();
+            nameToReturn = user2.getName();
+
         } else {
             keyToReturn = user1.getPublicKey();
             userIdToReturn = user1.getUserId();
+            nameToReturn = user1.getName();
         }
 
-        ActorMetadata actorMetadata = new ActorMetadata(keyToReturn, userIdToReturn);
+        ActorMetadata actorMetadata = new ActorMetadata(keyToReturn, userIdToReturn, nameToReturn);
 
         return actorMetadata;
+    }
+
+    // Check if the user is part of the chat
+    public boolean isUserInChat(long userId){
+        return user1.getUserId() == userId || user2.getUserId() == userId;
     }
     
 }

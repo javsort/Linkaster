@@ -1,4 +1,4 @@
-package com.linkaster.messageHandler.dto;
+package com.linkaster.messageHandler.model.p2p;
 
 import com.linkaster.messageHandler.model.UserInfo;
 

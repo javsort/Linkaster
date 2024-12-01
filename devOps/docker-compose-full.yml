@@ -1,5 +1,10 @@
 name: 'linkaster_application'
 
+
+# DO NOT UNCOMMENT THE SERVICES THAT ARE NOT READY YET -> if you're testing, you can uncomment the one being tested
+
+# Be careful for full deployment, you need to uncomment all the services
+
 services:
   # Front-end service
   flutter-web:
@@ -43,6 +48,104 @@ services:
     networks:
       - linkaster-network
 
+#  timetable-service:
+#    build:
+#      context: ../linkaster-services/services/timetableService
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8082
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+#
+#  reserve-service:
+#    build:
+#      context: ../linkaster-services/services/reserveService
+#    ports:
+#      - "8083:8083"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8083
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+#
+#  notification-service:
+#    build:
+#      context: ../linkaster-services/services/notifHandler
+#    ports:
+#      - "8084:8084"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8084
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+
+  module-manager:
+    build:
+      context: ../linkaster-services/services/moduleManager
+    ports:
+      - "8085:8085"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8085
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+  message-handler:
+    build:
+      context: ../linkaster-services/services/messageHandler
+    ports:
+      - "8086:8086"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8086
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
+
+#  feedback-service:
+#    build:
+#      context: ../linkaster-services/services/feedbackService
+#    ports:
+#      - "8087:8087"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8087
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+
+#  cabinet-service:
+#    build:
+#      context: ../linkaster-services/services/cabinetService
+#    ports:
+#      - "8088:8088"
+#    depends_on:
+#      - linkaster-MySQL
+#    environment:
+#      - SERVER_PORT=8088
+#    env_file:
+#      - .env
+#    networks:
+#      - linkaster-network
+
   linkaster-MySQL:
     container_name: "Linkaster-SQL"
     image: "mysql:8.0"
@@ -58,8 +161,15 @@ services:
       - MYSQL_USER=linkaster
       - MYSQL_PASSWORD=password
     volumes:
-      - ./sql/roles.sql:/docker-entrypoint-initdb.d/roles.sql
-      - ./sql/users.sql:/docker-entrypoint-initdb.d/users.sql
+      - ./sql/001_roles.sql:/docker-entrypoint-initdb.d/001_roles.sql
+      - ./sql/002_users.sql:/docker-entrypoint-initdb.d/002_users.sql
+      - ./sql/003_modules.sql:/docker-entrypoint-initdb.d/003_modules.sql
+      - ./sql/004_events.sql:/docker-entrypoint-initdb.d/004_events.sql
+      - ./sql/005_announcements.sql:/docker-entrypoint-initdb.d/005_announcements.sql
+      - ./sql/006_chats.sql:/docker-entrypoint-initdb.d/006_chats.sql
+      
+    
+    
 
 networks:
   linkaster-network:

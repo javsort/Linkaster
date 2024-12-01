@@ -21,6 +21,7 @@ public class SecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/ws/**").permitAll()              // Allow all requests to the WebSocket
             .anyRequest().permitAll()                       // Allow all requests -> To change when not testing
         )
         .sessionManagement(session -> session
