@@ -233,7 +233,7 @@ public class GatewayController implements APIGatewayController {
     // Forward requests to moduleService
     // All paths going into /module/** will be forwarded to the moduleService
     @Override
-    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody String requestBody) {
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
 
         log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());
         String targetUrl = moduleServiceUrl + request.getRequestURI();
