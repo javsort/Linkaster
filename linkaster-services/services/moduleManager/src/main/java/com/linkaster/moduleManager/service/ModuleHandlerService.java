@@ -33,60 +33,58 @@ public class ModuleHandlerService {
 
     public Announcement createAnnouncement(AnnouncementCreate announcementCreate) {
         long moduleId = announcementCreate.getModuleId();
-        String announcement = announcementCreate.getMessage();
+        String message = announcementCreate.getMessage();
         long ownerId = announcementCreate.getOwner_id();
-
+    
         log.info(log_header + "Creating announcement for module: " + moduleId);
-
+    
         // Validate module existence
         Optional<Module> moduleOptional = moduleRepository.findById(moduleId);
         if (moduleOptional.isEmpty()) {
             log.error(log_header + "Module with ID " + moduleId + " not found.");
             throw new IllegalArgumentException("Module not found");
         }
-
+    
+        Module module = moduleOptional.get();
+    
         // Create the announcement
-        
         Announcement newAnnouncement = new Announcement();
-        newAnnouncement.setMessage(announcement);
+        newAnnouncement.setMessage(message);
         newAnnouncement.setDate(new java.sql.Date(System.currentTimeMillis())); // Current date
-        newAnnouncement.setTime(java.time.LocalTime.now().toString()); // Current time
+        newAnnouncement.setTime(java.time.LocalTime.now().toString());          // Current time
         newAnnouncement.setOwnerId(ownerId);
-
-        // Save and return
+        newAnnouncement.setModuleId(moduleId);  // Link the announcement to the module
+    
+        // Save and return the announcement
         Announcement savedAnnouncement = announcementRepository.save(newAnnouncement);
         log.info(log_header + "Announcement created successfully: " + savedAnnouncement);
         return savedAnnouncement;
     }
+    
 
-
-    public Announcement deleteAnnouncement(long moduleId, long announcementId) {
-        log.info(log_header + "Deleting announcement - " + announcementId + " - from module: " + moduleId);
-
+   public boolean deleteAnnouncement(long moduleId, long announcementId) {
+        log.info(log_header + "Deleting announcement with ID: {} from module: {}", announcementId, moduleId);
+    
         // Fetch the announcement
         Optional<Announcement> announcementOptional = announcementRepository.findById(announcementId);
         if (announcementOptional.isEmpty()) {
             log.error(log_header + "Announcement with ID " + announcementId + " not found.");
             throw new IllegalArgumentException("Announcement not found");
         }
-
+    
         Announcement announcement = announcementOptional.get();
-
+    
         // Validate the module
-        if (announcement.getModule().getId() != moduleId) {
-            log.error(log_header + "Announcement does not belong to module ID " + moduleId);
+        if (announcement.getModuleId() != moduleId) {
+            log.error(log_header + "Announcement with ID {} does not belong to module ID {}", announcementId, moduleId);
             throw new IllegalArgumentException("Announcement does not belong to the specified module");
         }
-
+    
         // Delete the announcement
         announcementRepository.delete(announcement);
-        log.info(log_header + "Announcement deleted successfully: " + announcement);
-        return announcement;
-    }
-
-    public Iterable<Announcement> getAllAnnouncements() {
-        log.info(log_header + "Fetching all announcements");
-        return announcementRepository.findAll(); // Return the result from the repository
+        log.info(log_header + "Announcement deleted successfully.");
+    
+        return true;
     }
     
     public List<Announcement> getAllAnnouncementsByStudent(long studentId) {

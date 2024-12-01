@@ -26,12 +26,14 @@ public class Announcement {
     @Column(name = "id", unique = true, nullable = false)
     private long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "announcement_module_id", nullable = false)
-    private Module module;
+    @Column(name = "announcement_module_id", nullable = false)
+    private long moduleId;
 
     @Column(name = "announcement_message")
     private String message;
+
+    @Column(name = "announcement_name")
+    private String name;
 
     @Column(name = "announcement_date")
     private Date date;
