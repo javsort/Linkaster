@@ -1,9 +1,24 @@
 package com.linkaster.feedbackService.model;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
 //feedback contains: id, recipientName, senderName, anonymous, recipientModule, and contents
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+@Entity
+@Table(name = "feedback")
 public class Feedback {
     @Id
     @Column(name = "feedbackID")
@@ -12,14 +27,14 @@ public class Feedback {
     @Column(name = "recipientID")
     private int recipientID;
 
-    @Column(name = "senderID")
+    @Column(name = "sender_id")
     private int senderID;
 
     @Column(name = "anonymous")
     private boolean anonymous;
 
     @Column(name = "moduleID")
-    private int moduleID;
+    private long moduleID;
 
     @Column(name = "contents")
     private String contents;

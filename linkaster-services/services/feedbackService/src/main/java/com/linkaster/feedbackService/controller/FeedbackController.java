@@ -4,14 +4,17 @@ import com.linkaster.feedbackService.controller.FeedbackController;
 import com.linkaster.feedbackService.model.Feedback;
 import com.linkaster.feedbackService.service.FeedbackAnonymizerService;
 import com.linkaster.feedbackService.service.FeedbackHandlerService;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
+
+
+@Slf4j
 @RestController
-@RequestMapping("/feedback")
-@SpringBootApplication
-public class FeedbackController {
+public class FeedbackController implements APIFeedbackController {
 
     private final FeedbackAnonymizerService feedbackAnonymizerService;
     private final FeedbackHandlerService feedbackHandlerService;
@@ -22,7 +25,7 @@ public class FeedbackController {
         this.feedbackHandlerService = feedbackHandlerService;
     }
 
-    @PostMapping("/submit")
+    @Override
     public String handleFeedback(@RequestBody Feedback feedback) {
         if (feedback.getAnonymous() && feedback.getSenderID() != 0) {   //if feedback needs to be anonymized 
             feedbackAnonymizerService.anonymizeFeedback(feedback);
