@@ -1,14 +1,12 @@
 package com.linkaster.moduleManager.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.linkaster.moduleManager.model.ClassModule;
-import com.linkaster.moduleManager.model.ClubModule;
+import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
@@ -54,7 +52,10 @@ public class JoinCodeManagerService {
     
     
     // INTERSERVICE COMMUNICATION - Called by the student service
-    public boolean joinModuleByCode(String joinCode, long studentId) {
+    public boolean joinModuleByCode(JoinModuleCreate joinModuleCreate) {
+        String joinCode = joinModuleCreate.getCode();
+        long studentId = joinModuleCreate.getStudentId();
+
         log.info(log_header + "Student " + studentId + " attempting to join module with join code: " + joinCode);
     
         // Step 1: Validate the join code
@@ -72,7 +73,7 @@ public class JoinCodeManagerService {
     
         // Step 3: Check if the student is already enrolled
         if (module.getStudentList().contains(studentId)) {
-            log.info(log_header + "Student " + studentId + " is already enrolled in module: " + module.getName());
+            log.info(log_header + "Student: " + studentId + " is already enrolled in module: \nId: '" + module.getId() + "'\nModule Name: '" + module.getModuleName() + "'");
             return true; // Student is already enrolled
         }
     
@@ -80,7 +81,7 @@ public class JoinCodeManagerService {
         module.getStudentList().add(studentId);
         moduleRepository.save(module); // Save the updated module
     
-        log.info(log_header + "Student " + studentId + " successfully joined module: " + module.getName());
+        log.info(log_header + "Student " + studentId + " successfully joined module: " + module.getModuleName());
         return true; // Successfully added the student
     }
         

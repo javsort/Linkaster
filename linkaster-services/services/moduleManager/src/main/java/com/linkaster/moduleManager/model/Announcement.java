@@ -9,18 +9,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @Entity
-@Table (name = "module_announcements")
+@Table (name = "announcements")
 public class Announcement {
 
     @Id
@@ -28,19 +27,19 @@ public class Announcement {
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "module_id", nullable = false)
+    @JoinColumn(name = "announcement_module_id", nullable = false)
     private Module module;
 
-    @Column(name = "message")
+    @Column(name = "announcement_message")
     private String message;
 
-    @Column(name = "date")
+    @Column(name = "announcement_date")
     private Date date;
 
-    @Column(name = "time")
+    @Column(name = "announcement_time")
     private String time;
 
-    @Column(name = "owner_id")
+    @Column(name = "announcement_owner_id")
     private Long ownerId;
     
 }

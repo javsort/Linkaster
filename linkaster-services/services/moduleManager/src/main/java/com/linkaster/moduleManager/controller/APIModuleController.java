@@ -1,22 +1,24 @@
 package com.linkaster.moduleManager.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.linkaster.moduleManager.dto.AnnouncementCreate;
+import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.model.Announcement;
-import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/api/module")
@@ -28,19 +30,17 @@ public interface APIModuleController {
     @GetMapping("/status")
     public String status();
 
-    @PostMapping("/createModule")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Module createModule(@RequestBody ModuleCreate module);
+    @PostMapping("/create")
+    public ResponseEntity<?> createModule(@RequestBody ModuleCreate module, HttpServletRequest request);
 
-
-    @PostMapping("/deleteModule/{id}")
+    @DeleteMapping("/delete/id")
     @ResponseStatus(HttpStatus.OK)
-    public boolean deleteModule(@PathVariable long id);
+    public boolean deleteModule(@RequestBody long id);
 
 
-    @PostMapping("/updateModule/{id}")
+    @PostMapping("/update/id")
     @ResponseStatus(HttpStatus.OK)
-    public boolean updateModule(@PathVariable long id, @RequestBody ModuleCreate module);
+    public boolean updateModule(@RequestBody long id, @RequestBody ModuleCreate module);
 
 
     @GetMapping("/getAllModules")
@@ -48,45 +48,46 @@ public interface APIModuleController {
     public List<Module> getAllModules();
 
 
-    @GetMapping("/getModuleById/{id}")
+    @GetMapping("/moduleId")
     @ResponseStatus(HttpStatus.OK)
-    public Module getModuleById(@PathVariable long id);
+    public Module getModuleById(@RequestBody long id);
 
 
-    @PostMapping("/assignTeacher")
+    @GetMapping("/students/moduleId")
     @ResponseStatus(HttpStatus.OK)
-    public boolean assignTeacher(@RequestParam long teacherUserId, @RequestParam long moduleId);
-
-
-    @GetMapping("/getStudentsByModule/{moduleId}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Long> getStudentsByModule(@PathVariable long moduleId);
-
-
+    public List<Long> getStudentsByModule(@RequestBody long moduleId);
     
-    @GetMapping("/joinModulebyCode/{code}")
+    @GetMapping("/students")
     @ResponseStatus(HttpStatus.OK)
-    public boolean joinModuleByCode(@PathVariable String code, @RequestParam long studentId);
+    public List<Module> getModulesByStudent(@PathVariable long studentId);
+    
+    @PostMapping("/join")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule);
     
 
-    @GetMapping("/leaveModule/{moduleId}/{studentId}")
+    @PostMapping("/leave")
     @ResponseStatus(HttpStatus.OK)
-    public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId);
+    public void leaveModule(@RequestBody long moduleId, @RequestBody long studentId);
 
 
-    @GetMapping("/createAnnouncement")
+    @PostMapping("/announcement")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createAnnouncement(@PathVariable long moduleId, @PathVariable long userId, @RequestBody String announcement);
+    public String createAnnouncement(@RequestBody AnnouncementCreate announcement);
 
 
-    @GetMapping("/deleteAnnouncement")
+    @DeleteMapping("/announcement/id")
     @ResponseStatus(HttpStatus.OK)
-    public boolean deleteAnnouncement(@PathVariable long announcementId, @PathVariable long moduleId);
+    public boolean deleteAnnouncement(@RequestBody long announcementId, @RequestBody long moduleId);
 
 
-    @GetMapping("/getAllAnnouncements")
+    @GetMapping("/announcement/moduleId")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Announcement> getAllAnnouncementsByModuleId();
+    public Iterable<Announcement> getAllAnnouncementsByModuleId(@RequestBody long moduleId);
+
+    @GetMapping("/announcement/user")
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Announcement> getAllAnnouncementsByUserId(@RequestBody long userId);
     /* 
     @GetMapping("/updateTimetable")
     @ResponseStatus(HttpStatus.OK)
@@ -96,5 +97,5 @@ public interface APIModuleController {
     // Called by the student service - INTERSERVICE COMMUNICATION
     @GetMapping("/student/{studentId}/teachers")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@PathVariable Long studentId);
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@RequestBody Long studentId);
 }
