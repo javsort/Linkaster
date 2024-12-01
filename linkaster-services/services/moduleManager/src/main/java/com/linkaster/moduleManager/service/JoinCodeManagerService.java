@@ -1,6 +1,5 @@
 package com.linkaster.moduleManager.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.linkaster.moduleManager.dto.JoinModuleCreate;
-import com.linkaster.moduleManager.model.ClassModule;
-import com.linkaster.moduleManager.model.ClubModule;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 

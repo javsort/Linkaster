@@ -53,9 +53,9 @@ public class GatewayController implements APIGatewayController {
     private final GatewayAuthService gatewayAuthService;
 
     @Autowired
-    public GatewayController(GatewayAuthService gatewayAuthService) {
+    public GatewayController(GatewayAuthService gatewayAuthService, RestTemplate restTemplate) {
         this.gatewayAuthService = gatewayAuthService;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -233,7 +233,7 @@ public class GatewayController implements APIGatewayController {
     // Forward requests to moduleService
     // All paths going into /module/** will be forwarded to the moduleService
     @Override
-    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request) {
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody String requestBody) {
 
         log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());
         String targetUrl = moduleServiceUrl + request.getRequestURI();
@@ -245,16 +245,6 @@ public class GatewayController implements APIGatewayController {
             .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Get the request body
-        String requestBody = null;
-        try {
-            requestBody = request.getReader().lines()
-                .reduce("", (accumulator, actual) -> accumulator + actual);
-        } catch (IOException e) {
-            log.error(log_header + "Error reading request body", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to read request body.");
-        }
-
         log.info(log_header + "Request headers: " + headers);
         log.info(log_header + "Request body: " + requestBody);
         
@@ -263,25 +253,26 @@ public class GatewayController implements APIGatewayController {
 
         log.info(log_header + "Forwarding request to moduleService: " + targetUrl);
             
-        ResponseEntity<String> response = restTemplate.exchange(
-            targetUrl,
-            HttpMethod.valueOf(request.getMethod()),
-            entity,
-            String.class
-        );
-
-        log.info(log_header + "Response from moduleService: " + response.getBody());
+        try {
+            log.info(log_header + "Forwarding to module Service. The request has these qualities: \nUrl:" + " " + targetUrl + "\nMethod: " + request.getMethod() + "\nHeaders: " + headers + "\nBody: " + requestBody);
+            // Forward the request to the Module Manager service
+            ResponseEntity<String> response = restTemplate.exchange(
+                targetUrl,
+                HttpMethod.valueOf(request.getMethod()),
+                entity,
+                String.class
+            );
     
+            // Log the response for debugging
+            log.info("Response from Module Manager: Body= '" + response.getBody() +  "'', Status= " + response.getStatusCode());
+    
+            // Return the response back to the client
             return new ResponseEntity<>(response.getBody(), response.getStatusCode());
-
-        // Forward the request
-        /*try {
-            
-            
+    
         } catch (Exception e) {
-            log.error(log_header + "Error while forwarding request to moduleService: ", e);
-            return ResponseEntity.status(500).body("An error occurred while processing your request.");
-        }*/
+            log.error("Error while forwarding request toW Module Manager", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while forwarding the request.");
+        }
     }
 
 }

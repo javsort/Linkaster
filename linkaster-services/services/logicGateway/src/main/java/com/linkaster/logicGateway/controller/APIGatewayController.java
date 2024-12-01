@@ -43,6 +43,6 @@ public interface APIGatewayController {
     public ResponseEntity<?> forwardToUserService(HttpServletRequest request);
 
     @RequestMapping("/module/**")
-    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request); 
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody String requestBody); 
 
 }

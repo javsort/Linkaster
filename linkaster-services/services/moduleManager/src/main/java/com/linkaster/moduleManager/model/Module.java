@@ -57,7 +57,4 @@ public class Module {
 
     @Column(name = "module_type")
     private String type;
-
-
-    // Add groupchat's RSA key here
 }
