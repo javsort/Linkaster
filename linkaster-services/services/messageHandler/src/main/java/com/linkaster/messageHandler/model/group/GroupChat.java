@@ -36,15 +36,14 @@ import lombok.Setter;
 @Entity
 @Table(name = "group_chats")
 public class GroupChat {
-
     
     @Id
     @Column(name = "group_chat_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupChatId;
 
-    @Column(name = "encrypted_module_AESKey")
-    private byte[] encryptedModuleAESKey;
+    @Column(name = "module_AESKey")
+    private String moduleAESKey;
 
     @Column(name = "moduleId")
     private long moduleId;

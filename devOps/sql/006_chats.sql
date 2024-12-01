@@ -24,3 +24,47 @@ INSERT INTO private_chats (
  'user4@example.com', 'User Four', 'user4_public_key_101112', 'TEACHER', 8, '2024-12-01'),
 ('user5@example.com', 'User Five', 'user5_public_key_131415', 'ADMIN', 9,
  'user6@example.com', 'User Six', 'user6_public_key_161718', 'STUDENT', 10, '2024-12-01');
+
+-- Create the group chats table
+ CREATE TABLE group_chats (
+    group_chat_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    module_AESKey VARCHAR(255) NOT NULL,
+    moduleId BIGINT NOT NULL,
+    moduleName VARCHAR(255) NOT NULL,
+    ownerUserId BIGINT NOT NULL
+);
+
+CREATE TABLE group_chat_members (
+    group_chat_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    public_key VARCHAR(255) NOT NULL,
+    PRIMARY KEY (group_chat_id, user_id),
+    FOREIGN KEY (group_chat_id) REFERENCES group_chats(group_chat_id)
+);
+
+-- Insert example group chats
+INSERT INTO group_chats (module_AESKey, moduleId, moduleName, ownerUserId)
+VALUES
+('aes_key_1', 1, 'Internet Application of Engineering', 2),
+('aes_key_2', 2, 'Robotics', 2),
+('aes_key_3', 3, 'Artificial Intelligence', 3);
+
+-- Insert members for the group chats
+INSERT INTO group_chat_members (group_chat_id, user_id, public_key)
+VALUES
+-- Group Chat 1: Internet Application of Engineering
+(1, 2, 'public_key_2'),
+(1, 5, 'public_key_5'),
+(1, 6, 'public_key_6'),
+(1, 7, 'public_key_7'),
+
+-- Group Chat 2: Robotics
+(2, 2, 'public_key_2'),
+(2, 8, 'public_key_8'),
+(2, 9, 'public_key_9'),
+
+-- Group Chat 3: Artificial Intelligence
+(3, 3, 'public_key_3'),
+(3, 10, 'public_key_10'),
+(3, 11, 'public_key_11'),
+(3, 12, 'public_key_12');

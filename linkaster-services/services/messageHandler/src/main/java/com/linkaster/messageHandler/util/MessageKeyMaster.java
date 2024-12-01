@@ -13,6 +13,7 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.stereotype.Component;
 
@@ -39,8 +40,7 @@ public class MessageKeyMaster {
             keyGenerator.initialize(2048);
             this.applicationKeyPair = keyGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Error generating application key pair", e);
         }
         
         if (this.applicationKeyPair != null) {
@@ -48,20 +48,16 @@ public class MessageKeyMaster {
         } else {
             log.error("Application Key Pair generation failed");
         }
-
     }
 
     // Encode the key pair
     public String encodePublic(PublicKey pubKey) {
-        String publicKey = Base64.getEncoder().encodeToString(pubKey.getEncoded());
-        return publicKey;
+        return Base64.getEncoder().encodeToString(pubKey.getEncoded());
     }
 
     public String encodePrivate(PrivateKey privKey) {
-        String privateKey = Base64.getEncoder().encodeToString(privKey.getEncoded());
-        return privateKey;
+        return Base64.getEncoder().encodeToString(privKey.getEncoded());
     }
-
 
     /* 
     * Private Chat Ops -> RSA Encryption
@@ -75,24 +71,20 @@ public class MessageKeyMaster {
     }
     
     private PublicKey decodePublic(String publicKey) throws Exception {
-        PublicKey pubKey = KeyFactory.getInstance("RSA")
+        return KeyFactory.getInstance("RSA")
             .generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(publicKey)));
-        return pubKey;
     }
 
     private PrivateKey decodePrivate(String privateKey) throws Exception {
-        PrivateKey privKey = KeyFactory.getInstance("RSA")
+        return KeyFactory.getInstance("RSA")
             .generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey)));
-        return privKey;
     }
-
 
     // Encryption + Decryption
     public String encryptMessage(String message, String codedPublic) throws Exception {
         PublicKey publicKey = decodePublic(codedPublic);
 
         Cipher cipher = Cipher.getInstance("RSA");
-
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         
         byte[] encryptedMessage = cipher.doFinal(message.getBytes());
@@ -104,7 +96,6 @@ public class MessageKeyMaster {
         PrivateKey privateKey = decodePrivate(codedPrivate);
 
         Cipher cipher = Cipher.getInstance("RSA");
-
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         
         byte[] decryptedMessage = cipher.doFinal(Base64.getDecoder().decode(encryptedMessage));
@@ -115,7 +106,7 @@ public class MessageKeyMaster {
     /*
      * Group Chat extra functionality -> Hybrid Encryption
      */
-    public byte[] encryptAESKeyWithAppPublicKey() throws Exception {
+    public String encryptAESKeyWithAppPublicKey() throws Exception {
         // Get the application public key
         PublicKey publicKey = this.applicationKeyPair.getPublic();
 
@@ -127,14 +118,32 @@ public class MessageKeyMaster {
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         byte[] encryptedAESKey = cipher.doFinal(moduleAESKey.getEncoded());
         
-        return encryptedAESKey;
+        return Base64.getEncoder().encodeToString(encryptedAESKey);
+    }
+
+    public String encryptMessageWithAESKey(String message, String encryptedKey) throws Exception {
+        // Get key out of byte array -> decrypt with app private key
+        PrivateKey privateKey = this.applicationKeyPair.getPrivate();
+
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        byte[] decodedKey = cipher.doFinal(Base64.getDecoder().decode(encryptedKey));
+
+        // Reconstruct the key
+        SecretKey moduleAESKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+
+        // Encrypt the message with the AES key
+        Cipher aesCipher = Cipher.getInstance("AES");
+        aesCipher.init(Cipher.ENCRYPT_MODE, moduleAESKey);
+        byte[] encryptedMessage = aesCipher.doFinal(message.getBytes());
+
+        return Base64.getEncoder().encodeToString(encryptedMessage);
     }
 
     public SecretKey generateGroupChatKey() throws Exception {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         keyGen.init(256); 
 
-        return  keyGen.generateKey();
+        return keyGen.generateKey();
     }
-
 }
