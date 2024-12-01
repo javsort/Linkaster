@@ -10,7 +10,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 @Entity
 @Table (name = "events")
 public class EventModel {
@@ -19,9 +21,8 @@ public class EventModel {
     @Column(name = "id", unique = true, nullable = false)
     private long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "event_module_id", nullable = false)  
-    private Module module;
+    @Column(name = "event_module_id", nullable = false)  
+    private long moduleId;
 
     @Column(name = "event_name")
     private String name;
@@ -39,6 +40,6 @@ public class EventModel {
     private String room;
 
     @Column(name = "event_owner_id")
-    private Long ownerId;
+    private long ownerId;
 
 }

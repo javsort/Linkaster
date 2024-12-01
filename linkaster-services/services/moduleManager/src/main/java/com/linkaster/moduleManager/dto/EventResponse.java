@@ -6,22 +6,18 @@ import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-
-public class EventCreate {
+public class EventResponse {
     private long id;
     private String name;
     private String startTime;
     private String endTime;
     private String room;
     private Date date;
-    private long ownerId;
-    private long moduleId;
+    private Module moduleId;
 
 }
