@@ -17,20 +17,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ModuleCreate {
-    private String name;
-    private String moduleCode;
+    private String moduleOwnerId;
+    private String moduleOwnerName;
     private String type;
-    private List<Long> students;
-    private List<EventModel> events;
-    private List<Announcement> announcements;
-    private List<String> studentIds;
-
-    // ClubModule only fields
-    private String clubLeaderStudentId;
-    private String clubLeader;
-
-    // ClassModule only fields
-    private String teacherId;
-    private String teacherName;
+    private String moduleName;
+    private String moduleCode;
 
 }

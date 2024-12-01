@@ -35,14 +35,14 @@ public interface APIGatewayController {
     public ResponseEntity<?> register(@RequestBody UserRegistration regRequest, @PathVariable("user_type") String user_type);
 
     // Special access. Only one authorization to enabling websocket for messaging:
-    @GetMapping("/message/**")
+    @RequestMapping("/message/**")
     public ResponseEntity<?> forwardToMessageService(HttpServletRequest request);
 
     // Access to services through gateway
-    @GetMapping("/user/**")
+    @RequestMapping("/user/**")
     public ResponseEntity<?> forwardToUserService(HttpServletRequest request);
 
-    @GetMapping("/module/**")
-    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request); 
+    @RequestMapping("/module/**")
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody String requestBody); 
 
 }

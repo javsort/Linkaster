@@ -1,15 +1,14 @@
 package com.linkaster.moduleManager.service;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.linkaster.moduleManager.model.ClassModule;
-import com.linkaster.moduleManager.model.ClubModule;
+import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
@@ -33,35 +32,20 @@ public class AuditManagerService {
         List<Long> studentIds = new ArrayList<>();
 
         // Fetch the module by ID
-        moduleRepository.findById(moduleId).ifPresent(module -> {
-            // Check if the module is a ClassModule
-            if (module instanceof ClassModule) {
-                log.info(log_header + "Module {} is a class module", moduleId);
-
-                // Add student IDs from the class module to the list
-                studentIds.addAll(((ClassModule) module).getStudentList());
-            }
-            // Check if the module is a ClubModule
-            else if (module instanceof ClubModule) {
-                log.info(log_header + "Module {} is a club module", moduleId);
-
-                // Add student IDs from the club module to the list
-                studentIds.addAll(((ClubModule) module).getStudentList());
-            }
-            // Handle unknown module types
-            else {
-                log.error(log_header + "Module {} is not a class or club module", moduleId);
-            }
-        });
+        Module module = moduleRepository.findById(moduleId).orElse(null);
 
         // Log and return the result
-        if (studentIds.isEmpty()) {
-            log.info(log_header + "No students found for module: {}", moduleId);
+        if (module == null) {
+            log.info(log_header + "Module with id: " + moduleId + " not found");
             return Collections.emptyList(); // Return an empty list if no students are found
+
         } else {
-            log.info(log_header + "Found {} students for module: {}", studentIds.size(), moduleId);
-            //Transform student IDs to student names
-            return studentIds;
+            
+            int amountOfUsersInModule = module.getStudentList().size();
+
+            log.info(log_header + "Found: " + amountOfUsersInModule + " students for module: " + moduleId);
+
+            return module.getStudentList();
         }
     }
 
@@ -73,15 +57,14 @@ public class AuditManagerService {
         List<Long> teachers = new ArrayList<>();
     
         moduleRepository.findAll().forEach(module -> {
-            if (module instanceof ClassModule) {
-                ClassModule classModule = (ClassModule) module;
+            if (module.getType().equals("class_module")) {
     
                 // Check if student is enrolled in this module
-                if (classModule.getStudentList().contains(studentId)) {
+                if (module.getStudentList().contains(studentId)) {
                     log.info(log_header + "Student {} is enrolled in module {}", studentId, module.getId());
     
                     // Get the teacher for this module and add to teachers list
-                    teachers.add(classModule.getModuleOwnerId());
+                    teachers.add(module.getModuleOwnerId());
                 }
             }
         });

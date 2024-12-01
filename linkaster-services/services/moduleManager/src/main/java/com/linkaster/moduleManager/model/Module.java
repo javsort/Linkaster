@@ -34,30 +34,27 @@ public class Module {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "module_owner_id", unique = true, nullable = false)
-    private long moduleOwnerId;
+    private Long moduleOwnerId;
 
-    @Column(name = "name", unique = true, nullable = false)
-    private String name;
+    @Column(name = "module_owner_name", unique = true, nullable = false)
+    private String moduleOwnerName;
+
+    @Column(name = "module_owner_type", unique = true, nullable = false)
+    private String moduleOwnerType;
+
+    @Column(name = "module_name", unique = true, nullable = false)
+    private String moduleName;
 
     @Column(name = "module_code", unique = true, nullable = false)
     private String moduleCode;    
 
     @ElementCollection
-    @Column(name = "studentList")
+    @Column(name = "student_enrolled_ids")
     private List<Long> studentList;
 
-    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<EventModel> events;
-
-    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Announcement> announcements;
-
-    @Column(name = "type")
+    @Column(name = "module_type")
     private String type;
-
-
-    // Add groupchat's RSA key here
 }

@@ -1,13 +1,17 @@
 package com.linkaster.moduleManager.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.linkaster.moduleManager.model.Module;
+import com.linkaster.moduleManager.dto.AnnouncementCreate;
 import com.linkaster.moduleManager.model.Announcement;
-import com.linkaster.moduleManager.repository.ModuleRepository;
+import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.AnnouncementRepository;
-import java.util.Optional;
+import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -27,21 +31,11 @@ public class ModuleHandlerService {
 
     // Admin Tasks
 
-    public boolean assignTeacher(long moduleId, long teacherId) {
-        log.info(log_header + "Assigning teacher: '" + teacherId + "'' to module: " + moduleId);
-        // Logic to assign a teacher to a module
-        
+    public Announcement createAnnouncement(AnnouncementCreate announcementCreate) {
+        long moduleId = announcementCreate.getModuleId();
+        String announcement = announcementCreate.getMessage();
+        long ownerId = announcementCreate.getOwner_id();
 
-        return true; // Replace with actual implementation
-    }
-
-    public Module unassignTeacher(long moduleId, long teacherId) {
-        log.info(log_header + "Unassigning teacher: '" + teacherId + "'' to module: " + moduleId);
-        // Logic to unassign a teacher from a module
-        return null; // Replace with actual implementation
-    }
-
-    public Announcement createAnnouncement(long moduleId, String announcement, long ownerId) {
         log.info(log_header + "Creating announcement for module: " + moduleId);
 
         // Validate module existence
@@ -52,9 +46,8 @@ public class ModuleHandlerService {
         }
 
         // Create the announcement
-        Module module = moduleOptional.get();
+        
         Announcement newAnnouncement = new Announcement();
-        newAnnouncement.setModule(module);
         newAnnouncement.setMessage(announcement);
         newAnnouncement.setDate(new java.sql.Date(System.currentTimeMillis())); // Current date
         newAnnouncement.setTime(java.time.LocalTime.now().toString()); // Current time
@@ -96,12 +89,26 @@ public class ModuleHandlerService {
         return announcementRepository.findAll(); // Return the result from the repository
     }
     
-    public Iterable<Announcement> getAllAnnouncementsByUserId(long userId) {
-        log.info(log_header + "Fetching all announcements for user: " + userId);    
-        return announcementRepository.findByOwnerId(userId); // Return the result from the repository
+    public List<Announcement> getAllAnnouncementsByStudent(long studentId) {
+        log.info("Fetching all announcements for user: " + studentId);
+        
+        // Find the modules the student is enrolled in
+        Iterable<Module> modules = moduleRepository.findAllByStudentId(studentId);
+    
+        // Find the announcements for each module
+        List<Announcement> announcements = new ArrayList<>();
+        if (modules != null) {
+            for (Module module : modules) {
+                List<Announcement> moduleAnnouncements = announcementRepository.findAllByModuleId(module.getId());
+                if (moduleAnnouncements != null) {
+                    announcements.addAll(moduleAnnouncements);
+                }
+            }
+        }
+    
+        return announcements;
     }
     
-
 
     public Module leaveModule(long moduleId, long studentId) {
         log.info(log_header + "Student: " + studentId + " leaving module: " + moduleId);

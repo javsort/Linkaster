@@ -1,5 +1,7 @@
 package com.linkaster.logicGateway.controller;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,9 +53,9 @@ public class GatewayController implements APIGatewayController {
     private final GatewayAuthService gatewayAuthService;
 
     @Autowired
-    public GatewayController(GatewayAuthService gatewayAuthService) {
+    public GatewayController(GatewayAuthService gatewayAuthService, RestTemplate restTemplate) {
         this.gatewayAuthService = gatewayAuthService;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -125,10 +129,25 @@ public class GatewayController implements APIGatewayController {
             log.info(log_header + "Establishing websocket connection through messaging service... ");
             String targetUrl = messageServiceUrl + request.getRequestURI();
             
+            // Cycle through headers and add them to the new request
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", request.getHeader("Authorization"));
+            Collections.list(request.getHeaderNames())
+                .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+                headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<?> entity = new HttpEntity<>(headers);
+            // Get the request body
+            String requestBody = null;
+            try {
+                requestBody = request.getReader().lines()
+                    .reduce("", (accumulator, actual) -> accumulator + actual);
+            } catch (IOException e) {
+                log.error(log_header + "Error reading request body", e);
+            }
+
+            HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
+            log.info(log_header + "Request headers: " + headers);
+            log.info(log_header + "Request body: " + requestBody);
+            
 
             // Forward the request
             ResponseEntity<?> response = restTemplate.exchange(
@@ -145,16 +164,29 @@ public class GatewayController implements APIGatewayController {
             String targetUrl = messageServiceUrl + request.getRequestURI();
             
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", request.getHeader("Authorization"));
+            Collections.list(request.getHeaderNames())
+                .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+                headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<?> entity = new HttpEntity<>(headers);
+            // Get the request body
+            String requestBody = null;
+            try {
+                requestBody = request.getReader().lines()
+                    .reduce("", (accumulator, actual) -> accumulator + actual);
+            } catch (IOException e) {
+                log.error(log_header + "Error reading request body", e);
+            }
+
+            HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
+            log.info(log_header + "Request headers: " + headers);
+            log.info(log_header + "Request body: " + requestBody);
 
             // Forward the request
-            ResponseEntity<String> response = restTemplate.exchange(
+            ResponseEntity<Map> response = restTemplate.exchange(
                 targetUrl,
                 HttpMethod.valueOf(request.getMethod()),
                 entity,
-                String.class
+                Map.class
             );
 
             return new ResponseEntity<>(response.getBody(), response.getStatusCode());
@@ -170,16 +202,29 @@ public class GatewayController implements APIGatewayController {
         String targetUrl = userServiceUrl + request.getRequestURI();
         
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
+        Collections.list(request.getHeaderNames())
+            .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        // Get the request body
+        String requestBody = null;
+        try {
+            requestBody = request.getReader().lines()
+                .reduce("", (accumulator, actual) -> accumulator + actual);
+        } catch (IOException e) {
+            log.error(log_header + "Error reading request body", e);
+        }
+
+        HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
+        log.info(log_header + "Request headers: " + headers);
+        log.info(log_header + "Request body: " + requestBody);
 
         // Forward the request
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<Map> response = restTemplate.exchange(
             targetUrl,
             HttpMethod.valueOf(request.getMethod()),
             entity,
-            String.class
+            Map.class
         );
 
         return new ResponseEntity<>(response.getBody(), response.getStatusCode());
@@ -188,25 +233,46 @@ public class GatewayController implements APIGatewayController {
     // Forward requests to moduleService
     // All paths going into /module/** will be forwarded to the moduleService
     @Override
-    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request) {
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
 
         log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());
         String targetUrl = moduleServiceUrl + request.getRequestURI();
+
+        log.info(log_header + "Request before processing data: " + request);
         
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
+        Collections.list(request.getHeaderNames())
+            .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        log.info(log_header + "Request headers: " + headers);
+        log.info(log_header + "Request body: " + requestBody);
+        
+        log.info(log_header + "Request after processing data: " + request);
+        HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
 
-        // Forward the request
-        ResponseEntity<String> response = restTemplate.exchange(
-            targetUrl,
-            HttpMethod.valueOf(request.getMethod()),
-            entity,
-            String.class
-        );
-
-        return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+        log.info(log_header + "Forwarding request to moduleService: " + targetUrl);
+            
+        try {
+            log.info(log_header + "Forwarding to module Service. The request has these qualities: \nUrl:" + " " + targetUrl + "\nMethod: " + request.getMethod() + "\nHeaders: " + headers + "\nBody: " + requestBody);
+            // Forward the request to the Module Manager service
+            ResponseEntity<String> response = restTemplate.exchange(
+                targetUrl,
+                HttpMethod.valueOf(request.getMethod()),
+                entity,
+                String.class
+            );
+    
+            // Log the response for debugging
+            log.info("Response from Module Manager: Body= '" + response.getBody() +  "'', Status= " + response.getStatusCode());
+    
+            // Return the response back to the client
+            return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+    
+        } catch (Exception e) {
+            log.error("Error while forwarding request toW Module Manager", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while forwarding the request.");
+        }
     }
 
 }
