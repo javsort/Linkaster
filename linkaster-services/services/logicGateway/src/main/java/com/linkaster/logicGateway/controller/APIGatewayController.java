@@ -45,4 +45,6 @@ public interface APIGatewayController {
     @RequestMapping("/module/**")
     public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody String requestBody); 
 
+    @RequestMapping("/feedback/**")
+    public ResponseEntity<?> forwardToFeedbackService(HttpServletRequest request, @RequestBody String requestBody);
 }

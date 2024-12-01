@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -17,6 +19,7 @@ class FeedbackPage extends StatefulWidget {
 class _FeedbackPageState extends State<FeedbackPage> {
   String? selectedRecipient;
   bool isAnonymous = false;
+  String? feedbackInput;
   final TextEditingController feedbackController = TextEditingController();
 
   final List<String> recipients = [
@@ -137,6 +140,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
+                //add saving feedback text as feedbackInput
               ),
             ),
             SizedBox(height: 20),
