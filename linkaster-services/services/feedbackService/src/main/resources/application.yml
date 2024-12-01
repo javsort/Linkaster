@@ -14,19 +14,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
-  web:
-    mvc:
-      log-request-details: true
-      
   cloud:
     gateway:
       routes:
-        - id: user-service
-          uri: ${USER_SERVICE_URL:http://localhost:8081}
+        - id: feedback-service
+          uri: ${FEEDBACK_SERVICE_URL:http://localhost:8087}
           predicates:
-            - Path=/api/user/**
-            - Path=/api/user/getAllUsers
-            - Path=/api/auth/**
+            - Path=/api/feedback/**
+            - Path=/api/feedback/getAllFeedbacks
           filters:
             - AddRequestHeader=Authorization, "#{request.headers.Authorization}" # Forward Authorization header
 
@@ -39,25 +34,8 @@ logging:
       springframework.cloud.gateway: ${LOGGING_LEVEL_SPRING_CLOUD:DEBUG}
 
 address:
-  user:
-    url: ${USER_SERVICE_URL:http://localhost:8081}
-  logicGateway: 
-    url: ${LOGIC_GATEWAY_URL:http://localhost:8080}
-  timetable: 
-    url: ${TIMETABLE_SERVICE_URL:http://localhost:8082}
-  reserve:  
-    url: ${RESERVE_SERVICE_URL:http://localhost:8083}
-  notif:  
-    url: ${NOTIF_SERVICE_URL:http://localhost:8084}
-  module:  
-    url: ${MODULE_SERVICE_URL:http://localhost:8085}
-  message:  
-    url: ${MESSAGE_SERVICE_URL:http://localhost:8086}
   feedback:  
     url: ${FEEDBACK_SERVICE_URL:http://localhost:8087}
-  cabinet:  
-    url: ${CABINET_SERVICE_URL:http://localhost:8088}
 
-# Set up connections to other services:
 server:
   port: ${SERVER_PORT:8087}
