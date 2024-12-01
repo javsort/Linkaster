@@ -43,6 +43,9 @@ public class GatewayController implements APIGatewayController {
     @Value("${address.message.url}")
     private String messageServiceUrl;
 
+    @Value("${address.feedback.url}")
+    private String feedbackServiceUrl;
+
     private final String log_header = "GatewayController --- ";
 
     // END: Endpoints
@@ -150,6 +153,17 @@ public class GatewayController implements APIGatewayController {
         String targetUrl = moduleServiceUrl + request.getRequestURI();
 
         return travelGate(request, targetUrl, requestBody, "Module Manager Service");
+    }
+
+    // Forward requests to feedbackService
+    // All paths going into /feedback/** will be forwarded to the feedbackService
+    @Override
+    public ResponseEntity<?> forwardToFeedbackService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
+
+        log.info(log_header + "Forwarding request to feedbackService: " + request.getRequestURI());
+        String targetUrl = feedbackServiceUrl + request.getRequestURI();
+
+        return travelGate(request, targetUrl, requestBody, "Feedback Service");
     }
 
     public ResponseEntity<?> travelGate(HttpServletRequest request, String targetUrl, String requestBody, String destinationService) {

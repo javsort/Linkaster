@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,15 +19,17 @@ import jakarta.persistence.GenerationType;
 @Entity
 @Table(name = "feedback")
 public class Feedback {
+
     @Id
     @Column(name = "feedbackID")
-    private int FeedbackID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long FeedbackID;
 
     @Column(name = "recipientID")
-    private int recipientID;
+    private long recipientID;
 
-    @Column(name = "sender_id")
-    private int senderID;
+    @Column(name = "senderID")
+    private long senderID;
 
     @Column(name = "anonymous")
     private boolean anonymous;
@@ -43,15 +44,15 @@ public class Feedback {
         return anonymous;
     }
 
-    public void setFeedbackID (int newFeedbackID) {
+    public void setFeedbackID (long newFeedbackID) {
         this.FeedbackID = newFeedbackID;
     }
 
-    public void setRecipientID (int newRecipientID) {
+    public void setRecipientID (long newRecipientID) {
         this.recipientID = newRecipientID;
     }
 
-    public void setSenderID(int newID){
+    public void setSenderID(long newID){
         this.senderID = newID;
     }
 
@@ -59,7 +60,7 @@ public class Feedback {
         this.anonymous = newAnonymous;
     }
 
-    public void setModuleID (int newModuleID) {
+    public void setModuleID (long newModuleID) {
         this.moduleID = newModuleID;
     }
 
@@ -67,7 +68,7 @@ public class Feedback {
         this.contents = newContents;
     }
 
-    public int getSenderID() {
+    public long getSenderID() {
         return senderID;
     }
 }
