@@ -1,18 +1,17 @@
 package com.linkaster.moduleManager.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.dto.AnnouncementCreate;
 import com.linkaster.moduleManager.model.Announcement;
-import com.linkaster.moduleManager.repository.ModuleRepository;
+import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.AnnouncementRepository;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +73,7 @@ public class ModuleHandlerService {
         Announcement announcement = announcementOptional.get();
 
         // Validate the module
-        if (announcement.getModuleId() != moduleId) {
+        if (announcement.getModule().getId() != moduleId) {
             log.error(log_header + "Announcement does not belong to module ID " + moduleId);
             throw new IllegalArgumentException("Announcement does not belong to the specified module");
         }

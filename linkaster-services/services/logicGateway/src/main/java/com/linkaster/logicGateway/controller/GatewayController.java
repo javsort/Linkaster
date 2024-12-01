@@ -1,5 +1,7 @@
 package com.linkaster.logicGateway.controller;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -125,10 +129,25 @@ public class GatewayController implements APIGatewayController {
             log.info(log_header + "Establishing websocket connection through messaging service... ");
             String targetUrl = messageServiceUrl + request.getRequestURI();
             
+            // Cycle through headers and add them to the new request
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", request.getHeader("Authorization"));
+            Collections.list(request.getHeaderNames())
+                .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+                headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<?> entity = new HttpEntity<>(headers);
+            // Get the request body
+            String requestBody = null;
+            try {
+                requestBody = request.getReader().lines()
+                    .reduce("", (accumulator, actual) -> accumulator + actual);
+            } catch (IOException e) {
+                log.error(log_header + "Error reading request body", e);
+            }
+
+            HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
+            log.info(log_header + "Request headers: " + headers);
+            log.info(log_header + "Request body: " + requestBody);
+            
 
             // Forward the request
             ResponseEntity<?> response = restTemplate.exchange(
@@ -145,16 +164,29 @@ public class GatewayController implements APIGatewayController {
             String targetUrl = messageServiceUrl + request.getRequestURI();
             
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", request.getHeader("Authorization"));
+            Collections.list(request.getHeaderNames())
+                .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+                headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<?> entity = new HttpEntity<>(headers);
+            // Get the request body
+            String requestBody = null;
+            try {
+                requestBody = request.getReader().lines()
+                    .reduce("", (accumulator, actual) -> accumulator + actual);
+            } catch (IOException e) {
+                log.error(log_header + "Error reading request body", e);
+            }
+
+            HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
+            log.info(log_header + "Request headers: " + headers);
+            log.info(log_header + "Request body: " + requestBody);
 
             // Forward the request
-            ResponseEntity<String> response = restTemplate.exchange(
+            ResponseEntity<Map> response = restTemplate.exchange(
                 targetUrl,
                 HttpMethod.valueOf(request.getMethod()),
                 entity,
-                String.class
+                Map.class
             );
 
             return new ResponseEntity<>(response.getBody(), response.getStatusCode());
@@ -170,16 +202,29 @@ public class GatewayController implements APIGatewayController {
         String targetUrl = userServiceUrl + request.getRequestURI();
         
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
+        Collections.list(request.getHeaderNames())
+            .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        // Get the request body
+        String requestBody = null;
+        try {
+            requestBody = request.getReader().lines()
+                .reduce("", (accumulator, actual) -> accumulator + actual);
+        } catch (IOException e) {
+            log.error(log_header + "Error reading request body", e);
+        }
+
+        HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
+        log.info(log_header + "Request headers: " + headers);
+        log.info(log_header + "Request body: " + requestBody);
 
         // Forward the request
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<Map> response = restTemplate.exchange(
             targetUrl,
             HttpMethod.valueOf(request.getMethod()),
             entity,
-            String.class
+            Map.class
         );
 
         return new ResponseEntity<>(response.getBody(), response.getStatusCode());
@@ -192,13 +237,32 @@ public class GatewayController implements APIGatewayController {
 
         log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());
         String targetUrl = moduleServiceUrl + request.getRequestURI();
+
+        log.info(log_header + "Request before processing data: " + request);
         
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
+        Collections.list(request.getHeaderNames())
+            .forEach(headerName -> headers.add(headerName, request.getHeader(headerName)));
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        // Get the request body
+        String requestBody = null;
+        try {
+            requestBody = request.getReader().lines()
+                .reduce("", (accumulator, actual) -> accumulator + actual);
+        } catch (IOException e) {
+            log.error(log_header + "Error reading request body", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to read request body.");
+        }
 
-        // Forward the request
+        log.info(log_header + "Request headers: " + headers);
+        log.info(log_header + "Request body: " + requestBody);
+        
+        log.info(log_header + "Request after processing data: " + request);
+        HttpEntity<?> entity = new HttpEntity<>(requestBody, headers);
+
+        log.info(log_header + "Forwarding request to moduleService: " + targetUrl);
+            
         ResponseEntity<String> response = restTemplate.exchange(
             targetUrl,
             HttpMethod.valueOf(request.getMethod()),
@@ -206,7 +270,18 @@ public class GatewayController implements APIGatewayController {
             String.class
         );
 
-        return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+        log.info(log_header + "Response from moduleService: " + response.getBody());
+    
+            return new ResponseEntity<>(response.getBody(), response.getStatusCode());
+
+        // Forward the request
+        /*try {
+            
+            
+        } catch (Exception e) {
+            log.error(log_header + "Error while forwarding request to moduleService: ", e);
+            return ResponseEntity.status(500).body("An error occurred while processing your request.");
+        }*/
     }
 
 }

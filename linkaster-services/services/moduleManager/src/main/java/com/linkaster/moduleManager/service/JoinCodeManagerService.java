@@ -76,7 +76,7 @@ public class JoinCodeManagerService {
     
         // Step 3: Check if the student is already enrolled
         if (module.getStudentList().contains(studentId)) {
-            log.info(log_header + "Student " + studentId + " is already enrolled in module: " + module.getName());
+            log.info(log_header + "Student: " + studentId + " is already enrolled in module: \nId: '" + module.getId() + "'\nModule Name: '" + module.getModuleName() + "'");
             return true; // Student is already enrolled
         }
     
@@ -84,7 +84,7 @@ public class JoinCodeManagerService {
         module.getStudentList().add(studentId);
         moduleRepository.save(module); // Save the updated module
     
-        log.info(log_header + "Student " + studentId + " successfully joined module: " + module.getName());
+        log.info(log_header + "Student " + studentId + " successfully joined module: " + module.getModuleName());
         return true; // Successfully added the student
     }
         

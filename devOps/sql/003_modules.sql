@@ -5,8 +5,7 @@ CREATE TABLE modules (
     module_name VARCHAR(255) NOT NULL,
     module_code VARCHAR(255) UNIQUE,
     student_enrolled_ids JSON,
-    module_type VARCHAR(255),
-    FOREIGN KEY (module_owner_id) REFERENCES users(id) ON DELETE SET NULL
+    module_type VARCHAR(255)
 );
 
 -- Insert a module class and a module club

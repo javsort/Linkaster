@@ -24,6 +24,8 @@ import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @RequestMapping("/api/module")
 public interface APIModuleController {
@@ -35,9 +37,7 @@ public interface APIModuleController {
     public String status();
 
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Module createModule(@RequestBody ModuleCreate module);
-
+    public ResponseEntity<?> createModule(@RequestBody ModuleCreate module, HttpServletRequest request);
 
     @DeleteMapping("/delete/id")
     @ResponseStatus(HttpStatus.OK)

@@ -107,6 +107,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 log.info(log_header + "UsernamePasswordAuthenticationToken set: " + authentication);
                 log.info(log_header + "Forwarding request to: " + request.getRequestURI());
+                log.info(log_header + "Request body: " + new String(requestWrap.getContentAsByteArray(), requestWrap.getCharacterEncoding()));
 
             } catch (JWTVerificationException e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token at the request");
@@ -127,7 +128,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
         
-        log.info(log_header + "Request forwarded to: " + request.getAttribute("forwarded-uri"));
+        log.info(log_header + "Request forwarded to: " + request.getRequestURI());
         
         // Continue with the request
         filterChain.doFilter(request, response);

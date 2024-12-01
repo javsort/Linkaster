@@ -1,7 +1,11 @@
 package com.linkaster.moduleManager.controller;
 
 import java.util.Date;
+import java.util.HashMap;
+
+import static java.util.HashMap.newHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +28,9 @@ import com.linkaster.moduleManager.service.JoinCodeManagerService;
 import com.linkaster.moduleManager.service.ModuleHandlerService;
 import com.linkaster.moduleManager.service.ModuleManagerService;
 import com.linkaster.moduleManager.service.TimetableIntegratorService;
+import com.sun.net.httpserver.HttpsConfigurator;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -61,8 +67,33 @@ public class ModuleController implements APIModuleController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @Override
-    public Module createModule(@RequestBody ModuleCreate module) {
-        return moduleManagerService.createModule(module);
+    public ResponseEntity<?> createModule(@RequestBody ModuleCreate module, HttpServletRequest request) {
+        // Get role for module creation user type
+        String creatorRole = request.getAttribute("role").toString();
+
+        // Strip "ROLE_" from the role
+        creatorRole = creatorRole.substring(5);
+
+        // Create a new module
+        log.info(log_header + "Creating new module: " + module + " calling moduleManagerService...");
+        Module newModule = moduleManagerService.createModule(module, creatorRole);
+
+        // Create a response entity
+        if (newModule == null) { 
+            return ResponseEntity.badRequest().body("Module creation failed");
+        }
+
+        Map<String, String> response = new HashMap<>();
+        response.put("id", newModule.getId().toString());
+        response.put("name", newModule.getModuleName());
+        response.put("moduleCode", newModule.getModuleCode());
+        response.put("studentList", newModule.getStudentList().toString());
+        response.put("announcements", newModule.getType());
+        response.put("type", newModule.getType());
+        
+
+        log.info(log_header + "Module created successfully: " + newModule + " returning response entity...");
+        return ResponseEntity.ok(response);
     }
 
     @Override
