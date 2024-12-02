@@ -1,4 +1,8 @@
 package com.linkaster.messageHandler.dto;
+
+import java.sql.Date;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -8,8 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class GroupMessageDTO {
-    private String message;
+public class GroupChatDTO {
     private long groupChatId;
-    private long senderId;
+    private long moduleId;
+
+    private String moduleName;
+    private Map<Long, String> groupMembers;
+    private Date lastMessageDate;
+
 }

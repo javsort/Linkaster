@@ -1,6 +1,6 @@
 -- Create the modules table
 CREATE TABLE modules (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    module_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     module_owner_id BIGINT,
     module_name VARCHAR(255) NOT NULL,
     module_code VARCHAR(255) UNIQUE,

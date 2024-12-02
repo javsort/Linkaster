@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,28 +20,27 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "public_messages")
+@Table(name = "group_messages")
 public class GroupMessage {
-    
+
     @Id
     @Column(name = "group_message_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupMessageId;
 
-    @Column(name = "group_id")
-    private long groupId;
+    @Column(name = "module_id", nullable = false)
+    private long moduleId;
 
-    @Column(name = "sender_id")
+    @Column(name = "sender_id", nullable = false)
     private long senderId;
 
-    @Column(name = "group_chat_id")
-    private long groupChatId;
-
-    @Column(name = "encrypted_message")
+    @Column(name = "encrypted_message", nullable = false)
     private String encryptedMessage;
 
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", nullable = false)
     private Date timestamp;
 
-    
+    @ManyToOne
+    @JoinColumn(name = "group_chat_id", nullable = false)
+    private GroupChat groupChat;
 }

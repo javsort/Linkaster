@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModuleResponse {
-    private Long id;
+    private Long moduleId;
     private String moduleName;
     private String moduleCode;
     private String moduleOwnerName;
