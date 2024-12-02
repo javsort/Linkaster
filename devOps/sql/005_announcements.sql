@@ -7,7 +7,7 @@ CREATE TABLE announcements (
     announcement_owner_id BIGINT,
     announcement_module_id BIGINT,
     FOREIGN KEY (announcement_owner_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (announcement_module_id) REFERENCES modules(id) ON DELETE CASCADE
+    FOREIGN KEY (announcement_module_id) REFERENCES modules(module_id) ON DELETE CASCADE
 );
 
 -- Insert data of announcements

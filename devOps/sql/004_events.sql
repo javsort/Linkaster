@@ -9,7 +9,7 @@ CREATE TABLE events (
     event_owner_id BIGINT NOT NULL,
     event_module_id BIGINT NOT NULL,
     FOREIGN KEY (event_owner_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (event_module_id) REFERENCES modules(id) ON DELETE CASCADE
+    FOREIGN KEY (event_module_id) REFERENCES modules(module_id) ON DELETE CASCADE
 );
 
 -- Insert data of events

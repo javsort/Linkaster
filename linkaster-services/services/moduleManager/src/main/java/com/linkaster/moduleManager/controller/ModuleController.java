@@ -16,7 +16,10 @@ import com.linkaster.moduleManager.dto.AnnouncementCreate;
 import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.dto.ModuleResponse;
+import com.linkaster.moduleManager.dto.AnnouncementResponse;
+import com.linkaster.moduleManager.dto.EventCreate;
 import com.linkaster.moduleManager.model.Announcement;
+import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.service.AuditManagerService;
 import com.linkaster.moduleManager.service.JoinCodeManagerService;
@@ -66,13 +69,12 @@ public class ModuleController implements APIModuleController {
         String creatorRole = request.getAttribute("role").toString();
 
         
-
         // Strip "ROLE_" from the role
         creatorRole = creatorRole.substring(5);
 
         // Create a new module
         log.info(log_header + "Creating new module: " + module + " calling moduleManagerService...");
-        Module newModule = moduleManagerService.createModule(module, creatorRole);
+        Module newModule = moduleManagerService.createModule(request, module, creatorRole);
 
         // Create a response entity
         if (newModule == null) { 
@@ -80,7 +82,7 @@ public class ModuleController implements APIModuleController {
         }
 
         ModuleResponse response = new ModuleResponse(
-            newModule.getId(),
+            newModule.getModuleId(),
             newModule.getModuleName(),
             newModule.getModuleCode(),
             newModule.getModuleOwnerName(),
@@ -97,76 +99,176 @@ public class ModuleController implements APIModuleController {
     }
 
     @Override
-    public boolean deleteModule(@RequestBody long id) {
-        return moduleManagerService.deleteModule(id);
+    public ResponseEntity<?> deleteModule(@PathVariable long id) {
+        log.info("Attempting to delete module with ID: {}", id);
+        
+        // Call the service method to delete the module
+        boolean isDeleted = moduleManagerService.deleteModule(id);
+        
+        if (isDeleted) {
+            return ResponseEntity.ok("Module deleted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Module not found or deletion failed.");
+        }
     }
 
     @Override
-    public boolean updateModule(@RequestBody long id, @RequestBody ModuleCreate module) {
-        return moduleManagerService.updateModule(id, module);
-    }
+    public ResponseEntity<?> updateModule(@PathVariable long id, @RequestBody ModuleCreate module) {
+        log.info(log_header + "Attempting to update module with ID: {}", id);
+        boolean isUpdated = moduleManagerService.updateModule(id, module);
 
+        if (isUpdated) {
+            log.info(log_header + "Module with ID {} updated successfully.", id);
+            return ResponseEntity.ok("Module updated successfully.");
+        } else {
+            log.error(log_header + "Module with ID {} not found or update failed.", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Module not found or update failed.");
+        }
+    }
     @Override
     public List<Module> getAllModules() {
         return moduleManagerService.getAllModules();
     }
 
     @Override
-    public Module getModuleById(@RequestBody long id) {
-        return moduleManagerService.getModuleById(id);
+    public Module getModuleById(@PathVariable long id) {
+        log.info(log_header + "Fetching module with ID: {}", id);
+        Module module = moduleManagerService.getModuleById(id);
+
+        if (module == null) {
+            log.error(log_header + "Module with ID {} not found.", id);
+            return null;
+        }
+
+        log.info(log_header + "Module with ID {} retrieved successfully.", id);
+        return module;
     }
 
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public List<Long> getStudentsByModule(@RequestBody long moduleId) {
+    public List<Long> getStudentsByModule(@PathVariable long moduleId) {
         // Example logic; replace with actual implementation
+        log.info(log_header + "Getting students for module: {}", moduleId);
         return auditManagerService.getStudentsByModule(moduleId);
     }
 
     @Override
     public List<Module> getModulesByStudent(@PathVariable long studentId) {
+        log.info(log_header + "Getting modules for student: {}", studentId);
         return moduleManagerService.getModulesByStudent(studentId);
     }
 
     @Override
     public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule) {
+        log.info(log_header + "Joining module by code: {}", joinModule);
         return joinCodeManagerService.joinModuleByCode(joinModule);
     }
 
     @Override
     public void leaveModule(@RequestBody long moduleId, @RequestBody long studentId) {
         // Logic for a student to leave a module
+        log.info(log_header + "Student: {} leaving module: {}", studentId, moduleId);
         moduleHandlerService.leaveModule(moduleId, studentId);
     }
 
     @Override
-    @ResponseStatus(HttpStatus.CREATED)
-    public String createAnnouncement(@RequestBody AnnouncementCreate announcement) {
+    public ResponseEntity<?> createAnnouncement(@RequestBody AnnouncementCreate announcement, HttpServletRequest request) {
         // Logic to create a new announcement
-        moduleHandlerService.createAnnouncement(announcement);
-        return "New announcement created successfully";
+        log.info(log_header + "Creating new announcement: {}", announcement);
+
+        // Implement the announcement creation logic here like createModule method
+        Announcement newAnnouncement = moduleHandlerService.createAnnouncement(announcement);
+
+        // Create a response entity
+        if (newAnnouncement == null) {
+            return ResponseEntity.badRequest().body("Announcement creation failed");
+        }
+        
+        AnnouncementResponse response = new AnnouncementResponse(
+            newAnnouncement.getId(),
+            newAnnouncement.getName(),
+            newAnnouncement.getMessage(),
+            newAnnouncement.getOwnerId(),
+            newAnnouncement.getTime(),
+            newAnnouncement.getDate(), // Assuming date is converted to String
+            newAnnouncement.getModuleId()
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        log.info(log_header + "Announcement created successfully: " + response + " returning response entity...");
+        return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
+    
     }
 
 
     @Override
-    public boolean deleteAnnouncement(@RequestBody long announcementId, @RequestBody long moduleId) {
+    public ResponseEntity<?> deleteAnnouncement(@RequestBody long announcementId, @RequestBody long moduleId) {
         // Logic to delete an announcement
-        moduleHandlerService.deleteAnnouncement(announcementId, moduleId);
-        return true;
-    }
+        log.info(log_header + "Deleting announcement: {} from module: {}", announcementId, moduleId);
 
+        boolean isDeleted = moduleHandlerService.deleteAnnouncement(announcementId, moduleId);
 
-    @Override
-    public Iterable<Announcement> getAllAnnouncementsByModuleId(@RequestBody long moduleId) {
-        // Logic to get all announcements
-        return moduleHandlerService.getAllAnnouncements();
+        if (isDeleted) {
+            return ResponseEntity.ok("Announcement deleted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Announcement not found or deletion failed.");
+        }
     }
 
     @Override
     public Iterable<Announcement> getAllAnnouncementsByUserId(@RequestBody long studentId) {
         // Logic to get all announcements by user
+        log.info(log_header + "Getting all announcements for user: {}", studentId);
         return moduleHandlerService.getAllAnnouncementsByStudent(studentId);
     }
+
+    @Override
+    public ResponseEntity<?> createEvent(@RequestBody EventCreate event, HttpServletRequest request) {
+        // Logic to create a new event
+        log.info(log_header + "Creating new event: {}", event);
+
+        // Implement the event creation logic here
+        EventModel newEvent = moduleManagerService.createEvent(event);
+
+        // Create a response entity
+        if (newEvent == null) {
+            return ResponseEntity.badRequest().body("Event creation failed");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        log.info(log_header + "Event created successfully: " + newEvent + " returning response entity...");
+        return new ResponseEntity<>(newEvent, headers, HttpStatus.CREATED);
+    }
+
+    @Override
+    public Iterable<EventModel> getAllEventsByUserId(@RequestBody long userId) {
+        // Logic to get all events by user
+        log.info(log_header + "Getting all events for user: {}", userId);
+        return moduleManagerService.getEventsByUserId(userId);
+    }
+
+    @Override
+    public ResponseEntity<?> getAllEventsByModuleId(@PathVariable long id) {
+        // Logic to get all events for a module
+        log.info(log_header + "Getting events for module: {}", id);
+        List<EventModel> events = moduleManagerService.getModuleEvents(id);
+
+        if (events == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Events not found for module: " + id);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        log.info(log_header + "Events retrieved successfully for module: {}", id);
+        return new ResponseEntity<>(events, headers, HttpStatus.OK);
+    }
+
+    // Called by the timetable service - INTERSERVICE COMMUNICATION
     /*
     @Override
     public boolean updateTimetable(Integer time, Date date) {
