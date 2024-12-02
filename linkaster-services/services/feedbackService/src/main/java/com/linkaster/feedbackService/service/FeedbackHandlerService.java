@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import com.linkaster.feedbackService.dto.FeedbackDTO;
 import com.linkaster.feedbackService.model.Feedback;
 import com.linkaster.feedbackService.repository.FeedbackRepository;
-// adds feedback to repository and sends feedback to instructor 
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -48,4 +47,8 @@ public class FeedbackHandlerService {
             log.info(log_header + "Error processing feedback: " + e.getMessage());
         }
     }
+
+    /*
+     * Insert methods here:
+     */
 }

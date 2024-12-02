@@ -11,4 +11,9 @@ public interface APIFeedbackController {
     
     @PostMapping("/submit")
     public String handleFeedback(@RequestBody FeedbackDTO feedback);
+
+    /*
+     * Insert method REST calls here + method to implement
+     * Implement back at FeddbackController.java
+     */
 }

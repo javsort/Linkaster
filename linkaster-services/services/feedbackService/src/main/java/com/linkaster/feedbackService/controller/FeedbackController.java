@@ -1,15 +1,14 @@
 package com.linkaster.feedbackService.controller;
 
-import com.linkaster.feedbackService.controller.FeedbackController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.linkaster.feedbackService.dto.FeedbackDTO;
-import com.linkaster.feedbackService.model.Feedback;
 import com.linkaster.feedbackService.service.FeedbackAnonymizerService;
 import com.linkaster.feedbackService.service.FeedbackHandlerService;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 
 
@@ -41,4 +40,9 @@ public class FeedbackController implements APIFeedbackController {
         log.info(log_header + "Feedback processed successfully!");
         return "Feedback processed successfully!";
     }
+
+    /*
+     * Insert method functionality
+     * Method implementation of the ones delcared in APIFeedbackController.java
+     */
 }
