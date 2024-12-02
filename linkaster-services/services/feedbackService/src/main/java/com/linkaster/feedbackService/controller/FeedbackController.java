@@ -11,6 +11,7 @@ import com.linkaster.feedbackService.service.FeedbackHandlerService;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,8 +28,6 @@ public class FeedbackController {
     private final FeedbackAnonymizerService feedbackAnonymizerService;
     private final FeedbackHandlerService feedbackHandlerService;
 
-    private final String log_header = "FeedbackController --- ";
-
     @Autowired
     public FeedbackController(FeedbackAnonymizerService feedbackAnonymizerService, FeedbackHandlerService feedbackHandlerService) {
         this.feedbackAnonymizerService = feedbackAnonymizerService;
@@ -40,9 +39,7 @@ public class FeedbackController {
         if (feedback.getAnonymous() && feedback.getSenderID() != 0) {   //if feedback needs to be anonymized 
             feedbackAnonymizerService.anonymizeFeedback(feedback);
         }
-
         feedbackHandlerService.processFeedback(feedback);           // call process feedback
-        log.info(log_header + "Feedback processed successfully!");
         return "Feedback processed successfully!";
     }
 
