@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widget/user_status.dart';
+import '../widget/create_module_club.dart';
+
 import 'announcement_page.dart';
 import 'chat_selection_page.dart';
 import 'library_page.dart';
@@ -20,8 +22,6 @@ class LinkasterHome extends StatefulWidget {
 
 class LinkasterHomeState extends State<LinkasterHome> {
   int _currentIndex = 0;
-
-  // Token storage
   String? token;
 
   @override
@@ -34,16 +34,13 @@ class LinkasterHomeState extends State<LinkasterHome> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       token = prefs.getString('authToken');
-      print('Token: $token');
-
       if (token == null || token!.isEmpty) {
-        // Redirect to the login page if token is not available
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => LoginPage()),
         );
       } else {
-        _updatePages(); // Update pages with the new token
+        _updatePages();
       }
     });
   }
@@ -59,10 +56,7 @@ class LinkasterHomeState extends State<LinkasterHome> {
         ChatSelectionPage(isPrivateChat: false, token: token),
         TimetablePage(token: token),
         LibraryPage(),
-        ProfilePage(
-          token: token,
-          status: UserStatus.available,
-        ),
+        ProfilePage(token: token, status: UserStatus.available),
       ]);
     });
   }
@@ -96,13 +90,22 @@ class LinkasterHomeState extends State<LinkasterHome> {
 
   Future<void> _launchMoodle() async {
     const url = 'https://portal.lancaster.ac.uk/portal/my-area/modules';
-
-    print('Pinging the following address: $url');
     if (await canLaunch(url)) {
       await launch(url);
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  void _showCreateModuleDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CreateModuleDialog(
+          token: token,
+        ); // Show the two-step form dialog
+      },
+    );
   }
 
   @override
@@ -125,6 +128,10 @@ class LinkasterHomeState extends State<LinkasterHome> {
                 print('Failed to fetch status');
               }
             },
+          ),
+          IconButton(
+            icon: Text('Create Module', style: TextStyle(color: Colors.white)),
+            onPressed: _showCreateModuleDialog,
           ),
           IconButton(
             icon: Text('Moodle', style: TextStyle(color: Colors.white)),

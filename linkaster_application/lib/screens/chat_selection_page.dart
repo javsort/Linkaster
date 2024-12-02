@@ -9,7 +9,8 @@ class ChatSelectionPage extends StatefulWidget {
   final bool isPrivateChat;
   final String? token;
 
-  ChatSelectionPage({Key? key, required this.isPrivateChat, required this.token})
+  ChatSelectionPage(
+      {Key? key, required this.isPrivateChat, required this.token})
       : super(key: key);
 
   @override
@@ -42,7 +43,7 @@ class _ChatSelectionPageState extends State<ChatSelectionPage> {
         headers: {'Authorization': 'Bearer $token'},
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
           privateChats = data.map((item) => Chat.fromJson(item)).toList();
