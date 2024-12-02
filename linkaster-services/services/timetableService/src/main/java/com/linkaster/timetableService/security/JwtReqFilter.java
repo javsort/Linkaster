@@ -33,6 +33,15 @@ public class JwtReqFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
+        // Allow access to timetable service after user registration
+        if(requestWrap.getRequestURI().matches("/api/timetable/(create|delete)/\\d+")){
+            
+            log.info(log_header + "Request is for creating or deleting a timetable, allowing access...");
+            
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
