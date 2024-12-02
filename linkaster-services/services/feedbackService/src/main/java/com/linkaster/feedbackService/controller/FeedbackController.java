@@ -1,6 +1,5 @@
 package com.linkaster.feedbackService.controller;
 
-import com.linkaster.feedbackService.controller.FeedbackController;
 import com.linkaster.feedbackService.dto.InstructorFeedbackRequest;
 import com.linkaster.feedbackService.dto.InstructorModuleFeedbackRequest;
 import com.linkaster.feedbackService.dto.ModuleFeedbackRequest;

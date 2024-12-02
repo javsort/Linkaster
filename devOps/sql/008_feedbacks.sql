@@ -12,6 +12,6 @@ INSERT INTO feedbacks (
     feedback_recipient_id, feedback_sender_id, feedback_anonymous, 
     feedback_recipient_module, feedback_contents
 ) VALUES 
-    (1, 2, true, 3, 'Example feedback 01.'),
-    (4, 5, true, 6, 'Example feedback 02.'),
-    (7, 8, true, 9, 'Example feedback 03.');
+    (1, 2, false, 3, 'Example feedback 01.'),
+    (4, 5, false, 6, 'Example feedback 02.'),
+    (7, 0, true, 9, 'Example feedback 03.');
