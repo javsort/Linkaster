@@ -70,6 +70,14 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
+        // Special case for timetable
+        if (requestWrap.getRequestURI().matches("/api/timetable/(create|delete)/\\d+")) {
+            log.info(log_header + "Public timetable endpoint accessed, no token required");
+            
+            filterChain.doFilter(request, response);
+            return;
+        }
         
         // For all authenticated accesses
         String authHeader = requestWrap.getHeader("Authorization");

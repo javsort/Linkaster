@@ -46,6 +46,9 @@ public class GatewayController implements APIGatewayController {
     @Value("${address.feedback.url}")
     private String feedbackServiceUrl;
 
+    @Value("${address.timetable.url}")
+    private String timetableServiceUrl;
+
     private final String log_header = "GatewayController --- ";
 
     // END: Endpoints
@@ -114,9 +117,56 @@ public class GatewayController implements APIGatewayController {
         }
     }
 
+    
+
+    // Forward requests to userService
+    // All paths going into /user/** will be forwarded to the moduleService
+    /*
+     * PORT: 8081 -> /user/**
+     */
+    @Override
+    public ResponseEntity<?> forwardToUserService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
+
+        log.info(log_header + "Forwarding request to userService: " + request.getRequestURI());
+        String targetUrl = userServiceUrl + request.getRequestURI();
+
+        
+        return travelGate(request, targetUrl, requestBody, "User Handler Service");
+    }
+
+    // Forward requests to timetableService
+    // All paths going into /timetable/** will be forwarded to the timetableService
+    /*
+     * PORT: 8082 -> /timetable/**
+     */
+    @Override
+    public ResponseEntity<?> forwardToTimetableService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
+        log.info(log_header + "Forwarding request to timetableService: " + request.getRequestURI());
+        String targetUrl = timetableServiceUrl + request.getRequestURI();
+
+        return travelGate(request, targetUrl, requestBody, "Timetable Service");
+    }
+
+    // Forward requests to moduleService
+    // All paths going into /module/** will be forwarded to the moduleService
+    /*
+     * PORT: 8085 -> /module/**
+     */
+    @Override
+    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
+
+        log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());
+        String targetUrl = moduleServiceUrl + request.getRequestURI();
+
+        return travelGate(request, targetUrl, requestBody, "Module Manager Service");
+    }
+
 
     // Forward requests to messageService
     // All paths going into /message/** will be forwarded to the messageService
+    /*
+     * PORT: 8086 -> /message/**
+     */
     @Override
     public ResponseEntity<?> forwardToMessageService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
         log.info(log_header + "Forwarding request to MessagingService: " + request);
@@ -129,34 +179,14 @@ public class GatewayController implements APIGatewayController {
         }
 
         String targetUrl = messageServiceUrl + request.getRequestURI();
-        return travelGate(request, targetUrl, requestBody, "User Handler Service");
-    }
-
-    // Forward requests to userService
-    // All paths going into /user/** will be forwarded to the moduleService
-    @Override
-    public ResponseEntity<?> forwardToUserService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
-
-        log.info(log_header + "Forwarding request to userService: " + request.getRequestURI());
-        String targetUrl = userServiceUrl + request.getRequestURI();
-
-        
-        return travelGate(request, targetUrl, requestBody, "User Handler Service");
-    }
-
-    // Forward requests to moduleService
-    // All paths going into /module/** will be forwarded to the moduleService
-    @Override
-    public ResponseEntity<?> forwardToModuleService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
-
-        log.info(log_header + "Forwarding request to moduleService: " + request.getRequestURI());
-        String targetUrl = moduleServiceUrl + request.getRequestURI();
-
-        return travelGate(request, targetUrl, requestBody, "Module Manager Service");
+        return travelGate(request, targetUrl, requestBody, "Message Manager Service");
     }
 
     // Forward requests to feedbackService
     // All paths going into /feedback/** will be forwarded to the feedbackService
+    /*
+     * PORT: 8087 -> /feedback/**
+     */
     @Override
     public ResponseEntity<?> forwardToFeedbackService(HttpServletRequest request, @RequestBody(required=false) String requestBody) {
 
@@ -166,6 +196,10 @@ public class GatewayController implements APIGatewayController {
         return travelGate(request, targetUrl, requestBody, "Feedback Service");
     }
 
+    
+    /*
+     * TRAVEL GATE -> Forward request to destination service SHARED methods
+     */
     public ResponseEntity<?> travelGate(HttpServletRequest request, String targetUrl, String requestBody, String destinationService) {
         log.info(log_header + "Request before processing data: " + request);
 

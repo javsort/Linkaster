@@ -108,6 +108,10 @@ public class AuthenticationController implements APIAuthenticationController {
             response.put("userEmail", registeredUser.getUserEmail());
             response.put("role", registeredUser.getRole());
 
+            // Open request to create timetable for the user
+            log.info("Creating timetable for user: " + userEmail);
+            userAuthenticatorService.createTimetable(registeredUser.getId());
+
             log.info(log_header + "User: '" + userEmail + "' registered");
             return ResponseEntity.ok(response);
         }
