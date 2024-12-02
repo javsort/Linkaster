@@ -14,8 +14,18 @@ class FeedbackPage extends StatefulWidget {
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
-  List<String> recipients = [
-    //example data:
+  String? selectedRecipient;
+  bool isAnonymous = false;
+  String? feedbackInput;
+  late TextEditingController studentIDController;
+  //to do: store current user id 
+  final TextEditingController feedbackController = TextEditingController();
+  
+
+  final List<String> recipients = [
+    //to do: get user id's module id's
+    //translate module ids to teacher - module
+    //translate teacher - module to teacher id - module id
     'Dr. Smith - Software Engineering',
     'Prof. Johnson - Computer Science',
     'Ms. Brown - IT Club Leader',
