@@ -10,6 +10,8 @@ import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,9 +54,19 @@ public class JoinCodeManagerService {
     
     
     // INTERSERVICE COMMUNICATION - Called by the student service
-    public boolean joinModuleByCode(JoinModuleCreate joinModuleCreate) {
+    public boolean joinModuleByCode(JoinModuleCreate joinModuleCreate, HttpServletRequest request) {
         String joinCode = joinModuleCreate.getCode();
-        long studentId = joinModuleCreate.getStudentId();
+
+        String studentIdString = (String) request.getAttribute("id");
+
+        long studentId;
+
+        try {
+            studentId = Long.parseLong(studentIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid student ID: " + studentIdString);
+            return false; // Invalid student ID
+        }
 
         log.info(log_header + "Student " + studentId + " attempting to join module with join code: " + joinCode);
     

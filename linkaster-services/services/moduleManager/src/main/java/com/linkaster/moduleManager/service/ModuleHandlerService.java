@@ -13,6 +13,8 @@ import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.AnnouncementRepository;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,10 +33,20 @@ public class ModuleHandlerService {
 
     // Admin Tasks
 
-    public Announcement createAnnouncement(AnnouncementCreate announcementCreate) {
+    public Announcement createAnnouncement(AnnouncementCreate announcementCreate, HttpServletRequest request) {
         long moduleId = announcementCreate.getModuleId();
         String message = announcementCreate.getMessage();
-        long ownerId = announcementCreate.getOwner_id();
+        
+        String ownerIdString = (String) request.getAttribute("id");
+        
+        long ownerId;
+
+        try {
+            ownerId = Long.parseLong(ownerIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid owner ID: " + ownerIdString);
+            throw new IllegalArgumentException("Invalid owner ID");
+        }
     
         log.info(log_header + "Creating announcement for module: " + moduleId);
     

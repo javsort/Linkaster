@@ -56,6 +56,16 @@ public class ModuleManagerService {
     public Module createModule(HttpServletRequest request, ModuleCreate module, String creatorRole) {
         log.info(log_header + "Creating module: " + module);
 
+        String ownerIdString = (String) request.getAttribute("id");
+
+        long ownerId;
+        try {
+            ownerId = Long.parseLong(ownerIdString);  // Convert to long
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid owner ID: " + ownerIdString);
+            return null;  // or handle the error appropriately
+        }
+
         // Check if the module already exists
         if (moduleRepository.existsByModuleCode(module.getModuleCode())) {
             log.error(log_header + "Module with code: '" + module.getModuleCode() + "' already exists");
@@ -65,8 +75,6 @@ public class ModuleManagerService {
         log.info(log_header + "Module is new!\nCreating new module with code: " + module.getModuleCode());
         Module newModule;
 
-        // Make the owner id from string to long
-        long ownerId = Long.parseLong(module.getModuleOwnerId());
 
         // Create module from DTO based on its type
         switch (module.getType()) {
@@ -117,7 +125,7 @@ public class ModuleManagerService {
         return newModule;
     }
 
-    public boolean updateModule(long id, ModuleCreate module) {
+    public boolean updateModule(long id, ModuleCreate module, long ownerId) {
         // Check if the module exists
         if (!moduleRepository.existsById(id)) {
             log.error(log_header + "Module with ID: " + id + " does not exist");
@@ -142,7 +150,7 @@ public class ModuleManagerService {
         // Apply changes from the ModuleCreate DTO to the existing module
         existingModule.setModuleCode(module.getModuleCode());
         existingModule.setModuleName(module.getModuleName());
-        existingModule.setModuleOwnerId(Long.parseLong(module.getModuleOwnerId()));
+        existingModule.setModuleOwnerId(ownerId);
         existingModule.setModuleOwnerName(module.getModuleOwnerName());
         existingModule.setModuleOwnerType(module.getType());
     
@@ -235,8 +243,20 @@ public class ModuleManagerService {
     }
 
     //Create a new event
-    public EventModel createEvent(EventCreate eventCreate) {
+    public EventModel createEvent(EventCreate eventCreate, HttpServletRequest request) {
+
         log.info(log_header + "Creating event: " + eventCreate);
+
+        String ownerIdString = (String) request.getAttribute("id");
+
+        long ownerId;
+
+        try {
+            ownerId = Long.parseLong(ownerIdString);  // Convert to long
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid owner ID: " + ownerIdString);
+            return null;  // or handle the error appropriately
+        }
 
         // Check if the module exists
         if (!moduleRepository.existsById(eventCreate.getModuleId())) {
@@ -253,7 +273,7 @@ public class ModuleManagerService {
                 .date(new java.sql.Date(eventCreate.getDate().getTime()))
                 .startTime(eventCreate.getStartTime())
                 .endTime(eventCreate.getEndTime())
-                .ownerId(eventCreate.getOwnerId())
+                .ownerId(ownerId)
                 .moduleId(eventCreate.getModuleId())
                 .build();
 
