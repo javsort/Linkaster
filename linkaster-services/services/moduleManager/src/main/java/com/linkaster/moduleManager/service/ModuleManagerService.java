@@ -7,15 +7,25 @@ import java.util.stream.Collectors;
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.linkaster.moduleManager.dto.EventCreate;
+import com.linkaster.moduleManager.dto.GroupChatRegDTO;
 import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.repository.EventRepository;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,15 +34,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ModuleManagerService {
 
-    @Autowired
     private ModuleRepository moduleRepository;
 
-    @Autowired
     private EventRepository eventRepository;
+
+    private RestTemplate restTemplate = new RestTemplate();
+
+
+
+    @Value("${address.logicGateway.url}")
+    private String logicGatewayAddress;
 
     private final String log_header = "ModuleManagerService --- ";
 
-    public Module createModule(ModuleCreate module, String creatorRole) {
+    @Autowired
+    public ModuleManagerService(ModuleRepository moduleRepository, EventRepository eventRepository) {
+        this.moduleRepository = moduleRepository;
+        this.eventRepository = eventRepository;
+    }
+
+    public Module createModule(HttpServletRequest request, ModuleCreate module, String creatorRole) {
         log.info(log_header + "Creating module: " + module);
 
         // Check if the module already exists
@@ -86,8 +107,10 @@ public class ModuleManagerService {
                 return null;
         }
 
+        Long newModuleId = newModule.getModuleId();
+
         // Create chat for the module
-        createModuleChat(newModule.getId());
+        createModuleChat(request, newModuleId);
 
         log.info(log_header + "Module successfully created: " + newModule);
 
@@ -163,10 +186,52 @@ public class ModuleManagerService {
     
 
     // Ping messaging service to create a chat for the module
-    public boolean createModuleChat(long id) {
-        log.info(log_header + "Creating Module chat for module: " + id);
-        // Implement logic to create a chat for the module here (e.g., using a messaging service API)
-        return true; // Placeholder implementation
+    public boolean createModuleChat(HttpServletRequest request, Long newModuleId) {
+        log.info(log_header + "Creating Module chat for module: '" + newModuleId + "'' Contacting messaging service...");
+
+        String pathToPingMessageService = logicGatewayAddress + "/api/message/group/create";
+
+        // Build expected request body -> GroupChatReg
+        GroupChatRegDTO groupChatReg = GroupChatRegDTO.builder()
+                .moduleId(newModuleId + "")
+                .moduleName(moduleRepository.findById(newModuleId).get().getModuleName())
+                .ownerUserId(request.getAttribute("id").toString())
+                .build();
+
+        // Create request back to gateway
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Keep token on call for logicGateway & moduleManager re-verification of token 
+        headers.set("Authorization", request.getHeader("Authorization"));
+        
+        // Add user info to headers
+        // Add claims to the req attributes (opt, but would be [id, username, role])
+        headers.set("id", request.getAttribute("id").toString());
+        headers.set("userEmail", request.getAttribute("userEmail").toString());
+        headers.set("role", request.getAttribute("role").toString());
+
+        HttpEntity<GroupChatRegDTO> requestToMessageService = new HttpEntity<>(groupChatReg, headers);
+
+        try {
+            ResponseEntity<Boolean> response = restTemplate.exchange(
+                pathToPingMessageService, 
+                HttpMethod.POST, 
+                requestToMessageService, 
+                Boolean.class
+            );
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                return response.getBody();
+            } else {
+                log.error(log_header + "Failed to create group chat for module: " + groupChatReg.getModuleName());
+                return false;
+            }
+
+        } catch (Exception e) {
+            log.error(log_header + "Error occurred while creating module chat for module: '" + newModuleId + "'", e);
+            return false;
+        }
     }
 
     //Create a new event

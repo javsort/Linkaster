@@ -28,6 +28,12 @@ public class MessageKeyMaster {
 
     private KeyPair applicationKeyPair;
 
+    private static final String RSA_TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+    private static final String AES_TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final int AES_KEY_SIZE = 256;
+    private static final int RSA_KEY_SIZE = 2048;
+    private static final int GCM_IV_LENGTH = 12;
+
     /*
      * Key Master methods
      */
@@ -37,7 +43,7 @@ public class MessageKeyMaster {
         KeyPairGenerator keyGenerator;
         try {
             keyGenerator = KeyPairGenerator.getInstance("RSA");
-            keyGenerator.initialize(2048);
+            keyGenerator.initialize(RSA_KEY_SIZE);
             this.applicationKeyPair = keyGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
             log.error("Error generating application key pair", e);
@@ -114,7 +120,7 @@ public class MessageKeyMaster {
         SecretKey moduleAESKey = generateGroupChatKey();
 
         // Encrypt the AES Key with the application public key
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance(RSA_TRANSFORMATION);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         byte[] encryptedAESKey = cipher.doFinal(moduleAESKey.getEncoded());
         
@@ -125,24 +131,24 @@ public class MessageKeyMaster {
         // Get key out of byte array -> decrypt with app private key
         PrivateKey privateKey = this.applicationKeyPair.getPrivate();
 
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance(RSA_TRANSFORMATION);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        byte[] decodedKey = cipher.doFinal(Base64.getDecoder().decode(encryptedKey));
+        byte[] aesKeyBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedKey));
 
         // Reconstruct the key
-        SecretKey moduleAESKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+        SecretKey aesKey = new SecretKeySpec(aesKeyBytes, "AES");
 
         // Encrypt the message with the AES key
-        Cipher aesCipher = Cipher.getInstance("AES");
-        aesCipher.init(Cipher.ENCRYPT_MODE, moduleAESKey);
+        Cipher aesCipher = Cipher.getInstance(AES_TRANSFORMATION);
+        aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
         byte[] encryptedMessage = aesCipher.doFinal(message.getBytes());
 
         return Base64.getEncoder().encodeToString(encryptedMessage);
     }
 
-    public SecretKey generateGroupChatKey() throws Exception {
+    public SecretKey generateGroupChatKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(256); 
+        keyGen.init(AES_KEY_SIZE); 
 
         return keyGen.generateKey();
     }

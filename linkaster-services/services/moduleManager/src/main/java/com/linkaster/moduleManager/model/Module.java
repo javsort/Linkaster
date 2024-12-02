@@ -32,9 +32,9 @@ import lombok.experimental.SuperBuilder;
 public class Module {
 
     @Id
-    @Column(name = "id", unique = true, nullable = false)
+    @Column(name = "module_id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long moduleId;
 
     @Column(name = "module_owner_id", unique = true, nullable = false)
     private Long moduleOwnerId;

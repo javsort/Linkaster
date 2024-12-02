@@ -97,7 +97,7 @@ public class ModuleHandlerService {
         List<Announcement> announcements = new ArrayList<>();
         if (modules != null) {
             for (Module module : modules) {
-                List<Announcement> moduleAnnouncements = announcementRepository.findAllByModuleId(module.getId());
+                List<Announcement> moduleAnnouncements = announcementRepository.findAllByModuleId(module.getModuleId());
                 if (moduleAnnouncements != null) {
                     announcements.addAll(moduleAnnouncements);
                 }

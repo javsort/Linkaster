@@ -61,7 +61,7 @@ public class AuditManagerService {
     
                 // Check if student is enrolled in this module
                 if (module.getStudentList().contains(studentId)) {
-                    log.info(log_header + "Student {} is enrolled in module {}", studentId, module.getId());
+                    log.info(log_header + "Student {} is enrolled in module {}", studentId, module.getModuleId());
     
                     // Get the teacher for this module and add to teachers list
                     teachers.add(module.getModuleOwnerId());
