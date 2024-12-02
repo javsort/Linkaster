@@ -17,7 +17,6 @@ public class AnnouncementCreate {
     private long id;
     private String name;
     private String message;
-    private long owner_id;
     private String time;
     private Date date;
     private long moduleId;
