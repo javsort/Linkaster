@@ -14,7 +14,7 @@ import com.linkaster.messageHandler.dto.GroupMessageDTO;
 import com.linkaster.messageHandler.dto.GroupMessageReturnDTO;
 import com.linkaster.messageHandler.model.UserInfo;
 import com.linkaster.messageHandler.model.group.GroupChat;
-import com.linkaster.messageHandler.model.group.GroupChatReg;
+import com.linkaster.messageHandler.model.group.GroupChatRegDTO;
 import com.linkaster.messageHandler.model.group.GroupMessage;
 import com.linkaster.messageHandler.repository.GroupChatRepository;
 import com.linkaster.messageHandler.repository.GroupMessageRepository;
@@ -42,11 +42,12 @@ public class GroupMessagingManagerService {
     }
 
     // THIS IS PINGED BY MODULE MANAGER EVERY TIME A NEW MODULE IS CREATED
-    public boolean createChatForModule(GroupChatReg newChat) throws Exception {
+    public boolean createChatForModule(GroupChatRegDTO newChat) throws Exception {
 
-        long moduleId = newChat.getModuleId();
+        Long moduleId = Long.parseLong(newChat.getModuleId());
         String moduleName = newChat.getModuleName();
-        long ownerUserId = newChat.getOwnerUserId();
+        Long ownerUserId = Long.parseLong(newChat.getOwnerUserId());
+        log.info(log_header + "Creating new chat for module: " + moduleName + " with id: " + moduleId + " and owner: " + ownerUserId);
 
         // Generate & Encrypt the Module's AES Key with the application's public key
         String encryptedModuleAESKey = keyMaster.encryptAESKeyWithAppPublicKey();
@@ -55,12 +56,18 @@ public class GroupMessagingManagerService {
         // Create a new group chat
         GroupChat newGroupChat = new GroupChat();
         newGroupChat.setModuleAESKey(encryptedModuleAESKey);
-        newGroupChat.setModuleName(moduleName);
         newGroupChat.setModuleId(moduleId);
+        newGroupChat.setModuleName(moduleName);
         newGroupChat.setOwnerUserId(ownerUserId);
+        newGroupChat.setLastMessageDate(new Date(System.currentTimeMillis()));
 
 
-        log.info(log_header + "Creating new chat for module: ");
+        log.info(log_header + "Creating new chat for module: " + moduleName);
+
+        log.info(log_header + "Grouo Chat Object to store: { groupChatId" + newGroupChat.getGroupChatId() + ",\nModuleId:" + newGroupChat.getModuleId() + ",\nModuleName:" + newGroupChat.getModuleName() + "\nOwnerUserId:" + newGroupChat.getOwnerUserId() + ",\nKey: " + newGroupChat.getModuleAESKey() + ",\n Last message: " + newGroupChat.getLastMessageDate());
+
+        // Save the new group chat
+        groupChatRepository.save(newGroupChat);
         return true;
     }
 

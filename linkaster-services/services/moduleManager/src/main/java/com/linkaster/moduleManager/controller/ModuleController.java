@@ -74,7 +74,7 @@ public class ModuleController implements APIModuleController {
 
         // Create a new module
         log.info(log_header + "Creating new module: " + module + " calling moduleManagerService...");
-        Module newModule = moduleManagerService.createModule(module, creatorRole);
+        Module newModule = moduleManagerService.createModule(request, module, creatorRole);
 
         // Create a response entity
         if (newModule == null) { 
@@ -82,7 +82,7 @@ public class ModuleController implements APIModuleController {
         }
 
         ModuleResponse response = new ModuleResponse(
-            newModule.getId(),
+            newModule.getModuleId(),
             newModule.getModuleName(),
             newModule.getModuleCode(),
             newModule.getModuleOwnerName(),

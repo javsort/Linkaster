@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class GroupChatReg {
-    private long moduleId;
+public class GroupChatRegDTO {
+    private String moduleId;
     private String moduleName;
-    private long ownerUserId;
+    private String ownerUserId;
 }

@@ -33,22 +33,22 @@ public class GroupChat {
     @Id
     @Column(name = "group_chat_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long groupChatId;
+    private Long groupChatId;
 
     @Column(name = "last_message_date")
     private Date lastMessageDate;
 
-    @Column(name = "module_AESKey", nullable = false)
+    @Column(name = "module_AESKey", nullable = false, length = 512)
     private String moduleAESKey;
 
-    @Column(name = "moduleId", nullable = false)
-    private long moduleId;
+    @Column(name = "moduleId")
+    private Long moduleId;
 
-    @Column(name = "moduleName", nullable = false)
+    @Column(name = "moduleName")
     private String moduleName;
 
-    @Column(name = "ownerUserId", nullable = false)
-    private long ownerUserId;
+    @Column(name = "ownerUserId")
+    private Long ownerUserId;
 
     // Map of group members - key is the user id, value is the user's public key
     @ElementCollection(fetch = FetchType.EAGER)

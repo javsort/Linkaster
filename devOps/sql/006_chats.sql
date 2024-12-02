@@ -57,10 +57,10 @@ INSERT INTO private_messages (
 -- Create the group chats table
 CREATE TABLE group_chats (
     group_chat_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    module_AESKey VARCHAR(255) NOT NULL,
-    moduleId BIGINT NOT NULL,
-    moduleName VARCHAR(255) NOT NULL,
-    ownerUserId BIGINT NOT NULL,
+    module_AESKey VARCHAR(512) NOT NULL,
+    moduleId BIGINT,
+    moduleName VARCHAR(255),
+    ownerUserId BIGINT,
     last_message_date DATE
 );
 

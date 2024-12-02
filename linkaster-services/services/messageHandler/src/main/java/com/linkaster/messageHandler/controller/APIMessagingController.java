@@ -4,8 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.linkaster.messageHandler.model.group.GroupChatRegDTO;
 import com.linkaster.messageHandler.model.p2p.PrivateChat;
 import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 
@@ -56,6 +59,11 @@ public interface APIMessagingController {
      * Group Messaging
      */
     // Called before establishing websocket -> Sample of all group chats with minimal information for the user
+
+    // !!!! ONLY TO BE CALLED FROM MODULE MANAGER SERVICE
+    @PostMapping("/group/create")
+    public ResponseEntity<?> createGroupChat(HttpServletRequest request, @RequestBody GroupChatRegDTO groupChatReg) throws Exception;
+
     @GetMapping("/group/all")
     public ResponseEntity<?> getUsersGroupChats(HttpServletRequest request);
  

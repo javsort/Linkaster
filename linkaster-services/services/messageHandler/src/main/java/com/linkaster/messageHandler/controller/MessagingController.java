@@ -5,8 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.linkaster.messageHandler.model.group.GroupChatRegDTO;
 import com.linkaster.messageHandler.model.p2p.PrivateChat;
 import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 import com.linkaster.messageHandler.repository.PrivateChatRepository;
@@ -138,6 +141,17 @@ public class MessagingController implements APIMessagingController {
     /*
      * Group Messaging
      */
+
+    
+    // !!!! ONLY TO BE CALLED FROM MODULE MANAGER SERVICE
+    @Override
+    public ResponseEntity<Boolean> createGroupChat(HttpServletRequest request,  @RequestBody GroupChatRegDTO groupChatReg) throws Exception{
+        log.info(log_header + "Creating group chat for module: " + groupChatReg.getModuleName());
+
+        return ResponseEntity.ok(groupMessagingManagerService.createChatForModule(groupChatReg));
+
+    }
+
     @Override
     public ResponseEntity<?> getUsersGroupChats(HttpServletRequest request){
         log.info(log_header + "Retrieving all group chats for user: " + request.getHeader("Authorization"));
