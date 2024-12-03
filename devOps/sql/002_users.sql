@@ -34,7 +34,7 @@ CREATE TABLE students (
 );
 
 INSERT INTO students (id, student_id, course, year, enrolled_modules_ids)
-VALUES (2, '123456', 'Computer Science', "3", NULL);
+VALUES (2, '123456', 'Computer Science', '3', '[3, 2]');
 
 
 CREATE TABLE teachers (
