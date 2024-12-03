@@ -116,8 +116,8 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
       final newMessage = {
         "id": responseData['id'],
         "message": responseData['message'],
-        "ownerId": responseData['ownerId'],
-        "ownerName": responseData['ownerName'],
+        "senderId": responseData['ownerId'],
+        "receiverName": responseData['ownerName'],
         "time": responseData['time'],
         "date": responseData['date'],
         "moduleId": responseData['moduleId'],

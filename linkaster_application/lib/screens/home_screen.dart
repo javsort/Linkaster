@@ -9,7 +9,6 @@ import '../widget/join_module.dart'; // Import the JoinModuleDialog widget
 
 import 'announcement_page.dart';
 import 'chat_selection_page.dart';
-import 'library_page.dart';
 import 'profile_page.dart';
 import 'settings_page.dart';
 import 'feedback_page.dart';
@@ -56,7 +55,6 @@ class LinkasterHomeState extends State<LinkasterHome> {
         ChatSelectionPage(isPrivateChat: true, token: token),
         ChatSelectionPage(isPrivateChat: false, token: token),
         TimetablePage(token: token),
-        LibraryPage(),
         ProfilePage(token: token, status: UserStatus.available),
       ]);
     });
@@ -165,8 +163,6 @@ class LinkasterHomeState extends State<LinkasterHome> {
               icon: Icon(Icons.chat_bubble_sharp), label: 'Group Chats'),
           BottomNavigationBarItem(
               icon: Icon(Icons.calendar_month), label: 'Timetable'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.library_books), label: 'Library'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         selectedItemColor: Theme.of(context).colorScheme.secondary,
