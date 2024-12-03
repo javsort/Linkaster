@@ -29,12 +29,12 @@ public interface APIUserController {
 
     // CreateUser endpoint -> ADMIN ACCESS ONLY
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/createUser/{roleName}")
+    @PostMapping("/create/{roleName}")
     @ResponseStatus(HttpStatus.OK)
-    public String createUser(@ModelAttribute UserRegistration regRequest, @PathVariable String role);
+    public String createUser(@ModelAttribute UserRegistration regRequest, @PathVariable String roleName);
 
     // DeleteUser endpoint
-    @DeleteMapping("/deleteUser")
+    @DeleteMapping("/delete/{user_id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser(@PathVariable long user_id);
 

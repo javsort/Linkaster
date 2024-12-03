@@ -4,8 +4,16 @@ import java.security.KeyPair;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.linkaster.userService.dto.AuthUser;
 import com.linkaster.userService.dto.UserRegistration;
@@ -34,22 +42,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 //@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class UserAuthenticatorService {
+    @Value("${address.logicGateway.url}")
+    private String logicGatewayAddress;
+
+    // RestTemplate for making requests
+    private final RestTemplate restTemplate = new RestTemplate();
 
     // Repositories
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TeacherRepository teacherRepository;
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
+    private final RoleRepository roleRepository;
 
     // Autowired components:
-    @Autowired
-    private KeyMaster keyMaster;
+    private final KeyMaster keyMaster;
 
     private final String log_header = "UserAuthenticatorService --- ";
+
+    @Autowired
+    public UserAuthenticatorService(UserRepository userRepository, TeacherRepository teacherRepository, StudentRepository studentRepository, RoleRepository roleRepository, KeyMaster keyMaster) {
+        this.userRepository = userRepository;
+        this.teacherRepository = teacherRepository;
+        this.studentRepository = studentRepository;
+        this.roleRepository = roleRepository;
+        this.keyMaster = keyMaster;
+    }
 
     // Authenticate user -> Check if user exists and if password is correct
     public boolean authenticateUser(String userEmail, String password) {
@@ -214,6 +231,39 @@ public class UserAuthenticatorService {
         String encryptedPassword = userRepository.findByEmail(userEmail).getPassword();
 
         return bCryptPasswordEncoder.matches(password, encryptedPassword);
+    }
+
+    public boolean createTimetable(long newUserId){
+        log.info(log_header + "Pinging Timetable Service to create timetable for new user with id: '" + newUserId + "'...");
+
+        // Create request to timetable service
+        String pathToCreateTimetable = logicGatewayAddress + "/api/timetable/create/" + newUserId;
+
+        // Create request back to gateway
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<?> requestToMessageService = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Boolean> response = restTemplate.exchange(
+                pathToCreateTimetable, 
+                HttpMethod.POST, 
+                requestToMessageService, 
+                Boolean.class
+            );
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                return response.getBody();
+            } else {
+                log.error(log_header + "Error occurred while creating timetable for user: '" + newUserId + "'");
+                return false;
+            }
+
+        } catch (Exception e) {
+            log.error(log_header + "Error occurred while creating timetable for user: '" + newUserId + "'");
+            return false;
+        }
     }
     
 }
