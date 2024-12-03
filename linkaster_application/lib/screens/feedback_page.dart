@@ -8,26 +8,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 class FeedbackPage extends StatefulWidget {
   final String? token; // Token passed to the FeedbackPage
 
-  const FeedbackPage({
-    Key? key,
-    required this.token,
-  }) : super(key: key);
+  FeedbackPage({required this.token});
 
   @override
   _FeedbackPageState createState() => _FeedbackPageState();
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
+  List<String> recipients = []; // Stores "Teacher - Module" format
   String? token;
-  List<Map<String, dynamic>> classesStudents =
-    []; // Stores classes with name and ID
-  late TextEditingController studentIDController;
+  List<Map<String, String>> classesStudents = []; // Stores module details
   String? selectedRecipient;
   bool isAnonymous = false;
-  String? feedbackInput;
-  int? studentID = 123456;
-  //to do: store current user id 
   final TextEditingController feedbackController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -42,12 +36,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
     });
 
     if (token != null) {
-      await _fetchClasses(); // Fetch classes after announcements
+      await _fetchClasses("2"); // Replace "2" with actual user ID
     }
   }
 
-  Future<void> _fetchClasses() async {  
-    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/module/students');  //UPDATE TO ACTUAL ID
+  Future<void> _fetchClasses(String userID) async {
+    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/module/students/$userID');
     final response = await http.get(
       url,
       headers: {
@@ -60,11 +54,20 @@ class _FeedbackPageState extends State<FeedbackPage> {
       print('Classes fetched: ${response.body}');
       final List<dynamic> moduleList = jsonDecode(response.body);
       setState(() {
-        classesStudents = moduleList.map<Map<String, dynamic>>((module) {
+        // Populate `classesStudents` and `recipients`
+        classesStudents = moduleList.map<Map<String, String>>((module) {
           return {
-            'moduleName': module['moduleName'],
             'moduleId': module['moduleId'].toString(),
+            'moduleName': module['moduleName'],
+            'teacherId': module['teacherId'].toString(),
+            'teacherName': module['teacherName'],
           };
+        }).toList();
+
+        recipients = classesStudents.map<String>((module) {
+          final moduleName = module['moduleName']!;
+          final teacherName = module['teacherName']!;
+          return '$teacherName - $moduleName';
         }).toList();
       });
     } else {
@@ -72,58 +75,68 @@ class _FeedbackPageState extends State<FeedbackPage> {
     }
   }
 
-
-
-  final List<String> recipients = [
-    //to do: get user id's module id's
-    //translate module ids to teacher - module
-    //translate teacher - module to teacher id - module id
-    'Dr. Smith - Software Engineering',
-    'Prof. Johnson - Computer Science',
-    'Ms. Brown - IT Club Leader',
-    'Mr. White - Data Science Club Leader',
-    'Dr. Miller - Cyber Security',
-  ];
-
   Future<void> _submitFeedback() async {
-    String feedback = feedbackController.text;
-
-    if (selectedRecipient != null && feedback.isNotEmpty) {
-      try {
-        final url = Uri.parse(
-            'https://example.com/api/feedback'); // Replace with your actual API URL
-
-        final response = await http.post(
-          url,
-          headers: {
-            'Authorization':
-                'Bearer ${widget.token}', // Add token to the request
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'recipient': selectedRecipient,
-            'feedback': feedback,
-            'isAnonymous': isAnonymous,
-          }),
-        );
-
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Feedback submitted successfully!')),
-          );
-          feedbackController.clear();
-          setState(() {
-            selectedRecipient = null;
-            isAnonymous = false;
-          });
-        } else {
-          _showError('Failed to submit feedback. (${response.statusCode})');
-        }
-      } catch (e) {
-        _showError('An error occurred while submitting feedback.');
-      }
-    } else {
+    if (selectedRecipient == null || feedbackController.text.isEmpty) {
       _showError('Please fill in all fields before submitting.');
+      return;
+    }
+
+    final parts = selectedRecipient?.split(' - ');
+    if (parts == null || parts.length != 2) {
+      _showError('Invalid recipient format.');
+      return;
+    }
+
+    final teacherName = parts[0];
+    final moduleName = parts[1];
+
+    // Find matching module
+    final module = classesStudents.firstWhere(
+      (mod) => mod['moduleName'] == moduleName && mod['teacherName'] == teacherName,
+      orElse: () => {},
+    );
+
+    if (module.isEmpty) {
+      _showError('Could not find the selected module or teacher.');
+      return;
+    }
+
+    final recipientID = module['teacherId'];
+    final moduleID = module['moduleId'];
+    final senderID = "YourUserID"; // Replace with the current user's ID
+    final contents = feedbackController.text;
+
+    try {
+      final url = Uri.parse('${AppConfig.apiBaseUrl}/api/feedback/submit');
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'recipientID': recipientID,
+          'senderID': senderID,
+          'anonymous': isAnonymous,
+          'moduleID': moduleID,
+          'contents': contents,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Feedback submitted successfully!')),
+        );
+        feedbackController.clear();
+        setState(() {
+          selectedRecipient = null;
+          isAnonymous = false;
+        });
+      } else {
+        _showError('Failed to submit feedback. (${response.statusCode})');
+      }
+    } catch (e) {
+      _showError('An error occurred while submitting feedback.');
     }
   }
 
@@ -195,7 +208,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                //add saving feedback text as feedbackInput
               ),
             ),
             SizedBox(height: 20),
