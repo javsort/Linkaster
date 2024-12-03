@@ -58,3 +58,31 @@ linkaster_application/macos/flutter/generated_plugin_registrant.h
 linkaster_application/macos/flutter/generated_plugins.xcconfig
 
 linkaster_application/pubspec.lock
+
+# MacOs:
+.DS_Store
+mvnw
+mvnw.cmd
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/MavenWrapperDownloader.java
+devOps/.DS_Store
+linkaster-services/services/.DS_Store
+linkaster-services/services/cabinetService/.DS_Store
+linkaster-services/services/cabinetService/src/.DS_Store
+linkaster-services/services/feedbackService/.DS_Store
+linkaster-services/services/feedbackService/src/.DS_Store
+linkaster-services/services/logicGateway/.DS_Store
+linkaster-services/services/messageHandler/.DS_Store
+linkaster-services/services/messageHandler/src/.DS_Store
+linkaster-services/services/moduleManager/.DS_Store
+linkaster-services/services/moduleManager/src/.DS_Store
+linkaster-services/services/notifHandler/.DS_Store
+linkaster-services/services/notifHandler/src/.DS_Store
+linkaster-services/services/reserveService/.DS_Store
+linkaster-services/services/reserveService/src/.DS_Store
+linkaster-services/services/timetableService/.DS_Store
+linkaster-services/services/timetableService/src/.DS_Store
+linkaster-services/services/userService/.DS_Store
+linkaster-services/services/userService/src/.DS_Store
+linkaster_application/ios/Podfile
+linkaster_application/macos/Podfile
