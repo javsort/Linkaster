@@ -47,4 +47,7 @@ public interface APIGatewayController {
 
     @RequestMapping("/feedback/**")
     public ResponseEntity<?> forwardToFeedbackService(HttpServletRequest request, @RequestBody String requestBody);
+
+    @RequestMapping("/timetable/**")
+    public ResponseEntity<?> forwardToTimetableService(HttpServletRequest request, @RequestBody String requestBody);
 }

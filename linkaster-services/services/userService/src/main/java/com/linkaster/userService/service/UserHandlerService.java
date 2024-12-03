@@ -10,6 +10,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -179,8 +180,46 @@ public class UserHandlerService {
     // Delete user
     public void deleteUser(long user_id){
         log.info(log_header + "Deleting user with id: '" + user_id + "'...");
+
+        deleteUserTimetable(user_id);
+
         userRepository.deleteById(user_id);
     }
+
+    // Delete user's timetable
+    public boolean deleteUserTimetable(long newUserId){
+        log.info(log_header + "Pinging Timetable Service to create timetable for new user with id: '" + newUserId + "'...");
+
+        // Create request to timetable service
+        String pathToCreateTimetable = logicGatewayAddress + "/api/timetable/delete/" + newUserId;
+
+        // Create request back to gateway
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<?> requestToMessageService = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Boolean> response = restTemplate.exchange(
+                pathToCreateTimetable, 
+                HttpMethod.DELETE, 
+                requestToMessageService, 
+                Boolean.class
+            );
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                return response.getBody();
+            } else {
+                log.error(log_header + "Error occurred while creating timetable for user: '" + newUserId + "'");
+                return false;
+            }
+
+        } catch (Exception e) {
+            log.error(log_header + "Error occurred while creating timetable for user: '" + newUserId + "'");
+            return false;
+        }
+    }
+
 
 
     // Update user
