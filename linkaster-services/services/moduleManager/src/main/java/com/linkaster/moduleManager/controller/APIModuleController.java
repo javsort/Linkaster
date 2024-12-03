@@ -52,7 +52,7 @@ public interface APIModuleController {
     public Module getModuleById(@PathVariable long id);
 
 
-    @GetMapping("/modules/{moduleId}")
+    @GetMapping("/students/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
     public List<Long> getStudentsByModule(@PathVariable long moduleId);
     
