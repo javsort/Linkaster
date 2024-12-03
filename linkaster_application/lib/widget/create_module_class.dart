@@ -92,7 +92,7 @@ class _CreateModuleDialogState extends State<CreateModuleDialog> {
       Uri.parse('${AppConfig.apiBaseUrl}/api/module/create'),
       body: json.encode({
         'moduleOwnerName': 'GOD',
-        'type': 'club_module',
+        'type': 'class_module',
         'moduleName': _moduleNameController.text,
         'moduleCode': _moduleCodeController.text,
       }),
