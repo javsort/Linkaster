@@ -28,6 +28,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   ];
 
   // Sample list of classes or clubs
+  // Get /api/module/
   final List<String> classes = [
     'Software Engineering',
     'Data Science',

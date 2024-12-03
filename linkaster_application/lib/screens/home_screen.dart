@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widget/user_status.dart';
 import '../widget/create_module_club.dart';
+import '../widget/join_module.dart'; // Import the JoinModuleDialog widget
 
 import 'announcement_page.dart';
 import 'chat_selection_page.dart';
@@ -103,7 +104,18 @@ class LinkasterHomeState extends State<LinkasterHome> {
       builder: (BuildContext context) {
         return CreateModuleDialog(
           token: token,
-        ); // Show the two-step form dialog
+        );
+      },
+    );
+  }
+
+  void _showJoinModuleDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return JoinModuleDialog(
+          token: token,
+        );
       },
     );
   }
@@ -116,22 +128,12 @@ class LinkasterHomeState extends State<LinkasterHome> {
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
-            icon: Text('Status', style: TextStyle(color: Colors.white)),
-            onPressed: () async {
-              final response = await http.get(
-                Uri.parse('http://localhost:8080/api/status'),
-                headers: {'Authorization': 'Bearer $token'},
-              );
-              if (response.statusCode == 200) {
-                print('Status: ${response.body}');
-              } else {
-                print('Failed to fetch status');
-              }
-            },
-          ),
-          IconButton(
             icon: Text('Create Module', style: TextStyle(color: Colors.white)),
             onPressed: _showCreateModuleDialog,
+          ),
+          IconButton(
+            icon: Text('Join Module', style: TextStyle(color: Colors.white)),
+            onPressed: _showJoinModuleDialog,
           ),
           IconButton(
             icon: Text('Moodle', style: TextStyle(color: Colors.white)),
