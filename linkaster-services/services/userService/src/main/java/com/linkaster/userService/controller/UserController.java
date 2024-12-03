@@ -3,6 +3,8 @@ package com.linkaster.userService.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.userService.dto.UserRegistration;
@@ -45,14 +47,14 @@ public class UserController implements APIUserController {
 
     // CreateUser endpoint -> ADMIN ACCESS ONLY
     @Override
-    public String createUser(UserRegistration regRequest, String roleName) {
+    public String createUser(@ModelAttribute UserRegistration regRequest, @PathVariable String roleName) {
         userHandlerService.createUser(regRequest, roleName);
         return "User created successfully!";
     }
     
     // DeleteUser endpoint
     @Override
-    public void deleteUser(long user_id){
+    public void deleteUser(@PathVariable long user_id){
         userHandlerService.deleteUser(user_id);
     }
     
