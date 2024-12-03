@@ -145,20 +145,22 @@ class _TeacherLoginPageState extends State<TeacherLoginPage> {
       isLoading = true;
     });
 
-    final success = await _loginTeacher(
-      emailController.text,
-      passwordController.text,
-    );
+    final String? token =
+        await _loginTeacher(emailController.text, passwordController.text);
 
     setState(() {
       isLoading = false;
     });
 
-    if (success) {
+    if (token != null) {
       // Navigate to Home Screen
-      Navigator.pushReplacement(
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => LinkasterHome()),
+        (route) => false,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -170,7 +172,7 @@ class _TeacherLoginPageState extends State<TeacherLoginPage> {
     }
   }
 
-  Future<bool> _loginTeacher(String email, String password) async {
+  Future<String?> _loginTeacher(String email, String password) async {
     final url = Uri.parse('${AppConfig.apiBaseUrl}/api/auth/teacher/login');
 
     try {
@@ -185,18 +187,14 @@ class _TeacherLoginPageState extends State<TeacherLoginPage> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-
-        if (responseData['token'] != null) {
-          // Save the token in SharedPreferences
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('authToken', responseData['token']);
-          return true;
-        }
+        return responseData['token'];
+      } else {
+        print('Failed to login. Status code: ${response.statusCode}');
+        return null;
       }
-      return false;
     } catch (e) {
       print('Error during login: $e');
-      return false;
+      return null;
     }
   }
 }

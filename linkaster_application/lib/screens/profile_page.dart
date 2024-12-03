@@ -28,16 +28,14 @@ class _ProfilePageState extends State<ProfilePage> {
   late TextEditingController instagramController;
   late TextEditingController linkedinController;
   late TextEditingController phoneController;
-  late UserStatus currentStatus;
 
   bool isEditing = false;
 
   @override
   void initState() {
     super.initState();
-    currentStatus = widget.status;
-    initializeControllers(); // Initialize empty controllers
-    fetchStudentData(); // Fetch data from the server
+    initializeControllers();
+    fetchStudentData();
   }
 
   void initializeControllers({
@@ -63,8 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> fetchStudentData() async {
-    final url = Uri.parse(
-        '${AppConfig.apiBaseUrl}/api/student'); // Replace with your actual API URL
+    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/user/getStudentProfile');
 
     try {
       final response = await http.get(
@@ -80,10 +77,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
         setState(() {
           initializeControllers(
-            name: data['name'] ?? '',
-            surname: data['surname'] ?? '',
-            studentID: data['studentID'] ?? '',
-            studyYear: data['studyYear'] ?? '',
+            name: data['firstName'] ?? '',
+            surname: data['lastName'] ?? '',
+            studentID: data['studentId'] ?? '',
+            studyYear: data['year'] ?? '',
             program: data['program'] ?? '',
             email: data['email'] ?? '',
             instagram: data['instagram'] ?? '',
@@ -108,55 +105,65 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    surnameController.dispose();
-    studentIDController.dispose();
-    studyYearController.dispose();
-    programController.dispose();
-    emailController.dispose();
-    instagramController.dispose();
-    linkedinController.dispose();
-    phoneController.dispose();
-    super.dispose();
-  }
-
   void _toggleEdit() {
+    if (isEditing) {
+      _saveProfileChanges();
+    }
     setState(() {
       isEditing = !isEditing;
-      if (!isEditing) {
+    });
+  }
+
+  Future<void> _saveProfileChanges() async {
+    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/user/profile/update');
+
+    final body = {
+      'name': nameController.text,
+      'surname': surnameController.text,
+      'studentID': studentIDController.text,
+      'studyYear': studyYearController.text,
+      'program': programController.text,
+      'email': emailController.text,
+      'instagram': instagramController.text,
+      'linkedin': linkedinController.text,
+      'phone': phoneController.text,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer ${widget.token}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Changes saved successfully!'),
+            content: Text('Profile updated successfully!'),
             behavior: SnackBarBehavior.floating,
           ),
         );
+      } else {
+        _showError('Failed to update profile. (${response.statusCode})');
       }
-    });
+    } catch (e) {
+      _showError('An error occurred while saving data.');
+    }
   }
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Row(
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: Divider(
-              color: Theme.of(context).primaryColor.withOpacity(0.3),
-              thickness: 1,
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).primaryColor,
+        ),
       ),
     );
   }
@@ -165,38 +172,27 @@ class _ProfilePageState extends State<ProfilePage> {
     required String label,
     required TextEditingController controller,
     required IconData icon,
-    TextInputType? keyboardType,
     bool isLink = false,
+    TextInputType keyboardType = TextInputType.text,
   }) {
-    return Card(
-      elevation: 0,
-      color: isEditing ? Colors.white : Colors.grey.shade100,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: isEditing
-            ? TextField(
-                controller: controller,
-                keyboardType: keyboardType,
-                decoration: InputDecoration(
-                  labelText: label,
-                  prefixIcon: Icon(icon),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              )
-            : ListTile(
-                leading: Icon(icon, color: Theme.of(context).primaryColor),
-                title: Text(label),
-                subtitle: Text(
-                  controller.text.isEmpty ? 'Not provided' : controller.text,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(icon, color: Theme.of(context).primaryColor),
+          SizedBox(width: 16),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              readOnly: !isEditing,
+              keyboardType: keyboardType,
+              decoration: InputDecoration(
+                labelText: label,
+                border: isEditing ? OutlineInputBorder() : InputBorder.none,
               ),
+            ),
+          ),
+        ],
       ),
     );
   }

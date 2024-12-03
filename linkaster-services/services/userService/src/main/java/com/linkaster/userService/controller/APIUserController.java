@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.linkaster.userService.dto.ProfileInfoDTO;
 import com.linkaster.userService.dto.UserRegistration;
 import com.linkaster.userService.model.User;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /*
  * This interface defines the API endpoints for the User Controller.
@@ -60,5 +63,16 @@ public interface APIUserController {
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getUsersByRole( @PathVariable String role);
+
+    // GetStudentProfile endpoint
+    @GetMapping("/getStudentProfile")
+    @ResponseStatus(HttpStatus.OK)
+    public ProfileInfoDTO getStudentProfile(HttpServletRequest request);
+
+    // GetTeacherProfile endpoint
+    @GetMapping("/getTeacherProfile")
+    @ResponseStatus(HttpStatus.OK)
+    public ProfileInfoDTO getTeacherProfile(HttpServletRequest request);
+
     
 }
