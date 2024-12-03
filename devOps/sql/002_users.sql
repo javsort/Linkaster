@@ -37,6 +37,13 @@ INSERT INTO students (id, student_id, course, year, enrolled_modules_ids)
 VALUES 
     (2, '123456', 'Computer Science', '3', NULL),
     (5, '321', 'Computer Science', '2', NULL);
+VALUES (2, '123456', 'Computer Science', "3", NULL),
+        (5, '123444', 'Computer Science', "3", NULL),
+        (6, '123423', 'Computer Science', "3", NULL),
+        (7, '123412', 'Computer Science', "3", NULL),
+        (8, '132244', 'Computer Science', "3", NULL),
+        (9, '121455', 'Computer Science', "3", NULL),
+        (10, '122343', 'Computer Science', "3", NULL);
 
 
 CREATE TABLE teachers (
