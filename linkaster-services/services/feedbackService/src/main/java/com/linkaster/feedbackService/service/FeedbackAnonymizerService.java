@@ -20,7 +20,7 @@ public class FeedbackAnonymizerService {
 
     public void anonymizeFeedback(FeedbackDTO feedback) {
         log.info(log_header + "Anonymizing feedback ...");
-        feedback.setSenderId("0");
+        feedback.setSenderID(0);
         log.info(log_header + "Feedback anonymized successfully!");
     }
 }

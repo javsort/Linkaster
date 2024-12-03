@@ -21,12 +21,11 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user-service
-          uri: ${USER_SERVICE_URL:http://localhost:8081}
+        - id: feedback-service
+          uri: ${FEEDBACK_SERVICE_URL:http://localhost:8087}
           predicates:
-            - Path=/api/user/**
-            - Path=/api/user/getAllUsers
-            - Path=/api/auth/**
+            - Path=/api/feedback/**
+            - Path=/api/feedback/getAllFeedbacks
           filters:
             - AddRequestHeader=Authorization, "#{request.headers.Authorization}" # Forward Authorization header
 

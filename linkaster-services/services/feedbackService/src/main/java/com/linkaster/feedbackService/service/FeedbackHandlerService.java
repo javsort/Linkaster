@@ -8,6 +8,9 @@ import com.linkaster.feedbackService.repository.FeedbackRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Collections;
+
 
 @Service
 @Transactional
@@ -26,20 +29,14 @@ public class FeedbackHandlerService {
 
             log.info(log_header + "Processing feedback ...");
 
-            boolean anon = false;
-            if(feedback.getAnonymous().equals("True")){
-                anon = true;
-            }
 
             // Create feedback from DTO
             Feedback newFeedback = new Feedback();
-            newFeedback.setRecipientID(Long.parseLong(feedback.getRecipientId()));
-            newFeedback.setSenderID(Long.parseLong(feedback.getSenderId()));
-            newFeedback.setAnonymous(anon);
-            newFeedback.setModuleID(Long.parseLong(feedback.getModuleId()));
+            newFeedback.setRecipientID(feedback.getRecipientID());
+            newFeedback.setSenderID(feedback.getSenderID());
+            newFeedback.setAnonymous(feedback.isAnonymous());
+            newFeedback.setModuleID(feedback.getModuleID());
             newFeedback.setContents(feedback.getContents());
-
-        
 
             feedbackRepository.save(newFeedback);
             log.info(log_header + "Feedback processed successfully!");
@@ -47,7 +44,41 @@ public class FeedbackHandlerService {
             log.info(log_header + "Error processing feedback: " + e.getMessage());
         }
     }
+    public List<Feedback> getModuleFeedbacks(int moduleID) {
+        try {
+            return feedbackRepository.getModuleFeedback(moduleID); 
+        } catch (Exception e) {
+            System.out.println("Error getting module feedbacks: " + e.getMessage());
+            return Collections.emptyList(); 
+        }
+    }
 
+    public List<Feedback> getInstructorFeedbacks(int instructorID) {
+        try {
+            return feedbackRepository.getInstructorFeedback(instructorID); 
+        } catch (Exception e) {
+            System.out.println("Error getting instructor feedbacks: " + e.getMessage());
+            return Collections.emptyList(); 
+        }
+    }
+
+    public List<Feedback> getInstructorModuleFeedbacks(int moduleID, int instructorID) {
+        try {
+            return feedbackRepository.getInstructorModuleFeedback(moduleID, instructorID); 
+        } catch (Exception e) {
+            System.out.println("Error getting all feedbacks: " + e.getMessage());
+            return Collections.emptyList(); 
+        }
+    }
+    
+    public List<Feedback> getAllFeedbacks() {
+        try {
+            return feedbackRepository.findAll(); 
+        } catch (Exception e) {
+            System.out.println("Error getting all feedbacks: " + e.getMessage());
+            return Collections.emptyList(); 
+        }
+    }
     /*
      * Insert methods here:
      */

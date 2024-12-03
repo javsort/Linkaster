@@ -1,74 +1,87 @@
 package com.linkaster.feedbackService.model;
 
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
 
-//feedback contains: id, recipientName, senderName, anonymous, recipientModule, and contents
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
-@Getter
+/*
+ * This class represents a student user.
+ * It extends the User class.
+ *
+*/
 @Entity
-@Table(name = "feedback")
+@Table(name = "feedbacks")
+//feedback contains: id, recipientName, senderName, anonymous, recipientModule, and contents
 public class Feedback {
-
     @Id
-    @Column(name = "feedbackID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long FeedbackID;
+    private long id;
 
-    @Column(name = "recipientID")
+    @Column(name = "feedback_recipient_id")
     private long recipientID;
-
-    @Column(name = "senderID")
+    
+    @Column(name = "feedback_sender_id")
     private long senderID;
-
-    @Column(name = "anonymous")
+    
+    @Column(name = "feedback_anonymous")
     private boolean anonymous;
-
-    @Column(name = "moduleID")
+    
+    @Column(name = "feedback_recipient_module")
     private long moduleID;
-
-    @Column(name = "contents")
+    
+    @Column(name = "feedback_contents")
     private String contents;
+    
+
+    public long getId() {
+        return id;
+    }
+    
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public boolean getAnonymous(){
         return anonymous;
     }
 
-    public void setFeedbackID (long newFeedbackID) {
-        this.FeedbackID = newFeedbackID;
+    public void setAnonymous (boolean anonymous) {
+        this.anonymous = anonymous;
     }
 
-    public void setRecipientID (long newRecipientID) {
-        this.recipientID = newRecipientID;
+    public long getRecipientID() {
+        return recipientID;
     }
 
-    public void setSenderID(long newID){
-        this.senderID = newID;
-    }
-
-    public void setAnonymous (boolean newAnonymous) {
-        this.anonymous = newAnonymous;
-    }
-
-    public void setModuleID (long newModuleID) {
-        this.moduleID = newModuleID;
-    }
-
-    public void setContents (String newContents) {
-        this.contents = newContents;
+    public void setRecipientID (long recipientID) {
+        this.recipientID = recipientID;
     }
 
     public long getSenderID() {
         return senderID;
+    }
+
+    public void setSenderID(long senderID){
+        this.senderID = senderID;
+    }
+
+    public long getModuleID() {
+        return moduleID;
+    }
+
+    public void setModuleID (long moduleID) {
+        this.moduleID = moduleID;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+    
+    public void setContents (String contents) {
+        this.contents = contents;
     }
 }
