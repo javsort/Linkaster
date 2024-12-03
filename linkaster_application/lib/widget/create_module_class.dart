@@ -91,7 +91,6 @@ class _CreateModuleDialogState extends State<CreateModuleDialog> {
     final response = await http.post(
       Uri.parse('${AppConfig.apiBaseUrl}/api/module/create'),
       body: json.encode({
-        'moduleOwnerName': 'GOD',
         'type': 'class_module',
         'moduleName': _moduleNameController.text,
         'moduleCode': _moduleCodeController.text,

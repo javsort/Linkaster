@@ -15,10 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AnnouncementCreate {
     private long id;
-    private String name;
     private String message;
-    private String time;
-    private Date date;
     private long moduleId;
 
 }

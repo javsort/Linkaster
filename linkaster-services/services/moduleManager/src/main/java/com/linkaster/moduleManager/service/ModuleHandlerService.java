@@ -38,6 +38,7 @@ public class ModuleHandlerService {
         String message = announcementCreate.getMessage();
         
         String ownerIdString = (String) request.getAttribute("id");
+        String ownerName = (String) request.getAttribute("name");
         
         long ownerId;
 
@@ -57,11 +58,12 @@ public class ModuleHandlerService {
             throw new IllegalArgumentException("Module not found");
         }
     
-        Module module = moduleOptional.get();
+        Module module = moduleOptional.get(); // Get the module
     
         // Create the announcement
         Announcement newAnnouncement = new Announcement();
         newAnnouncement.setMessage(message);
+        newAnnouncement.setOwnerName(ownerName);
         newAnnouncement.setDate(new java.sql.Date(System.currentTimeMillis())); // Current date
         newAnnouncement.setTime(java.time.LocalTime.now().toString());          // Current time
         newAnnouncement.setOwnerId(ownerId);

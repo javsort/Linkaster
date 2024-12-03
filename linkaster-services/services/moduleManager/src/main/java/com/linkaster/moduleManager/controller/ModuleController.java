@@ -117,7 +117,9 @@ public class ModuleController implements APIModuleController {
     public ResponseEntity<?> updateModule(@PathVariable long id, @RequestBody ModuleCreate module, HttpServletRequest request) {
         log.info(log_header + "Attempting to update module with ID: {}", id);
         long ownerId = (Long) request.getAttribute("id");
-        boolean isUpdated = moduleManagerService.updateModule(id, module, ownerId);
+        String ownerName = (String) request.getAttribute("email");
+
+        boolean isUpdated = moduleManagerService.updateModule(id, module, ownerId, ownerName);
 
         if (isUpdated) {
             log.info(log_header + "Module with ID {} updated successfully.", id);
@@ -210,9 +212,9 @@ public class ModuleController implements APIModuleController {
         
         AnnouncementResponse response = new AnnouncementResponse(
             newAnnouncement.getId(),
-            newAnnouncement.getName(),
             newAnnouncement.getMessage(),
             newAnnouncement.getOwnerId(),
+            newAnnouncement.getOwnerName(),
             newAnnouncement.getTime(),
             newAnnouncement.getDate(), // Assuming date is converted to String
             newAnnouncement.getModuleId()

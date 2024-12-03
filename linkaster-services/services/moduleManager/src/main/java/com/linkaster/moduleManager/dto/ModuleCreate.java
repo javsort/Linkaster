@@ -17,7 +17,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ModuleCreate {
-    private String moduleOwnerName;
     private String type;
     private String moduleName;
     private String moduleCode;

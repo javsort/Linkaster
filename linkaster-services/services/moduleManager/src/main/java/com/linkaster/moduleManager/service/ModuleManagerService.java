@@ -57,6 +57,7 @@ public class ModuleManagerService {
         log.info(log_header + "Creating module: " + module);
 
         String ownerIdString = (String) request.getAttribute("id");
+        String ownerName = (String) request.getAttribute("userEmail");
 
         long ownerId;
         try {
@@ -84,7 +85,7 @@ public class ModuleManagerService {
                 
                 newModule = Module.builder()
                         .moduleOwnerId(ownerId)
-                        .moduleOwnerName(module.getModuleOwnerName())
+                        .moduleOwnerName(ownerName)
                         .moduleOwnerType(creatorRole)
                         .moduleName(module.getModuleName())
                         .moduleCode(module.getModuleCode())
@@ -100,7 +101,7 @@ public class ModuleManagerService {
 
                 newModule = Module.builder()
                         .moduleOwnerId(ownerId)
-                        .moduleOwnerName(module.getModuleOwnerName())
+                        .moduleOwnerName(ownerName)
                         .moduleOwnerType(creatorRole)
                         .moduleName(module.getModuleName())
                         .moduleCode(module.getModuleCode())
@@ -125,7 +126,7 @@ public class ModuleManagerService {
         return newModule;
     }
 
-    public boolean updateModule(long id, ModuleCreate module, long ownerId) {
+    public boolean updateModule(long id, ModuleCreate module, long ownerId, String ownerName) {
         // Check if the module exists
         if (!moduleRepository.existsById(id)) {
             log.error(log_header + "Module with ID: " + id + " does not exist");
@@ -151,7 +152,7 @@ public class ModuleManagerService {
         existingModule.setModuleCode(module.getModuleCode());
         existingModule.setModuleName(module.getModuleName());
         existingModule.setModuleOwnerId(ownerId);
-        existingModule.setModuleOwnerName(module.getModuleOwnerName());
+        existingModule.setModuleOwnerName(ownerName);
         existingModule.setModuleOwnerType(module.getType());
     
         // Save the updated module
