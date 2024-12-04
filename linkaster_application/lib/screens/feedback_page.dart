@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:linkaster_application/config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,66 +15,8 @@ class FeedbackPage extends StatefulWidget {
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
-  String? token;
-  List<Map<String, dynamic>> classesStudents =
-    []; // Stores classes with name and ID
-  late TextEditingController studentIDController;
-  String? selectedRecipient;
-  bool isAnonymous = false;
-  String? feedbackInput;
-  int? studentID = 123456;
-  //to do: store current user id 
-  final TextEditingController feedbackController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    _retrieveToken();
-  }
-
-  Future<void> _retrieveToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      token = prefs.getString('authToken');
-      print('Retrieved token: $token');
-    });
-
-    if (token != null) {
-      await _fetchClasses(); // Fetch classes after announcements
-    }
-  }
-
-  Future<void> _fetchClasses() async {  
-    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/module/students');  //UPDATE TO ACTUAL ID
-    final response = await http.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      print('Classes fetched: ${response.body}');
-      final List<dynamic> moduleList = jsonDecode(response.body);
-      setState(() {
-        classesStudents = moduleList.map<Map<String, dynamic>>((module) {
-          return {
-            'moduleName': module['moduleName'],
-            'moduleId': module['moduleId'].toString(),
-          };
-        }).toList();
-      });
-    } else {
-      print('Failed to fetch classes: ${response.statusCode}');
-    }
-  }
-
-
-
-  final List<String> recipients = [
-    //to do: get user id's module id's
-    //translate module ids to teacher - module
-    //translate teacher - module to teacher id - module id
+  List<String> recipients = [
+    //example data:
     'Dr. Smith - Software Engineering',
     'Prof. Johnson - Computer Science',
     'Ms. Brown - IT Club Leader',
