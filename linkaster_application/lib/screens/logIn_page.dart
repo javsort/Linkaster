@@ -4,9 +4,15 @@ import 'register_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../config/config.dart'; // AppConfig for API base URL
-import 'package:shared_preferences/shared_preferences.dart'; // Add for token storage
+import 'package:shared_preferences/shared_preferences.dart'; // Token storage
 
 class LoginPage extends StatefulWidget {
+  final http.Client httpClient;
+
+  LoginPage({Key? key, http.Client? httpClient})
+      : httpClient = httpClient ?? http.Client(),
+        super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -15,6 +21,13 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 TextField(
                   controller: emailController,
                   decoration: InputDecoration(
@@ -77,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 TextField(
                   controller: passwordController,
                   decoration: InputDecoration(
@@ -89,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   obscureText: true,
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -104,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       style: TextButton.styleFrom(
                         side: BorderSide(color: Theme.of(context).primaryColor),
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           vertical: 15.0,
                           horizontal: 20.0,
                         ),
@@ -117,25 +130,25 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () => _handleLogin(context),
+                      onPressed: isLoading ? null : () => _handleLogin(context),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        padding: EdgeInsets.symmetric(vertical: 15.0),
+                        padding: const EdgeInsets.symmetric(vertical: 15.0),
                         backgroundColor: Theme.of(context).primaryColor,
                         foregroundColor: Colors.white,
-                        textStyle: TextStyle(fontSize: 18.0),
+                        textStyle: const TextStyle(fontSize: 18.0),
                       ),
                       child: isLoading
-                          ? CircularProgressIndicator(
+                          ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
-                          : Text('Login'),
+                          : const Text('Login'),
                     ),
                   ],
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
               ],
             ),
           ),
@@ -147,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _handleLogin(BuildContext context) async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please enter your email and password'),
           backgroundColor: Colors.red,
         ),
@@ -159,8 +172,11 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
 
-    final String? token =
-        await loginUser(emailController.text, passwordController.text);
+    final String? token = await loginUser(
+      emailController.text,
+      passwordController.text,
+      widget.httpClient,
+    );
 
     setState(() {
       isLoading = false;
@@ -178,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Invalid email or password'),
           backgroundColor: Colors.red,
         ),
@@ -186,24 +202,27 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<String?> loginUser(String email, String password) async {
+  Future<String?> loginUser(
+    String email,
+    String password,
+    http.Client client,
+  ) async {
     final url = Uri.parse("${AppConfig.apiBaseUrl}/api/auth/student/login");
     print('Base URL: ${AppConfig.apiBaseUrl}');
     print('Logging in to: $url');
+
     try {
-      final response = await http.post(
+      final response = await client.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "userEmail": email,
-          "password": password,
-        }),
+        body: jsonEncode({"userEmail": email, "password": password}),
       );
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        return responseData['token']; // Return the token
+        return responseData['token'];
       } else {
+        print("Login failed with status: ${response.statusCode}");
         return null;
       }
     } catch (e) {
