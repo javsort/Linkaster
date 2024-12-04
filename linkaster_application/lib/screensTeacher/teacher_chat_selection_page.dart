@@ -20,6 +20,7 @@ class TeacherChatSelectionPage extends StatefulWidget {
 
 class _ChatSelectionPageState extends State<TeacherChatSelectionPage> {
   List<Chat> privateChats = [];
+  List<Chat> groupChat = [];
   bool isLoading = false;
 
   @override
@@ -28,7 +29,7 @@ class _ChatSelectionPageState extends State<TeacherChatSelectionPage> {
     if (widget.isPrivateChat) {
       _fetchPrivateChats();
     } else if (widget.isPrivateChat == false) {
-      // _fetchGroupChats();
+      _fetchGroupChats();
     }
   }
 
@@ -48,9 +49,9 @@ class _ChatSelectionPageState extends State<TeacherChatSelectionPage> {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        // setState(() {
-        //   groupChats = data.map((item) => GroupChat.fromJson(item)).toList();
-        // });
+        setState(() {
+          groupChat = data.map((item) => Chat.fromJson(item)).toList();
+        });
       } else {
         _showError(
             "Failed to fetch group chats. Status code: ${response.statusCode}");

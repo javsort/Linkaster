@@ -28,9 +28,6 @@ public class GroupMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupMessageId;
 
-    @Column(name = "module_id", nullable = false)
-    private long moduleId;
-
     @Column(name = "sender_id", nullable = false)
     private long senderId;
 

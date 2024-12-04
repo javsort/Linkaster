@@ -6,6 +6,12 @@ import '../config/config.dart'; // AppConfig for API configuration
 import './teacher_home_screen.dart'; // Import the home screen
 
 class TeacherLoginPage extends StatefulWidget {
+  final http.Client httpClient;
+
+  TeacherLoginPage({Key? key, http.Client? httpClient})
+      : httpClient = httpClient ?? http.Client(),
+        super(key: key);
+
   @override
   _TeacherLoginPageState createState() => _TeacherLoginPageState();
 }
@@ -133,8 +139,8 @@ class _TeacherLoginPageState extends State<TeacherLoginPage> {
   Future<void> _handleLogin(BuildContext context) async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please fill in all the fields'),
+        const SnackBar(
+          content: Text('Please enter your email and password'),
           backgroundColor: Colors.red,
         ),
       );
@@ -145,17 +151,20 @@ class _TeacherLoginPageState extends State<TeacherLoginPage> {
       isLoading = true;
     });
 
-    final String? token =
-        await _loginTeacher(emailController.text, passwordController.text);
+    final String? token = await loginUser(
+      emailController.text,
+      passwordController.text,
+      widget.httpClient,
+    );
 
     setState(() {
       isLoading = false;
     });
 
     if (token != null) {
-      // Navigate to Home Screen
+      // Save token locally
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
+      await prefs.setString('authToken', token);
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -164,36 +173,39 @@ class _TeacherLoginPageState extends State<TeacherLoginPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Login failed. Check your credentials.'),
+        const SnackBar(
+          content: Text('Invalid email or password'),
           backgroundColor: Colors.red,
         ),
       );
     }
   }
 
-  Future<String?> _loginTeacher(String email, String password) async {
-    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/auth/teacher/login');
+  Future<String?> loginUser(
+    String email,
+    String password,
+    http.Client client,
+  ) async {
+    final url = Uri.parse("${AppConfig.apiBaseUrl}/api/auth/student/login");
+    print('Base URL: ${AppConfig.apiBaseUrl}');
+    print('Logging in to: $url');
 
     try {
-      final response = await http.post(
+      final response = await client.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "userEmail": email,
-          "password": password,
-        }),
+        body: jsonEncode({"userEmail": email, "password": password}),
       );
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         return responseData['token'];
       } else {
-        print('Failed to login. Status code: ${response.statusCode}');
+        print("Login failed with status: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      print('Error during login: $e');
+      print('Error logging in: $e');
       return null;
     }
   }

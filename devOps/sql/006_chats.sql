@@ -58,9 +58,9 @@ INSERT INTO private_messages (
 CREATE TABLE group_chats (
     group_chat_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     module_AESKey VARCHAR(512) NOT NULL,
-    moduleId BIGINT,
-    moduleName VARCHAR(255),
-    ownerUserId BIGINT,
+    module_id BIGINT,
+    module_name VARCHAR(255),
+    owner_user_id BIGINT,
     last_message_date DATE
 );
 
@@ -75,7 +75,6 @@ CREATE TABLE group_chat_members (
 CREATE TABLE group_messages (
     group_message_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     group_chat_id BIGINT NOT NULL,
-    module_id BIGINT NOT NULL,
     sender_id BIGINT NOT NULL,
     encrypted_message VARCHAR(255) NOT NULL,
     timestamp TIMESTAMP NOT NULL,
@@ -84,11 +83,13 @@ CREATE TABLE group_messages (
 
 
 -- Insert example group chats
-INSERT INTO group_chats (module_AESKey, moduleId, moduleName, ownerUserId, last_message_date)
+INSERT INTO group_chats (module_AESKey, module_id, module_name, owner_user_id, last_message_date)
 VALUES
 ('aes_key_1', 1, 'Internet Application of Engineering', 2, '2024-12-01'),
 ('aes_key_2', 2, 'Robotics', 2, '2024-12-01'),
-('aes_key_3', 3, 'Artificial Intelligence', 3, '2024-12-01');
+('aes_key_3', 3, 'Artificial Intelligence', 3, '2024-12-01'),
+('aes_key_4', 4, 'Machine Learning', 5, '2024-12-01'),
+('aes_key_5', 5, 'Deep Learning', 6, '2024-12-01');
 
 -- Insert members for the group chats
 INSERT INTO group_chat_members (group_chat_id, user_id, public_key)
@@ -108,12 +109,24 @@ VALUES
 (3, 3, 'public_key_3'),
 (3, 10, 'public_key_10'),
 (3, 11, 'public_key_11'),
-(3, 12, 'public_key_12');
+(3, 12, 'public_key_12'),
+
+-- Group Chat 4: Machine Learning
+(4, 5, 'public_key_555'),
+(4, 13, 'public_key_13'),
+(4, 14, 'public_key_14'),
+
+-- Group Chat 5: Deep Learning
+(5, 6, 'public_key_777'),
+(5, 15, 'public_key_15'),
+(5, 16, 'public_key_16');
 
 -- Insert group messages
-INSERT INTO group_messages (group_chat_id, module_id, sender_id, encrypted_message, timestamp)
+INSERT INTO group_messages (group_chat_id, sender_id, encrypted_message, timestamp)
 VALUES
-(1, 1, 2, 'encrypted_message_1', '2024-12-01 10:00:00'),
-(1, 1, 5, 'encrypted_message_2', '2024-12-01 10:05:00'),
-(2, 2, 8, 'encrypted_message_3', '2024-12-01 11:00:00'),
-(3, 3, 3, 'encrypted_message_4', '2024-12-01 12:00:00');
+(1, 2, 'encrypted_message_1', '2024-12-01 10:00:00'),
+(1, 5, 'encrypted_message_2', '2024-12-01 10:05:00'),
+(2, 8, 'encrypted_message_3', '2024-12-01 11:00:00'),
+(3, 3, 'encrypted_message_4', '2024-12-01 12:00:00'),
+(4, 5, 'encrypted_message_5', '2024-12-01 13:00:00'),
+(5, 6, 'encrypted_message_6', '2024-12-01 14:00:00');
