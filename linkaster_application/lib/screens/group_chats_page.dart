@@ -42,13 +42,7 @@ class _GroupChatPageState extends State<GroupChatsPage> {
         final List<dynamic> fetchedMessages = jsonDecode(response.body);
         setState(() {
           messages = fetchedMessages.map((msg) {
-            return {
-              'message': msg['message'],
-              'time': DateTime.parse(msg['timestamp'])
-                  .toLocal()
-                  .toString()
-                  .split(' ')[1],
-            };
+            return {'message': msg['message'], 'time': (msg['timestamp'])};
           }).toList();
         });
       } else {
