@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.linkaster.userService.dto.ProfileInfoDTO;
 import com.linkaster.userService.model.StudentUser;
-import com.linkaster.userService.model.TeacherUser;
 import com.linkaster.userService.model.User;
 
 import com.linkaster.userService.repository.StudentRepository;
