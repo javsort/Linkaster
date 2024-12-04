@@ -118,19 +118,19 @@ services:
     networks:
       - linkaster-network
 
-#  feedback-service:
-#    build:
-#      context: ../linkaster-services/services/feedbackService
-#    ports:
-#      - "8087:8087"
-#    depends_on:
-#      - linkaster-MySQL
-#    environment:
-#      - SERVER_PORT=8087
-#    env_file:
-#      - .env
-#    networks:
-#      - linkaster-network
+  feedback-service:
+    build:
+      context: ../linkaster-services/services/feedbackService
+    ports:
+      - "8087:8087"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8087
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
 
 #  cabinet-service:
 #    build:
@@ -167,6 +167,7 @@ services:
       - ./sql/004_events.sql:/docker-entrypoint-initdb.d/004_events.sql
       - ./sql/005_announcements.sql:/docker-entrypoint-initdb.d/005_announcements.sql
       - ./sql/006_chats.sql:/docker-entrypoint-initdb.d/006_chats.sql
+      - ./sql/008_feedbacks.sql:/docker-entrypoint-initdb.d/008_feedbacks.sql
       
     
     
