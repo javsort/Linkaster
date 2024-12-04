@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.linkaster.messageHandler.dto.PrivChatDTO;
 import com.linkaster.messageHandler.model.group.GroupChatRegDTO;
 import com.linkaster.messageHandler.model.p2p.PrivateChat;
 import com.linkaster.messageHandler.model.p2p.PrivateMessage;
@@ -42,14 +43,18 @@ public interface APIMessagingController {
     */
     @GetMapping("/establishSocket")
     public String establishSocket(HttpServletRequest request);
-
     
     /*
      * Private Messaging
      */
+
     // Called before establishing websocket -> Sample of all private chats with minimal information for the user
     @GetMapping("/private/all")
     public ResponseEntity<?> getUsersPrivateChats(HttpServletRequest request);
+
+    // Create chat from email request
+    @PostMapping("/private/create")
+    public ResponseEntity<?> createPrivateChat(HttpServletRequest request, @RequestBody PrivChatDTO email);
 
     // Called simultaneously as the websocket is established
     @GetMapping("/private/{chatId}")

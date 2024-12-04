@@ -218,7 +218,6 @@ public class UserAuthenticatorService {
             return false;
         }
 
-
         // Then check if it is a lancaster email
         String domain = "lancaster.ac.uk";
 

@@ -57,23 +57,18 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // Public endpoints
-        if (requestWrap.getRequestURI().equals("/api/login") 
-            || requestWrap.getRequestURI().equals("/api/status") 
-            || requestWrap.getRequestURI().equals("/api/auth/{user_type}/login")
-            || requestWrap.getRequestURI().equals("/api/auth/admin/login")
-            || requestWrap.getRequestURI().equals("/api/auth/student/login")
-            || requestWrap.getRequestURI().equals("/api/auth/teacher/login")
-            || requestWrap.getRequestURI().equals("/api/auth/admin/register")
-            || requestWrap.getRequestURI().equals("/api/auth/student/register")
-            || requestWrap.getRequestURI().equals("/api/auth/teacher/register")){
-            log.info(log_header + "Public endpoint accessed, no token required");
+        if (requestWrap.getRequestURI().matches(
+            "/api/(login|status|" +
+            "auth/(admin|student|teacher)/(login|register))"
+        )) {
+            log.info(log_header + "Public login/registration endpoint accessed, no token required");
             filterChain.doFilter(request, response);
             return;
         }
 
         // Special case for timetable
         if (requestWrap.getRequestURI().matches("/api/timetable/(create|delete)/\\d+")) {
-            log.info(log_header + "Public timetable endpoint accessed, no token required");
+            log.info(log_header + "Public timetable creation endpoint accessed, no token required");
             
             filterChain.doFilter(request, response);
             return;

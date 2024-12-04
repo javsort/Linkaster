@@ -3,18 +3,22 @@ package com.linkaster.userService.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.linkaster.userService.dto.ProfileInfoDTO;
 import com.linkaster.userService.dto.UserRegistration;
+import com.linkaster.userService.dto.message.PrivateChatReg;
+import com.linkaster.userService.dto.message.PrivateChatSeedDTO;
 import com.linkaster.userService.model.User;
+import com.linkaster.userService.service.AuthorizationAgentService;
 import com.linkaster.userService.service.UserAuthenticatorService;
 import com.linkaster.userService.service.UserCustomizerService;
 import com.linkaster.userService.service.UserHandlerService;
 
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,17 +34,16 @@ public class UserController implements APIUserController {
     // Services for handling user operations
     private final UserHandlerService userHandlerService;       // To implement (?)
     private final UserCustomizerService userCustomizerService;              // To implement (?)
-    //private final AuthorizationAgentService authorizationAgentService;      // To implement (?)
+    private final AuthorizationAgentService authorizationAgentService;      // To implement (?)
 
     private final String log_header = "UserController --- ";
 
     // Constructor
     @Autowired
-    public UserController(UserHandlerService userHandlerService, UserAuthenticatorService userAuthenticatorService, UserCustomizerService userCustomizerService/*AuthorizationAgentService authorizationAgentService*/) {
+    public UserController(UserHandlerService userHandlerService, UserAuthenticatorService userAuthenticatorService, UserCustomizerService userCustomizerService, AuthorizationAgentService authorizationAgentService) {
         this.userHandlerService = userHandlerService;
         this.userCustomizerService = userCustomizerService;
-      
-        //this.authorizationAgentService = authorizationAgentService;
+        this.authorizationAgentService = authorizationAgentService;
 
     }
 
@@ -86,6 +89,11 @@ public class UserController implements APIUserController {
     @Override
     public List<User> getUsersByRole(String role){
         return userHandlerService.getUsersByRole(role);
+    }
+
+    @Override
+    public ResponseEntity<PrivateChatReg> retrieveDataForChats(@RequestBody PrivateChatSeedDTO seed){
+        return authorizationAgentService.retrieveDataForChats(seed);
     }
 
     // GetProfile endpoint

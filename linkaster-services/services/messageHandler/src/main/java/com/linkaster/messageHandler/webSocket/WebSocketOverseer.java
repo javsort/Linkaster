@@ -307,7 +307,7 @@ public class WebSocketOverseer extends TextWebSocketHandler {
             long userId = entry.getKey();
             WebSocketSession userSession = entry.getValue();
             
-            // Check if the user is a member of the group
+             // Check if the user is a member of the group
             if(groupMessagingManagerService.authenticateChatAccess(userId, groupChatId) && userId != senderId){
                 if(userSession.isOpen()){
                     log.info(log_header + "User with id: " + userId + " is a member of the group. Sending message...");
