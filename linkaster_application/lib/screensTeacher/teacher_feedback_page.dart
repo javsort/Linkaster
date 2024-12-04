@@ -1,24 +1,47 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:linkaster_application/config/config.dart';
 
-class TeacherFeedbackPage extends StatelessWidget {
-  // Mock data - Replace this with your actual data fetching logic
-  final List<FeedbackItem> feedbackItems = [
-    FeedbackItem(
-      senderName: 'Anonymous Student',
-      message:
-          'Great lectures and very helpful office hours. Thank you for being so approachable.',
-      timestamp: DateTime.now().subtract(Duration(days: 1)),
-      isAnonymous: true,
-    ),
-    FeedbackItem(
-      senderName: 'John Doe',
-      message:
-          'The practical examples in class really helped me understand the concepts better.',
-      timestamp: DateTime.now().subtract(Duration(days: 2)),
-      isAnonymous: false,
-    ),
-    // Add more feedback items as needed
-  ];
+class TeacherFeedbackPage extends StatefulWidget {
+  final int instructorID;
+
+  const TeacherFeedbackPage({Key? key, required this.instructorID})
+      : super(key: key);
+
+  @override
+  _TeacherFeedbackPageState createState() => _TeacherFeedbackPageState();
+}
+
+class _TeacherFeedbackPageState extends State<TeacherFeedbackPage> {
+  late Future<List<FeedbackItem>> feedbackItems;
+
+  @override
+  void initState() {
+    super.initState();
+    feedbackItems = fetchFeedbacks();
+  }
+
+  Future<List<FeedbackItem>> fetchFeedbacks() async {
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.apiBaseUrl}/api/feedback/getInstructorFeedbacks'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'instructorID': widget.instructorID}),
+      );
+
+      if (response.statusCode == 200) {
+        List jsonResponse = jsonDecode(response.body);
+        return jsonResponse
+            .map((data) => FeedbackItem.fromJson(data))
+            .toList();
+      } else {
+        throw Exception('Failed to load feedbacks');
+      }
+    } catch (error) {
+      throw Exception('Error fetching feedbacks: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,21 +50,38 @@ class TeacherFeedbackPage extends StatelessWidget {
         title: Text('Feedback Received'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: feedbackItems.isEmpty
-          ? Center(
+      body: FutureBuilder<List<FeedbackItem>>(
+        future: feedbackItems,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: TextStyle(fontSize: 16, color: Colors.red),
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(
               child: Text(
                 'No feedback received yet',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-            )
-          : ListView.builder(
+            );
+          } else {
+            final feedbackList = snapshot.data!;
+            return ListView.builder(
               padding: EdgeInsets.all(16.0),
-              itemCount: feedbackItems.length,
+              itemCount: feedbackList.length,
               itemBuilder: (context, index) {
-                final feedback = feedbackItems[index];
+                final feedback = feedbackList[index];
                 return FeedbackCard(feedback: feedback);
               },
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }
@@ -97,4 +137,13 @@ class FeedbackItem {
     required this.timestamp,
     required this.isAnonymous,
   });
+
+  factory FeedbackItem.fromJson(Map<String, dynamic> json) {
+    return FeedbackItem(
+      senderName: json['senderName'] ?? 'Anonymous',
+      message: json['contents'],
+      timestamp: DateTime.parse(json['timestamp']), // Ensure backend provides this field
+      isAnonymous: json['anonymous'],
+    );
+  }
 }

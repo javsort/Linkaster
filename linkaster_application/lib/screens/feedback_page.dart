@@ -15,7 +15,7 @@ class FeedbackPage extends StatefulWidget {
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
-  final List<String> recipients = [
+  List<String> recipients = [
     'Dr. Smith - Software Engineering',
     'Prof. Johnson - Computer Science',
     'Ms. Brown - IT Club Leader',
@@ -98,6 +98,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       });
     } else {
       print('Failed to fetch classes: ${response.statusCode}');
+      _showError('Failed to fetch classes: (${response.statusCode})');
     }
   }
 
