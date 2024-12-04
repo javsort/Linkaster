@@ -4,6 +4,7 @@ package com.linkaster.userService.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.linkaster.userService.dto.ProfileInfoDTO;
 import com.linkaster.userService.dto.UserRegistration;
 import com.linkaster.userService.model.User;
+import com.linkaster.userService.dto.message.PrivateChatReg;
+import com.linkaster.userService.dto.message.PrivateChatSeedDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -62,7 +65,11 @@ public interface APIUserController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getUsersByRole/{role}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getUsersByRole( @PathVariable String role);
+    public List<User> getUsersByRole(@PathVariable String role);
+
+    @PostMapping("/getDataForChat")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<PrivateChatReg> retrieveDataForChats(@RequestBody PrivateChatSeedDTO seed);
 
     // GetStudentProfile endpoint
     @GetMapping("/getStudentProfile")

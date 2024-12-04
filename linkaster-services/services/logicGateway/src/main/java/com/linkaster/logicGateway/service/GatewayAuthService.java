@@ -59,7 +59,11 @@ public class GatewayAuthService {
         
         try {
             log.info(log_header + log_header + "Making request to: " + pathToAuth);
-            ResponseEntity<Map> response = restTemplate.exchange(pathToAuth, HttpMethod.POST, request, Map.class);
+            ResponseEntity<Map> response = restTemplate.exchange(
+                pathToAuth, 
+                HttpMethod.POST, 
+                request, 
+                Map.class);
             log.info(log_header + "Response from user-service: " + response.getBody());
             
             // If the response is successful, generate JWT

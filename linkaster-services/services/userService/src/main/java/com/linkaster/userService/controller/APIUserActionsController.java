@@ -22,6 +22,5 @@ public interface APIUserActionsController {
 
     @PostMapping("/assignModuleManager")
     public String assignModuleManager(HttpServletRequest request);
-
     
 }
