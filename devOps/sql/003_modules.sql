@@ -11,5 +11,9 @@ CREATE TABLE modules (
 -- Insert a module class and a module club
 INSERT INTO modules (module_owner_id, module_name, module_code, student_enrolled_ids, module_type)
 VALUES 
-    (2, 'Internet Application of Engineering', '123456', '[2]', 'class'),
-    (2, 'Robotics', '123457', '[2]', 'club');
+    (11, 'Internet Application of Engineering', '123456', '[2]', 'class'),
+    (2, 'Robotics', '123457', '[2]', 'club'),
+    (3, 'Artificial Intelligence', '123458', '[3]', 'class'),
+    (5, 'Machine Learning', '123459', '[3]', 'club'),
+    (6, 'Deep Learning', '123460', '[3]', 'club');
+

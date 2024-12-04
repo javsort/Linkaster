@@ -17,4 +17,8 @@ INSERT INTO events (event_name, event_date, event_start_time, event_end_time, ev
 VALUES 
 ('Internet Application of Engineering Lecture', '2024-12-03', '09:00:00', '11:00:00', '716', 3, 1),  -- Assuming module ID 1
 ('Internet Application of Engineering Workshop', '2024-12-06', '09:00:00', '11:00:00', '716', 3, 1),  -- Assuming module ID 1
-('Robotics Club Meeting', '2024-12-04', '13:00:00', '15:00:00', 'Club Room 1', 2, 2); -- Assuming module ID 2
+('Robotics Club Meeting', '2024-12-04', '13:00:00', '15:00:00', 'Club Room 1', 2, 2), -- Assuming module ID 2
+('Artificial Intelligence Lecture', '2024-12-05', '09:00:00', '11:00:00', 'Room 101', 3, 3), -- Assuming module ID 3
+('Artificial Intelligence Workshop', '2024-12-08', '09:00:00', '11:00:00', 'Room 101', 3, 3), -- Assuming module ID 3
+('Machine Learning Club Meeting', '2024-12-09', '13:00:00', '15:00:00', 'Club Room 2', 5, 4), -- Assuming module ID 4
+('Deep Learning Club Meeting', '2024-12-10', '13:00:00', '15:00:00', 'Club Room 3', 6, 5); -- Assuming module ID 5

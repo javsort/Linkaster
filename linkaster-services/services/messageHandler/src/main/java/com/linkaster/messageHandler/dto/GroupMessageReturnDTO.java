@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +16,6 @@ public class GroupMessageReturnDTO {
     private long groupChatId;
     private long senderId;
     private String senderName;
+    private Date timestamp;
        
 }

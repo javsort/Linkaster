@@ -65,10 +65,10 @@ class _TeacherProfilePageState extends State<TeacherProfile> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       initializeControllers(
-        name: data['name'],
-        surname: data['surname'],
-        email: data['email'],
-        id: data['id'],
+        name: data['FirstName'],
+        surname: data['LasteName'],
+        email: data['userEmail'],
+        id: data['teacherId'],
         linkedin: data['linkedin'],
         github: data['github'],
       );

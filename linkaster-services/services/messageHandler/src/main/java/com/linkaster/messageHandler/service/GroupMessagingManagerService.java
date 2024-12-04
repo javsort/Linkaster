@@ -121,7 +121,6 @@ public class GroupMessagingManagerService {
     
             // Create a new group message
             GroupMessage newGroupMessage = new GroupMessage();
-            newGroupMessage.setModuleId(groupChat.getModuleId());
             newGroupMessage.setSenderId(senderId);
             newGroupMessage.setGroupChat(groupChat);
             newGroupMessage.setEncryptedMessage(encryptedMessage);
@@ -132,7 +131,7 @@ public class GroupMessagingManagerService {
             groupMessageRepository.save(newGroupMessage);
     
             // Return the DTO
-            return new GroupMessageReturnDTO(message, moduleChatId, senderId, senderName);
+            return new GroupMessageReturnDTO(message, moduleChatId, senderId, senderName, newGroupMessage.getTimestamp());
             
         } catch (Exception e) {
             log.error(log_header + "Error encrypting message: " + e.getMessage());
@@ -175,7 +174,7 @@ public class GroupMessagingManagerService {
 
         List<GroupChatDTO> usersGroupChats = new ArrayList<>();
         for(GroupChat chat : groupChats){
-            GroupChatDTO chatDTO = new GroupChatDTO(chat.getGroupChatId(), chat.getModuleId(), chat.getModuleName(), chat.getGroupMembers(), chat.getLastMessageDate());
+            GroupChatDTO chatDTO = new GroupChatDTO(chat.getGroupChatId(), chat.getModuleId(), chat.getModuleName(), chat.getLastMessageDate());
             usersGroupChats.add(chatDTO);
         }
 
@@ -200,7 +199,7 @@ public class GroupMessagingManagerService {
         List<GroupMessageReturnDTO> groupsMessages = new ArrayList<>();
 
         for(GroupMessage message : messages){
-            GroupMessageReturnDTO messageDTO = new GroupMessageReturnDTO(message.getEncryptedMessage(), message.getGroupChat().getGroupChatId(), message.getSenderId(), requestedGroupChat.getGroupMembers().get(message.getSenderId()));
+            GroupMessageReturnDTO messageDTO = new GroupMessageReturnDTO(message.getEncryptedMessage(), message.getGroupChat().getGroupChatId(), message.getSenderId(), requestedGroupChat.getGroupMembers().get(message.getSenderId()), message.getTimestamp());
             groupsMessages.add(messageDTO);
         }
 
