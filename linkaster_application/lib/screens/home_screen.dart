@@ -89,6 +89,8 @@ class LinkasterHomeState extends State<LinkasterHome> {
     }
   }
 
+  //Delete
+
   Future<void> _launchMoodle() async {
     const url = 'https://portal.lancaster.ac.uk/portal/my-area/modules';
     if (await canLaunch(url)) {
