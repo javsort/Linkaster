@@ -1,4 +1,4 @@
-/*package com.linkaster.feedbackService;
+package com.linkaster.feedbackService;
 
 
 import com.linkaster.feedbackService.controller.FeedbackController;
@@ -31,4 +31,3 @@ class FeedbackControllerTest {
         assertTrue(true);
     }
 }
-*/

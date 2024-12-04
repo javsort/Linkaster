@@ -16,12 +16,14 @@ class FeedbackPage extends StatefulWidget {
 
 class _FeedbackPageState extends State<FeedbackPage> {
   List<String> recipients = [
+    //example data:
     'Dr. Smith - Software Engineering',
     'Prof. Johnson - Computer Science',
     'Ms. Brown - IT Club Leader',
   ];
   String? token;
   List<Map<String, String>> classesStudents = [
+    //example data:
   {
     'moduleId': '1',
     'moduleName': 'Software Engineering',
