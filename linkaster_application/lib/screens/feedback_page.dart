@@ -60,12 +60,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
     });
 
     if (token != null) {
-      await _fetchClasses("2"); // Replace "2" with actual user ID
+      await _fetchClasses(); 
     }
   }
 
-  Future<void> _fetchClasses(String userID) async {
-    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/module/students/$userID');
+  Future<void> _fetchClasses() async {
+    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/module/students');
     final response = await http.get(
       url,
       headers: {
@@ -78,7 +78,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       print('Classes fetched: ${response.body}');
       final List<dynamic> moduleList = jsonDecode(response.body);
       setState(() {
-        /*
+        
         // Populate `classesStudents` and `recipients`
         classesStudents = moduleList.map<Map<String, String>>((module) {
           return {
@@ -94,7 +94,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           final teacherName = module['teacherName']!;
           return '$teacherName - $moduleName';
         }).toList();
-        */
+        
       });
     } else {
       print('Failed to fetch classes: ${response.statusCode}');
@@ -124,7 +124,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
 
     if (module.isEmpty) {
-      _showError('Could not find the selected module or teacher.');
+      _showError('Error processing request: Could not find the selected module or teacher.');
       return;
     }
 
