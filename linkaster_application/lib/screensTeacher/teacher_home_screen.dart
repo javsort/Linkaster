@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import '../widget/user_status.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../widget/user_status.dart';
+import '../widget/join_module.dart'; // Import the JoinModuleDialog widget
+import '../widget/create_module_class.dart'; // Import the CreateModuleClubDialog widget
+
 import 'teacher_announcement_page.dart';
 import 'teacher_chat_selection_page.dart'; // Correct reference
 import 'teacher_profile_page.dart';
@@ -8,7 +14,6 @@ import 'teacher_settings_page.dart';
 import 'teacher_timetable_page.dart';
 import 'teacher_feedback_page.dart';
 import 'teacher_logIn_page.dart'; // Import your LoginPage
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LinkasterHome extends StatefulWidget {
   @override
@@ -17,8 +22,6 @@ class LinkasterHome extends StatefulWidget {
 
 class LinkasterHomeState extends State<LinkasterHome> {
   int _currentIndex = 0;
-
-  // Token storage
   String? token;
 
   @override
@@ -29,33 +32,33 @@ class LinkasterHomeState extends State<LinkasterHome> {
 
   Future<void> _checkAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('authToken');
-    print('Token: $token');
-
-    if (token == null || token!.isEmpty) {
-      // Redirect to the login page if token is not available
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => TeacherLoginPage()),
-      );
-    }
+    setState(() {
+      token = prefs.getString('authToken');
+      if (token == null || token!.isEmpty) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => TeacherLoginPage()),
+        );
+      } else {
+        _updatePages();
+      }
+    });
   }
 
-  final TextEditingController joinCodeController = TextEditingController();
+  final List<Widget> _pages = [];
 
-  final List<Widget> _pages = [
-    AnnouncementPage(),
-    TeacherChatSelectionPage(token: null), // Pass null token for now
-    TeacherChatSelectionPage(token: null), // Reuse selection page for group chats
-    TimetablePage(),
-    TeacherProfile(
-      id: '2121210',
-      name: 'Aakash',
-      surname: 'Ahmad',
-      email: 'a.ahmad13@lancaster.ac.uk',
-      status: UserStatus.available,
-    ),
-  ];
+  void _updatePages() {
+    setState(() {
+      _pages.clear();
+      _pages.addAll([
+        TeacherAnnouncementPage(token: token),
+        TeacherChatSelectionPage(isPrivateChat: true, token: token),
+        TeacherChatSelectionPage(isPrivateChat: false, token: token),
+        TimetablePage(token: token),
+        TeacherProfile(token: token, status: UserStatus.available),
+      ]);
+    });
+  }
 
   void _onTabTapped(int index) {
     setState(() {
@@ -76,23 +79,16 @@ class LinkasterHomeState extends State<LinkasterHome> {
         );
         break;
       case 'Logout':
-        _handleLogout();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => TeacherLoginPage()),
+        );
         break;
     }
   }
 
-  Future<void> _handleLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('authToken'); // Remove the stored token
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => TeacherLoginPage()),
-    );
-  }
-
   Future<void> _launchMoodle() async {
-    const url =
-        'https://portal.lancaster.ac.uk/portal/my-area/modules'; // Replace with your Moodle URL
+    const url = 'https://portal.lancaster.ac.uk/portal/my-area/modules';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -100,35 +96,23 @@ class LinkasterHomeState extends State<LinkasterHome> {
     }
   }
 
+  void _showCreateModuleDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CreateModuleDialog(
+          token: token,
+        );
+      },
+    );
+  }
+
   void _showJoinModuleDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Join a Module'),
-          content: TextField(
-            controller: joinCodeController,
-            decoration:
-                InputDecoration(labelText: 'Module Code (6 characters)'),
-            keyboardType: TextInputType.number,
-            maxLength: 6,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Handle Join Module logic here
-                print('Joined Module: ${joinCodeController.text}');
-                Navigator.pop(context);
-              },
-              child: Text('Join Module'),
-            ),
-          ],
+        return JoinModuleDialog(
+          token: token,
         );
       },
     );
@@ -142,14 +126,16 @@ class LinkasterHomeState extends State<LinkasterHome> {
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
+            icon: Text('Create Module', style: TextStyle(color: Colors.white)),
+            onPressed: _showCreateModuleDialog,
+          ),
+          IconButton(
+            icon: Text('Join Module', style: TextStyle(color: Colors.white)),
+            onPressed: _showJoinModuleDialog,
+          ),
+          IconButton(
             icon: Text('Moodle', style: TextStyle(color: Colors.white)),
             onPressed: _launchMoodle,
-          ),
-          SizedBox(width: 10), // Add space between Moodle and next buttons
-          IconButton(
-            icon: Icon(Icons.group_add),
-            onPressed: _showJoinModuleDialog,
-            tooltip: 'Join Module',
           ),
           PopupMenuButton<String>(
             icon: Icon(Icons.menu),
@@ -162,32 +148,25 @@ class LinkasterHomeState extends State<LinkasterHome> {
           ),
         ],
       ),
-      body: _pages[_currentIndex],
+      body: _pages.isNotEmpty
+          ? _pages[_currentIndex]
+          : Center(child: CircularProgressIndicator()),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
-        items: const <BottomNavigationBarItem>[
+        type: BottomNavigationBarType.fixed,
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            label: 'Announcements',
-          ),
+              icon: Icon(Icons.announcement), label: 'Announcements'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Private Chats',
-          ),
+              icon: Icon(Icons.chat_bubble_sharp), label: 'Group Chats'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: 'Group Chats',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.schedule),
-            label: 'Timetable',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
-          ),
+              icon: Icon(Icons.calendar_month), label: 'Timetable'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
+        selectedItemColor: Theme.of(context).colorScheme.secondary,
+        unselectedItemColor: Colors.grey,
       ),
     );
   }

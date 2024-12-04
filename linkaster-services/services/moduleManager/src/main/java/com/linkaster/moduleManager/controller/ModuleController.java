@@ -1,5 +1,6 @@
 package com.linkaster.moduleManager.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,9 +114,12 @@ public class ModuleController implements APIModuleController {
     }
 
     @Override
-    public ResponseEntity<?> updateModule(@PathVariable long id, @RequestBody ModuleCreate module) {
+    public ResponseEntity<?> updateModule(@PathVariable long id, @RequestBody ModuleCreate module, HttpServletRequest request) {
         log.info(log_header + "Attempting to update module with ID: {}", id);
-        boolean isUpdated = moduleManagerService.updateModule(id, module);
+        long ownerId = (Long) request.getAttribute("id");
+        String ownerName = (String) request.getAttribute("email");
+
+        boolean isUpdated = moduleManagerService.updateModule(id, module, ownerId, ownerName);
 
         if (isUpdated) {
             log.info(log_header + "Module with ID {} updated successfully.", id);
@@ -153,20 +157,42 @@ public class ModuleController implements APIModuleController {
     }
 
     @Override
-    public List<Module> getModulesByStudent(@PathVariable long studentId) {
-        log.info(log_header + "Getting modules for student: {}", studentId);
+    public List<Module> getModulesByStudent(HttpServletRequest request) {
+        log.info(log_header + "Getting modules for student: {}", request.getAttribute("id"));
+        String studentIdString = (String) request.getAttribute("id");
+
+        long studentId;
+
+        try {
+            studentId = Long.parseLong(studentIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid student ID: " + studentIdString);
+            return Collections.emptyList();
+        }
+        
         return moduleManagerService.getModulesByStudent(studentId);
     }
 
     @Override
-    public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule) {
+    public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule, HttpServletRequest request) {
         log.info(log_header + "Joining module by code: {}", joinModule);
-        return joinCodeManagerService.joinModuleByCode(joinModule);
+        return joinCodeManagerService.joinModuleByCode(joinModule, request);
     }
 
     @Override
-    public void leaveModule(@RequestBody long moduleId, @RequestBody long studentId) {
+    public void leaveModule(@RequestBody long moduleId, HttpServletRequest request) {
         // Logic for a student to leave a module
+        String studentIdString = (String) request.getAttribute("id");
+
+        long studentId;
+
+        try {
+            studentId = Long.parseLong(studentIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid student ID: " + studentIdString);
+            return;
+        }
+
         log.info(log_header + "Student: {} leaving module: {}", studentId, moduleId);
         moduleHandlerService.leaveModule(moduleId, studentId);
     }
@@ -177,7 +203,7 @@ public class ModuleController implements APIModuleController {
         log.info(log_header + "Creating new announcement: {}", announcement);
 
         // Implement the announcement creation logic here like createModule method
-        Announcement newAnnouncement = moduleHandlerService.createAnnouncement(announcement);
+        Announcement newAnnouncement = moduleHandlerService.createAnnouncement(announcement, request);
 
         // Create a response entity
         if (newAnnouncement == null) {
@@ -186,9 +212,9 @@ public class ModuleController implements APIModuleController {
         
         AnnouncementResponse response = new AnnouncementResponse(
             newAnnouncement.getId(),
-            newAnnouncement.getName(),
             newAnnouncement.getMessage(),
             newAnnouncement.getOwnerId(),
+            newAnnouncement.getOwnerName(),
             newAnnouncement.getTime(),
             newAnnouncement.getDate(), // Assuming date is converted to String
             newAnnouncement.getModuleId()
@@ -218,8 +244,19 @@ public class ModuleController implements APIModuleController {
     }
 
     @Override
-    public Iterable<Announcement> getAllAnnouncementsByUserId(@RequestBody long studentId) {
+    public Iterable<Announcement> getAllAnnouncementsByUserId(HttpServletRequest request) {
         // Logic to get all announcements by user
+        String studentIdString = (String) request.getAttribute("id");
+
+        long studentId;
+
+        try {
+            studentId = Long.parseLong(studentIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid student ID: " + studentIdString);
+            return Collections.emptyList();
+        }
+
         log.info(log_header + "Getting all announcements for user: {}", studentId);
         return moduleHandlerService.getAllAnnouncementsByStudent(studentId);
     }
@@ -230,7 +267,7 @@ public class ModuleController implements APIModuleController {
         log.info(log_header + "Creating new event: {}", event);
 
         // Implement the event creation logic here
-        EventModel newEvent = moduleManagerService.createEvent(event);
+        EventModel newEvent = moduleManagerService.createEvent(event, request);
 
         // Create a response entity
         if (newEvent == null) {
@@ -245,8 +282,19 @@ public class ModuleController implements APIModuleController {
     }
 
     @Override
-    public Iterable<EventModel> getAllEventsByUserId(@RequestBody long userId) {
+    public Iterable<EventModel> getAllEventsByUserId(HttpServletRequest request) {
         // Logic to get all events by user
+        String userIdString = (String) request.getAttribute("id");
+
+        long userId;
+
+        try {
+            userId = Long.parseLong(userIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid user ID: " + userIdString);
+            return Collections.emptyList();
+        }
+
         log.info(log_header + "Getting all events for user: {}", userId);
         return moduleManagerService.getEventsByUserId(userId);
     }
@@ -278,7 +326,18 @@ public class ModuleController implements APIModuleController {
 
     // Called by the student service - INTERSERVICE COMMUNICATION
     @Override
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@RequestBody Long studentId) {
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(HttpServletRequest request) {
+        String studentIdString = (String) request.getAttribute("id");
+
+        long studentId;
+
+        try {
+            studentId = Long.parseLong(studentIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid student ID: " + studentIdString);
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+        
         log.info(log_header + "Getting teachers for student: {}", studentId);
         return auditManagerService.getTeachersByStudent(studentId);
     }

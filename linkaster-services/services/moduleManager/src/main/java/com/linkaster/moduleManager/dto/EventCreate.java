@@ -21,7 +21,5 @@ public class EventCreate {
     private String endTime;
     private String room;
     private Date date;
-    private long ownerId;
     private long moduleId;
-
 }

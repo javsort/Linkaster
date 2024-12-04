@@ -15,5 +15,5 @@ import lombok.Setter;
 public class JoinModuleCreate {
     
     private String code;
-    private long studentId;
+
 }
