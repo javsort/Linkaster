@@ -1,20 +1,36 @@
 package com.linkaster.userService.controller;
 
 
+import javax.swing.text.html.parser.Entity;
+
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.function.EntityResponse;
 
 import com.linkaster.userService.dto.TeacherDTO;
 import com.linkaster.userService.dto.UserRegistration;
+import com.linkaster.userService.model.User;
+import com.linkaster.userService.repository.UserRepository;
 import com.linkaster.userService.service.UserHandlerService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+
 
 @Slf4j
 @RestController
@@ -22,11 +38,18 @@ import lombok.extern.slf4j.Slf4j;
 public class StudentActionsController implements APIUserActionsController {
 
     private final UserHandlerService userHandlerService;
+    private final UserRepository userRepository;
+    private final RestTemplate restTemplate = new RestTemplate();
+    
     private final String log_header = "StudentActionsController --- ";
 
+    @Value("${address.logicGateway.url}")
+    private String logicGatewayAddress;
+
     @Autowired
-    public StudentActionsController(UserHandlerService userHandlerService) {
+    public StudentActionsController(UserHandlerService userHandlerService, UserRepository userRepository) {
         this.userHandlerService = userHandlerService;
+        this.userRepository = userRepository;
     }
     
     @Override
