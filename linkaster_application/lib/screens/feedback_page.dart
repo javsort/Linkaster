@@ -15,9 +15,33 @@ class FeedbackPage extends StatefulWidget {
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
-  List<String> recipients = []; // Stores "Teacher - Module" format
+  final List<String> recipients = [
+    'Dr. Smith - Software Engineering',
+    'Prof. Johnson - Computer Science',
+    'Ms. Brown - IT Club Leader',
+  ];
   String? token;
-  List<Map<String, String>> classesStudents = []; // Stores module details
+  List<Map<String, String>> classesStudents = [
+  {
+    'moduleId': '1',
+    'moduleName': 'Software Engineering',
+    'teacherId': '2',
+    'teacherName': 'Dr. Smith'
+  },
+    {
+    'moduleId': '2',
+    'moduleName': 'Computer Science',
+    'teacherId': '3',
+    'teacherName': 'Prof. Johnson'
+  },
+    {
+    'moduleId': '3',
+    'moduleName': 'IT Club Leader',
+    'teacherId': '4',
+    'teacherName': 'Ms. Brown'
+  }
+]; // Stores module details
+
   String? selectedRecipient;
   bool isAnonymous = false;
   final TextEditingController feedbackController = TextEditingController();
@@ -54,6 +78,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       print('Classes fetched: ${response.body}');
       final List<dynamic> moduleList = jsonDecode(response.body);
       setState(() {
+        /*
         // Populate `classesStudents` and `recipients`
         classesStudents = moduleList.map<Map<String, String>>((module) {
           return {
@@ -69,6 +94,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           final teacherName = module['teacherName']!;
           return '$teacherName - $moduleName';
         }).toList();
+        */
       });
     } else {
       print('Failed to fetch classes: ${response.statusCode}');
@@ -103,11 +129,11 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
     final recipientID = module['teacherId'];
     final moduleID = module['moduleId'];
-    final senderID = "YourUserID"; // Replace with the current user's ID
+    final senderID = "1";                                        // Replace with user id
     final contents = feedbackController.text;
 
     try {
-      final url = Uri.parse('${AppConfig.apiBaseUrl}/api/feedback/submit');
+      final url = Uri.parse('${AppConfig.apiBaseUrl}/api/feedback/submitFeedback');
       final response = await http.post(
         url,
         headers: {
