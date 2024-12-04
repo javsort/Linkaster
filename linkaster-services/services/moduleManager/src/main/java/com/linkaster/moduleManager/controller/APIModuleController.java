@@ -40,7 +40,7 @@ public interface APIModuleController {
     public ResponseEntity<?> deleteModule(@PathVariable long id);
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<?> updateModule(@PathVariable long id, @RequestBody ModuleCreate module);
+    public ResponseEntity<?> updateModule(@PathVariable long id, @RequestBody ModuleCreate module, HttpServletRequest request);
 
     @GetMapping("/getAllModules")
     @ResponseStatus(HttpStatus.OK)
@@ -52,23 +52,23 @@ public interface APIModuleController {
     public Module getModuleById(@PathVariable long id);
 
 
-    @GetMapping("/modules/{moduleId}")
+    @GetMapping("/students/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
     public List<Long> getStudentsByModule(@PathVariable long moduleId);
     
 
-    @GetMapping("/students/{studentId}")
+    @GetMapping("/students")
     @ResponseStatus(HttpStatus.OK)
-    public List<Module> getModulesByStudent(@PathVariable long studentId);
+    public List<Module> getModulesByStudent(HttpServletRequest request);
     
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
-    public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule);
+    public boolean joinModuleByCode(@RequestBody JoinModuleCreate joinModule, HttpServletRequest request);
     
 
-    @PostMapping("/leave/{moduleId}/{studentId}")
+    @PostMapping("/leave/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public void leaveModule(@PathVariable long moduleId, @PathVariable long studentId);
+    public void leaveModule(@PathVariable long moduleId, HttpServletRequest request);
 
 
     @PostMapping("/announcement")
@@ -79,17 +79,17 @@ public interface APIModuleController {
     public ResponseEntity<?> deleteAnnouncement(@PathVariable long announcementId, @RequestBody long moduleId);
 
 
-    @GetMapping("/announcement/{userId}")
+    @GetMapping("/announcement/user")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Announcement> getAllAnnouncementsByUserId(@RequestBody long userId);
+    public Iterable<Announcement> getAllAnnouncementsByUserId(HttpServletRequest request);
 
 
     @PostMapping("/event")
     public ResponseEntity<?> createEvent(@RequestBody EventCreate event, HttpServletRequest request);
 
-    @GetMapping("/events/{userId}")
+    @GetMapping("/events/user")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<EventModel> getAllEventsByUserId(@RequestBody long userId);
+    public Iterable<EventModel> getAllEventsByUserId(HttpServletRequest request);
 
     @GetMapping("/events/{moduleId}")
     @ResponseStatus(HttpStatus.OK)
@@ -102,7 +102,7 @@ public interface APIModuleController {
     */
     
     // Called by the student service - INTERSERVICE COMMUNICATION
-    @GetMapping("/student/{studentId}/teachers")
+    @GetMapping("/student/teachers")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Iterable<Long>> getTeachersByStudent(@RequestBody Long studentId);
+    public ResponseEntity<Iterable<Long>> getTeachersByStudent(HttpServletRequest request);
 }

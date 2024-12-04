@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:http/http.dart' as http;
 import './screens/logIn_page.dart';
 
 void main() {
@@ -23,7 +24,7 @@ class _LinkasterAppState extends State<LinkasterApp> {
           primary: Color.fromARGB(255, 253, 9, 9),
         ),
       ),
-      home: LoginPage(),
+      home: LoginPage(httpClient: http.Client()),
     );
   }
 }

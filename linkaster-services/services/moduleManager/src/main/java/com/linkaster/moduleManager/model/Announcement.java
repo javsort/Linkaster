@@ -43,5 +43,8 @@ public class Announcement {
 
     @Column(name = "announcement_owner_id")
     private Long ownerId;
+
+    @Column(name = "announcement_owner_name")
+    private String ownerName;
     
 }

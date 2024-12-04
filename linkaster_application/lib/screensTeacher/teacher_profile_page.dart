@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
-import '../widget/user_status.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../widget/user_status.dart'; // Import your custom widget for the status indicator
+import '../config/config.dart'; // Import your config file
 
 class TeacherProfile extends StatefulWidget {
-  final String id;
-  final String email;
-  final String name;
-  final String surname;
+  final String? token;
   final UserStatus status;
-  final String? linkedin;
-  final String? github;
 
   const TeacherProfile({
     Key? key,
-    required this.id,
-    required this.email,
-    required this.name,
-    required this.surname,
+    required this.token,
     required this.status,
-    this.linkedin,
-    this.github,
   }) : super(key: key);
 
   @override
@@ -43,13 +36,45 @@ class _TeacherProfilePageState extends State<TeacherProfile> {
     currentStatus = widget.status;
   }
 
-  void initializeControllers() {
-    idController = TextEditingController(text: widget.id);
-    emailController = TextEditingController(text: widget.email);
-    nameController = TextEditingController(text: widget.name);
-    surnameController = TextEditingController(text: widget.surname);
-    linkedinController = TextEditingController(text: widget.linkedin ?? '');
-    githubController = TextEditingController(text: widget.github ?? '');
+  void initializeControllers({
+    String name = '',
+    String surname = '',
+    String email = '',
+    String id = '',
+    String linkedin = '',
+    String github = '',
+  }) {
+    idController = TextEditingController(text: id);
+    emailController = TextEditingController(text: email);
+    nameController = TextEditingController(text: name);
+    surnameController = TextEditingController(text: surname);
+    linkedinController = TextEditingController(text: linkedin);
+    githubController = TextEditingController(text: github);
+  }
+
+  Future<void> fetchTeacherData() async {
+    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/user/getTeacherProfile');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer ${widget.token}',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      initializeControllers(
+        name: data['name'],
+        surname: data['surname'],
+        email: data['email'],
+        id: data['id'],
+        linkedin: data['linkedin'],
+        github: data['github'],
+      );
+    } else {
+      throw Exception('Failed to load teacher profile');
+    }
   }
 
   @override

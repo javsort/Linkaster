@@ -7,11 +7,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.linkaster.userService.dto.ProfileInfoDTO;
 import com.linkaster.userService.dto.UserRegistration;
 import com.linkaster.userService.model.User;
 import com.linkaster.userService.service.UserAuthenticatorService;
+import com.linkaster.userService.service.UserCustomizerService;
 import com.linkaster.userService.service.UserHandlerService;
 
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 /*
@@ -25,16 +29,17 @@ public class UserController implements APIUserController {
 
     // Services for handling user operations
     private final UserHandlerService userHandlerService;       // To implement (?)
-    //private final UserCustomizerService userCustomizerService;              // To implement (?)
+    private final UserCustomizerService userCustomizerService;              // To implement (?)
     //private final AuthorizationAgentService authorizationAgentService;      // To implement (?)
 
     private final String log_header = "UserController --- ";
 
     // Constructor
     @Autowired
-    public UserController(UserHandlerService userHandlerService, UserAuthenticatorService userAuthenticatorService/*UserCustomizerService userCustomizerService, AuthorizationAgentService authorizationAgentService*/) {
+    public UserController(UserHandlerService userHandlerService, UserAuthenticatorService userAuthenticatorService, UserCustomizerService userCustomizerService/*AuthorizationAgentService authorizationAgentService*/) {
         this.userHandlerService = userHandlerService;
-        //this.userCustomizerService = userCustomizerService;
+        this.userCustomizerService = userCustomizerService;
+      
         //this.authorizationAgentService = authorizationAgentService;
 
     }
@@ -81,6 +86,18 @@ public class UserController implements APIUserController {
     @Override
     public List<User> getUsersByRole(String role){
         return userHandlerService.getUsersByRole(role);
+    }
+
+    // GetProfile endpoint
+    @Override
+    public ProfileInfoDTO getStudentProfile(HttpServletRequest request){
+        return userCustomizerService.getProfileStudent(request);
+    }
+
+    // GetProfile endpoint
+    @Override
+    public ProfileInfoDTO getTeacherProfile(HttpServletRequest request){
+        return userCustomizerService.getProfileTeacher(request);
     }
 
 }
