@@ -1,5 +1,6 @@
 package com.linkaster.moduleManager.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,11 +71,6 @@ public class JoinCodeManagerService {
 
         log.info(log_header + "Student " + studentId + " attempting to join module with join code: " + joinCode);
     
-        // Step 1: Validate the join code
-        if (!validateJoinCode(joinCode)) {
-            log.warn(log_header + "Invalid join code: " + joinCode);
-            return false; // Join code is invalid
-        }
     
         // Step 2: Retrieve the module
         Module module = moduleRepository.findByModuleCode(joinCode);
@@ -90,8 +86,15 @@ public class JoinCodeManagerService {
         }
     
         // Step 4: Add the student to the module
-        module.getStudentList().add(studentId);
+        List<Long> studentList = module.getStudentList();
+        if (studentList == null) {
+            studentList = new ArrayList<>();
+            module.setStudentList(studentList);
+        }
+        studentList.add(studentId);
+        log.info(log_header + "Adding student " + studentId + " to module: " + module.getModuleName());
         moduleRepository.save(module); // Save the updated module
+        log.info(log_header + "Module saved successfully with student " + studentId);
     
         log.info(log_header + "Student " + studentId + " successfully joined module: " + module.getModuleName());
         return true; // Successfully added the student
