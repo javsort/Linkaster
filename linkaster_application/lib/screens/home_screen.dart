@@ -81,15 +81,21 @@ class LinkasterHomeState extends State<LinkasterHome> {
         );
         break;
       case 'Logout':
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
+        _logout();
         break;
     }
   }
 
-  //Delete
+  void _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('authToken');
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
+
+  //Delete the token from SharedPreferences
 
   Future<void> _launchMoodle() async {
     const url = 'https://portal.lancaster.ac.uk/portal/my-area/modules';

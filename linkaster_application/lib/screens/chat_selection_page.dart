@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/chat.dart';
+import '../models/group_chat.dart';
 import '../config/config.dart';
 import 'private_chats_page.dart';
 import 'group_chats_page.dart';
@@ -10,9 +11,11 @@ class ChatSelectionPage extends StatefulWidget {
   final bool isPrivateChat;
   final String? token;
 
-  ChatSelectionPage(
-      {Key? key, required this.isPrivateChat, required this.token})
-      : super(key: key);
+  ChatSelectionPage({
+    Key? key,
+    required this.isPrivateChat,
+    required this.token,
+  }) : super(key: key);
 
   @override
   _ChatSelectionPageState createState() => _ChatSelectionPageState();
@@ -20,6 +23,7 @@ class ChatSelectionPage extends StatefulWidget {
 
 class _ChatSelectionPageState extends State<ChatSelectionPage> {
   List<Chat> privateChats = [];
+  List<GroupChat> groupChats = [];
   bool isLoading = false;
 
   @override
@@ -27,40 +31,8 @@ class _ChatSelectionPageState extends State<ChatSelectionPage> {
     super.initState();
     if (widget.isPrivateChat) {
       _fetchPrivateChats();
-    } else if (widget.isPrivateChat == false) {
-      // _fetchGroupChats();
-    }
-  }
-
-  Future<void> _fetchGroupChats() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    final apiUrl = "${AppConfig.apiBaseUrl}/api/message/group/all";
-    final token = widget.token;
-
-    try {
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        // setState(() {
-        //   groupChats = data.map((item) => GroupChat.fromJson(item)).toList();
-        // });
-      } else {
-        _showError(
-            "Failed to fetch group chats. Status code: ${response.statusCode}");
-      }
-    } catch (e) {
-      _showError("Error fetching group chats: $e");
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
+    } else {
+      _fetchGroupChats();
     }
   }
 
@@ -96,29 +68,35 @@ class _ChatSelectionPageState extends State<ChatSelectionPage> {
     }
   }
 
-  Future<void> _createPrivateChat(String email) async {
-    final apiUrl = "${AppConfig.apiBaseUrl}/api/message/private/...";
+  Future<void> _fetchGroupChats() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final apiUrl = "${AppConfig.apiBaseUrl}/api/message/group/all";
     final token = widget.token;
 
     try {
-      final response = await http.post(
+      final response = await http.get(
         Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({'email': email}),
+        headers: {'Authorization': 'Bearer $token'},
       );
 
-      if (response.statusCode == 201) {
-        _showMessage("Chat created successfully");
-        _fetchPrivateChats(); // Refresh chats
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          groupChats = data.map((item) => GroupChat.fromJson(item)).toList();
+        });
       } else {
         _showError(
-            "Failed to create chat. Status code: ${response.statusCode}");
+            "Failed to fetch group chats. Status code: ${response.statusCode}");
       }
     } catch (e) {
-      _showError("Error creating chat: $e");
+      _showError("Error fetching group chats: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -128,89 +106,81 @@ class _ChatSelectionPageState extends State<ChatSelectionPage> {
     );
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.isPrivateChat ? 'Private Chats' : 'Group Chats'),
         backgroundColor: Theme.of(context).primaryColor,
-        actions: widget.isPrivateChat
-            ? [
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () => _showSearchDialog(context),
-                  tooltip: 'New Chat',
-                ),
-              ]
-            : [],
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: privateChats.length,
+              itemCount: widget.isPrivateChat
+                  ? privateChats.length
+                  : groupChats.length,
               itemBuilder: (context, index) {
-                final chat = privateChats[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.grey[300],
-                    child: Text(
-                      chat.receiverName.isNotEmpty
-                          ? chat.receiverName[0].toUpperCase()
-                          : "?",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  title: Text(chat.receiverName),
-                  subtitle: Text('Last active: ${chat.lastMessageDate}'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PrivateChatPage(
-                          chat: chat,
-                          token: widget.token,
-                        ),
-                      ),
-                    );
-                  },
-                );
+                if (widget.isPrivateChat) {
+                  final chat = privateChats[index];
+                  return _buildPrivateChatTile(chat);
+                } else {
+                  final groupChat = groupChats[index];
+                  return _buildGroupChatTile(groupChat);
+                }
               },
             ),
     );
   }
 
-  void _showSearchDialog(BuildContext context) {
-    final emailController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Search for a contact'),
-          content: TextField(
-            controller: emailController,
-            decoration: InputDecoration(hintText: 'Enter email'),
+  Widget _buildPrivateChatTile(Chat chat) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Colors.grey[300],
+        child: Text(
+          chat.receiverName.isNotEmpty
+              ? chat.receiverName[0].toUpperCase()
+              : "?",
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
+      title: Text(chat.receiverName),
+      subtitle: Text('Last active: ${chat.lastMessageDate}'),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PrivateChatPage(
+              chat: chat,
+              token: widget.token,
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
+        );
+      },
+    );
+  }
+
+  Widget _buildGroupChatTile(GroupChat groupChat) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Colors.blueAccent,
+        child: Text(
+          groupChat.moduleName.isNotEmpty
+              ? groupChat.moduleName[0].toUpperCase()
+              : "?",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      title: Text(groupChat.moduleName),
+      subtitle: Text('Last message: ${groupChat.lastMessageDate}'),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GroupChatsPage(
+              groupChat: groupChat,
+              token: widget.token,
             ),
-            ElevatedButton(
-              onPressed: () {
-                _createPrivateChat(emailController.text);
-                Navigator.pop(context);
-              },
-              child: Text('Create'),
-            ),
-          ],
+          ),
         );
       },
     );

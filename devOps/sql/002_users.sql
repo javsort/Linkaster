@@ -22,7 +22,9 @@ VALUES ('admin', 'lastname', 'admin_password', 'admin@example.com', 'ADMIN', NUL
        ('User Three', '7', 'user3_password', 'user3@example.com', 'STUDENT', 'user3_public_key_789', 'user3_private_key_789'),
        ('User Four', '8', 'user4_password', 'user4@example.com', 'STUDENT', 'user4_public_key_101112', 'user4_private_key_101112'),
        ('User Five', '9', 'user5_password', 'user5@example.com', 'STUDENT', 'user5_public_key_131415', 'user5_private_key_131415'),
-       ('User Six', '10', 'user6_password', 'user6@example.com', 'STUDENT', 'user6_public_key_161718', 'user6_private_key_161718');
+       ('User Six', '10', 'user6_password', 'user6@example.com', 'STUDENT', 'user6_public_key_161718', 'user6_private_key_161718'),
+       ('teacher one', 'lastname', 'teacher1_password', 'teacher1@example.com', 'TEACHER', 'teacher1_public_key_123', 'teacher1_private_key_123'),
+        ('teacher two', 'lastname', 'teacher2_password', 'teacher2@example.com', 'TEACHER', 'teacher2_public_key_456', 'teacher2_private_key_456');
 
 CREATE TABLE students (
     id BIGINT PRIMARY KEY, -- This matches the "id" in the users table
@@ -51,7 +53,9 @@ CREATE TABLE teachers (
 );
 
 INSERT INTO teachers (id, subject, teaching_modules_ids)
-VALUES (3, "Digital Systems", NULL);
+VALUES  (3, "Digital Systems", NULL),
+        (11, "Digital Systems", NULL),
+        (12, "Digital Systems", NULL);
 
 
 -- Current modules addition (NOT FINAL -> missing to join the services)

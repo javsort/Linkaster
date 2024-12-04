@@ -17,7 +17,6 @@ public class GroupChatDTO {
     private long moduleId;
 
     private String moduleName;
-    private Map<Long, String> groupMembers;
     private Date lastMessageDate;
 
 }

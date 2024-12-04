@@ -1,16 +1,22 @@
-// group_chat_message.dart
 class GroupChat {
-  final String chatname;
-  final String name;
-  final String message;
-  final String time;
-  final String avatar;
+  final int groupChatId;
+  final int moduleId;
+  final String moduleName;
+  final String lastMessageDate;
 
   GroupChat({
-    required this.chatname,
-    required this.name,
-    required this.message,
-    required this.time,
-    required this.avatar,
+    required this.groupChatId,
+    required this.moduleId,
+    required this.moduleName,
+    required this.lastMessageDate,
   });
+
+  factory GroupChat.fromJson(Map<String, dynamic> json) {
+    return GroupChat(
+      groupChatId: json['groupChatId'],
+      moduleId: json['moduleId'],
+      moduleName: json['moduleName'],
+      lastMessageDate: json['lastMessageDate'],
+    );
+  }
 }

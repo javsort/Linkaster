@@ -41,13 +41,13 @@ public class GroupChat {
     @Column(name = "module_AESKey", nullable = false, length = 512)
     private String moduleAESKey;
 
-    @Column(name = "moduleId")
+    @Column(name = "module_id")
     private Long moduleId;
 
-    @Column(name = "moduleName")
+    @Column(name = "module_name")
     private String moduleName;
 
-    @Column(name = "ownerUserId")
+    @Column(name = "owner_user_id")
     private Long ownerUserId;
 
     // Map of group members - key is the user id, value is the user's public key

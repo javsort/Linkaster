@@ -1,5 +1,6 @@
 package com.linkaster.messageHandler.webSocket;
 
+import java.sql.Date;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +66,8 @@ public class WebSocketOverseer extends TextWebSocketHandler {
         // First, authenticate token, then assign chat-specific attributes
         String token = payload.get("token");
         long userId = Long.parseLong(jwtTokenProvider.getClaims(token, "id"));
+        log.info(log_header + "User id: " + userId);
+        log.info(log_header + "Websocket session attributes: " + session.getAttributes());
         
         if (token == null) {
             log.error(log_header + "Missing token in AUTH message.");
@@ -119,6 +122,17 @@ public class WebSocketOverseer extends TextWebSocketHandler {
     private boolean handleGroupAuthentication(WebSocketSession session, Map<String, String> payload, long userId) throws Exception {
         String chatId = payload.get("chatId");
         long longChatId = Long.parseLong(chatId);
+
+        if (chatId == null) {
+            log.error(log_header + "Missing chatId in AUTH message.");
+            session.close(CloseStatus.BAD_DATA);
+            return false;
+            
+        }
+
+        for (int i = 0; payload.size() > i; i++) {
+            log.info(log_header + "Payload key: " + payload.keySet().toArray()[i] + " value: " + payload.values().toArray()[i]);
+        }
 
         // Call GroupmessagingManagerService to authenticate user
         if (!groupMessagingManagerService.authenticateChatAccess(userId, longChatId)) {
@@ -286,6 +300,7 @@ public class WebSocketOverseer extends TextWebSocketHandler {
         String messageContent = message.getMessage();
         long senderId = message.getSenderId();
         String senderName = message.getSenderName();
+        Date timestamp = message.getTimestamp();
         
         // Get all connected users
         for (Map.Entry<Long, WebSocketSession> entry : activeSessions.entrySet()) {
@@ -297,7 +312,7 @@ public class WebSocketOverseer extends TextWebSocketHandler {
                 if(userSession.isOpen()){
                     log.info(log_header + "User with id: " + userId + " is a member of the group. Sending message...");
                     // Send the message to the user
-                    GroupMessageReturnDTO messageToSend = new GroupMessageReturnDTO(messageContent, groupChatId, senderId, senderName);
+                    GroupMessageReturnDTO messageToSend = new GroupMessageReturnDTO(messageContent, groupChatId, senderId, senderName, timestamp);
                     ObjectMapper mapper = new ObjectMapper();
                     String messageJson = mapper.writeValueAsString(messageToSend);
                     userSession.sendMessage(new TextMessage(messageJson));
