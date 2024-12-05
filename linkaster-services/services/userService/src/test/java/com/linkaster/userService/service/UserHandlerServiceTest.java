@@ -2,6 +2,7 @@ package com.linkaster.userService.service;
 
 import java.security.KeyPair;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,31 @@ public class UserHandlerServiceTest {
         log.info(log_header + "Test passed!\n\n");
 
     }
+
+    @Test
+    public void testCreateStudentUser_Unsuccessful_EmailExists() {
+        log.info(log_header + "Testing unsuccessful student registration due to existing email...");
+
+        // Make up fake user registration
+        UserRegistration regReq = new UserRegistration();
+        regReq.setName("Jane");
+        regReq.setSurname("Doe");
+        regReq.setUserEmail("jane_doe@lancaster.ac.uk");
+        regReq.setPassword("password");
+
+        // Simulate existing email
+        when(userRepository.findByEmail("jane_doe@lancaster.ac.uk")).thenReturn(new StudentUser());
+
+        // Call the service
+        boolean result = userHandlerService.createUser(regReq, "student");
+
+        // Assert failure
+        assertFalse(result);
+        verify(studentRepository, times(0)).save(any(StudentUser.class));
+        verify(userRepository, times(0)).save(any(User.class));
+
+        log.info(log_header + "Unsuccessful registration test passed!");
+}
 
     @Test
     public void testCreateTeacherUser_Successful() throws Exception {

@@ -61,7 +61,7 @@ public class PrivateChat {
     @Embedded
     @AttributeOverrides({
     @AttributeOverride(name = "userId", column = @Column(name = "user1_id")),
-    @AttributeOverride(name = "publicKey", column = @Column(name = "user1_public_key")),
+    @AttributeOverride(name = "publicKey", column = @Column(name = "user1_public_key", columnDefinition = "LONGTEXT")),
     @AttributeOverride(name = "name", column = @Column(name = "user1_name")),
     @AttributeOverride(name = "email", column = @Column(name = "user1_email")),
     @AttributeOverride(name = "role", column = @Column(name = "user1_role"))
@@ -71,7 +71,7 @@ public class PrivateChat {
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "userId", column = @Column(name = "user2_id")),
-        @AttributeOverride(name = "publicKey", column = @Column(name = "user2_public_key")),
+        @AttributeOverride(name = "publicKey", column = @Column(name = "user2_public_key", columnDefinition = "LONGTEXT")),
         @AttributeOverride(name = "name", column = @Column(name = "user2_name")),
         @AttributeOverride(name = "email", column = @Column(name = "user2_email")),
         @AttributeOverride(name = "role", column = @Column(name = "user2_role"))

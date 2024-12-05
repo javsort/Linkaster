@@ -204,6 +204,38 @@ public class PrivateMessagingManagerService {
         }
     }
 
+
+    /*public String getDecoded(long privateChatId, String encodedMessage, long userId){
+        // Get the private chat
+        PrivateChat privateChat = privateChatRepository.findById(privateChatId).orElse(null);
+
+        if(privateChat == null){
+            log.error(log_header + "Error: Private chat with id: '" + privateChatId + "' not found");
+            return null;
+        }
+
+        // Get the destinatary's private key
+        ActorMetadata destinataryInfo = privateChat.getDestData(userId);
+        //String encPrivate = destinataryInfo.getPrivateKey();
+
+        if(encPrivate == null){
+            log.error(log_header + "Error: Destinatary's private key not found");
+            return null;
+        }
+
+        // Call KeyMaster to decrypt the message with destinatary's private key
+        try {
+            log.info(log_header + "Decrypting message with destinatary's private key...");
+            String decryptedMessage = keyMaster.decryptMessage(encodedMessage, encPrivate);
+
+            return decryptedMessage;
+
+        } catch (Exception e){
+            log.error(log_header + "Error during message decryption: " + e.getMessage() + " - " + e.getCause());
+            return null;
+        }
+    }*/
+
     public ResponseEntity<?> getUsersPrivateChats(long userId){
         log.info(log_header + "Retrieving private chats sample DTO's for user with id: '" + userId + "'");
 
