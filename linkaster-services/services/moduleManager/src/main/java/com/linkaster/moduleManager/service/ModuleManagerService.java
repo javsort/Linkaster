@@ -3,9 +3,6 @@ package com.linkaster.moduleManager.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.lang.module.ResolutionException;
-import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -250,7 +247,13 @@ public class ModuleManagerService {
 
         long ownerId;
 
-        Long moduleId = eventCreate.getModuleId();
+        Long moduleId;
+        try {
+            moduleId = Long.parseLong(eventCreate.getModuleId());
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid module ID: " + eventCreate.getModuleId());
+            return false;
+        }
 
         try {
             ownerId = Long.parseLong(ownerIdString);  // Convert to long
@@ -277,7 +280,7 @@ public class ModuleManagerService {
 
         // Grow seed
         EventSeedDTO eventSeed = EventSeedDTO.builder()
-                .moduleId(eventCreate.getModuleId())
+                .moduleId(moduleId)
                 .name(eventCreate.getName())
                 .startTime(eventCreate.getStartTime())
                 .endTime(eventCreate.getEndTime())
