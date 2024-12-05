@@ -107,7 +107,7 @@ public class UserHandlerServiceTest {
     }
 
     @Test
-    public void testC1reateStudentUser_Unsuccessful_EmailExists() {
+    public void testCreateStudentUser_Unsuccessful_EmailExists() {
         log.info(log_header + "Testing unsuccessful student registration due to existing email...");
 
         // Make up fake user registration
