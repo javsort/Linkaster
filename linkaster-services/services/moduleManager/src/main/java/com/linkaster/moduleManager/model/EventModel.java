@@ -1,18 +1,17 @@
-package com.linkaster.moduleManager.model;
+/*package com.linkaster.moduleManager.model;
 
 
 import java.sql.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
-@Entity
-@Table (name = "events")
+//@Entity
+//@Table (name = "events")
 public class EventModel {
 
     @Id
@@ -41,3 +40,4 @@ public class EventModel {
     private long ownerId;
 
 }
+*/

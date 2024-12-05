@@ -1,9 +1,11 @@
 package com.linkaster.moduleManager.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -13,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -51,9 +54,10 @@ public class Module {
     @Column(name = "module_code", unique = true, nullable = false)
     private String moduleCode;    
 
-    @ElementCollection
-    @Column(name = "student_enrolled_ids")
-    private List<Long> studentList;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "module_student_list", joinColumns = @JoinColumn(name = "module_id"))
+    @Column(name = "student_id")
+    private List<Long> studentList = new ArrayList<>();
 
     @Column(name = "module_type")
     private String type;

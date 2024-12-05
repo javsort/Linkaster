@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.linkaster.moduleManager.model.EventModel;
-
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +21,7 @@ public class TimetableIntegratorService {
 
     private final String log_header = "TimetableIntegratorService --- ";
 
-    /* 
+/* 
     @Autowired
     public void updateTimetable(EventModel event) {
         log.info(log_header + "Updating timetable for event: " + event);
