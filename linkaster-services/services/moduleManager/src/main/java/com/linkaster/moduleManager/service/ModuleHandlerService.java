@@ -38,7 +38,7 @@ public class ModuleHandlerService {
         String message = announcementCreate.getMessage();
         
         String ownerIdString = (String) request.getAttribute("id");
-        String ownerName = (String) request.getAttribute("name");
+        String ownerName = (String) request.getAttribute("userEmail");
         
         long ownerId;
 

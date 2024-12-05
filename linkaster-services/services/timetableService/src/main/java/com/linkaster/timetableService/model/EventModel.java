@@ -3,6 +3,8 @@ package com.linkaster.timetableService.model;
 
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -55,6 +57,7 @@ public class EventModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "timetable_id", nullable = false)
+    @JsonBackReference
     private Timetable timetable;
 }
 

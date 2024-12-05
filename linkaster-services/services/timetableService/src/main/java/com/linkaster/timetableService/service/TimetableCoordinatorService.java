@@ -60,4 +60,9 @@ public class TimetableCoordinatorService {
         return ResponseEntity.ok(true);
     }
 
+    // Get timetable by userId
+    public Timetable getTimetableByUserId(long userId) {
+        return timetableRepository.findByUserOwnerId(userId);
+    }
+
 }
