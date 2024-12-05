@@ -1,43 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../models/event.dart'; // Ensure your Event model matches the data structure
+import '../config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/module.dart';
 
 class TimetablePage extends StatefulWidget {
-  String? token;
+  final String? token;
 
-  TimetablePage({required this.token});
+  const TimetablePage({Key? key, this.token}) : super(key: key);
 
   @override
   _TimetablePageState createState() => _TimetablePageState();
 }
 
 class _TimetablePageState extends State<TimetablePage> {
-  DateTime _selectedDay = DateTime.now(); // Currently selected day
-  CalendarFormat _calendarFormat =
-      CalendarFormat.week; // Initial calendar format
-  String? token; // Token to be retrieved
+  DateTime _selectedDay = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.week;
+  String? token;
 
-  final Map<DateTime, List<Module>> _classData = {
-    DateTime(2024, 10, 29): [
-      Module(
-        subject: "Internet Applications Engineering",
-        time: "15:00 PM - 17:00 PM",
-        room: "706",
-        instructor: "Prof. David Georg Reichelt",
-        isMandatory: true, // Mandatory class
-      ),
-    ],
-    DateTime(2024, 10, 30): [
-      Module(
-        subject: "German Language B1",
-        time: "16:00 PM - 18:00 PM",
-        room: "706",
-        instructor: "Prof. Barbara Osnowski",
-        isMandatory: false, // Non-mandatory class
-      ),
-    ],
-  };
+  final Map<DateTime, List<Event>> _events = {};
 
   @override
   void initState() {
@@ -50,36 +33,55 @@ class _TimetablePageState extends State<TimetablePage> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       token = prefs.getString('authToken');
-      print('Retrieved token: $token');
     });
 
-    // Fetch timetable data based on the token
     if (token != null) {
-      _fetchTimetableData();
+      _fetchTimetableData(_selectedDay);
     }
   }
 
-  /// Simulate fetching timetable data based on the token
-  Future<void> _fetchTimetableData() async {
-    // Simulate an API call or database fetch
-    print('Fetching timetable data with token: $token');
+  /// Fetch events from API based on the selected date
+  Future<void> _fetchTimetableData(DateTime selectedDate) async {
+    final apiUrl = '${AppConfig.apiBaseUrl}/api/timetable/getEvents';
 
-    // Example: Add new classes dynamically from "API response"
-    setState(() {
-      _classData[DateTime(2024, 11, 2)] = [
-        Module(
-          subject: "Advanced Flutter",
-          time: "10:00 AM - 12:00 PM",
-          room: "701",
-          instructor: "Dr. John Doe",
-          isMandatory: true,
-        ),
-      ];
-    });
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final List<dynamic> eventsData = responseData['upcomingEvents'];
+
+        final List<Event> events =
+            eventsData.map((event) => Event.fromJson(event)).toList();
+
+        setState(() {
+          _events.clear(); // Clear existing data
+          for (var event in events) {
+            final eventDate = DateTime.parse(
+                event.eventDate); // Assuming 'eventDate' is the date field
+            final normalizedDate = normalizeDate(eventDate);
+
+            if (_events[normalizedDate] == null) {
+              _events[normalizedDate] = [];
+            }
+            _events[normalizedDate]?.add(event);
+          }
+        });
+      } else {
+        print('Failed to load events. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching events: $error');
+    }
   }
 
   DateTime normalizeDate(DateTime date) {
-    return DateTime(date.year, date.month, date.day); // Normalize to midnight
+    return DateTime(date.year, date.month, date.day);
   }
 
   @override
@@ -100,6 +102,7 @@ class _TimetablePageState extends State<TimetablePage> {
               setState(() {
                 _selectedDay = selectedDay;
               });
+              _fetchTimetableData(selectedDay);
             },
             onFormatChanged: (format) {
               setState(() {
@@ -115,15 +118,14 @@ class _TimetablePageState extends State<TimetablePage> {
     );
   }
 
-  /// Build the list of classes for the selected day
   Widget _buildDailyClassList() {
     final normalizedDate = normalizeDate(_selectedDay);
-    final classes = _classData[normalizedDate] ?? [];
+    final classes = _events[normalizedDate] ?? [];
 
     if (classes.isEmpty) {
       return Center(
         child: Text(
-          'No classes scheduled for ${normalizedDate.toLocal().toString().split(' ')[0]}.',
+          'No events scheduled for ${normalizedDate.toLocal().toString().split(' ')[0]}.',
         ),
       );
     }
@@ -132,24 +134,17 @@ class _TimetablePageState extends State<TimetablePage> {
       child: ListView.builder(
         itemCount: classes.length,
         itemBuilder: (context, index) {
-          final classItem = classes[index];
+          final event = classes[index];
           return Card(
             margin: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
             child: ListTile(
-              leading: Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: classItem.isMandatory ? Colors.red : Colors.orange,
-                  shape: BoxShape.circle,
-                ),
-              ),
+              leading: Icon(Icons.event, color: Colors.blue),
               title: Text(
-                classItem.subject,
+                event.eventName,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                  '${classItem.time}\nRoom: ${classItem.room}\nLecturer: ${classItem.instructor}'),
+                  '${event.eventStartTime} - ${event.eventEndTime}\nLocation: ${event.eventLocation}'),
               isThreeLine: true,
             ),
           );
@@ -158,7 +153,6 @@ class _TimetablePageState extends State<TimetablePage> {
     );
   }
 
-  /// Navigation buttons to move between days
   Widget _buildNavigationButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,6 +163,7 @@ class _TimetablePageState extends State<TimetablePage> {
             setState(() {
               _selectedDay = _selectedDay.subtract(Duration(days: 1));
             });
+            _fetchTimetableData(_selectedDay);
           },
         ),
         IconButton(
@@ -177,6 +172,7 @@ class _TimetablePageState extends State<TimetablePage> {
             setState(() {
               _selectedDay = _selectedDay.add(Duration(days: 1));
             });
+            _fetchTimetableData(_selectedDay);
           },
         ),
       ],

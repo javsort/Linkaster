@@ -18,7 +18,6 @@ public class UserInfo {
 
     @Column(name = "public_key")
     private String publicKey;
-
     @Column(name = "name")
     private String name;
 

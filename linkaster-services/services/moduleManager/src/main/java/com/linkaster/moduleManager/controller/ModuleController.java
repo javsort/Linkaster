@@ -20,7 +20,6 @@ import com.linkaster.moduleManager.dto.ModuleResponse;
 import com.linkaster.moduleManager.dto.AnnouncementResponse;
 import com.linkaster.moduleManager.dto.EventCreate;
 import com.linkaster.moduleManager.model.Announcement;
-import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
 import com.linkaster.moduleManager.service.AuditManagerService;
 import com.linkaster.moduleManager.service.JoinCodeManagerService;
@@ -261,26 +260,28 @@ public class ModuleController implements APIModuleController {
         return moduleHandlerService.getAllAnnouncementsByStudent(studentId);
     }
 
+    
+    /*
+     * Create an event instance that then the timetable will replicate
+     */
     @Override
     public ResponseEntity<?> createEvent(@RequestBody EventCreate event, HttpServletRequest request) {
         // Logic to create a new event
-        log.info(log_header + "Creating new event: {}", event);
+        log.info(log_header + "Creating new event: '" + event.getName() + "' for module: " + event.getModuleId() + " creating Event and replicating on Timetable...");
 
-        // Implement the event creation logic here
-        EventModel newEvent = moduleManagerService.createEvent(event, request);
-
-        // Create a response entity
-        if (newEvent == null) {
-            return ResponseEntity.badRequest().body("Event creation failed");
+        if(moduleManagerService.createEvent(event, request)){
+            return ResponseEntity.ok("Event created successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Event creation failed.");
         }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        log.info(log_header + "Event created successfully: " + newEvent + " returning response entity...");
-        return new ResponseEntity<>(newEvent, headers, HttpStatus.CREATED);
     }
 
+
+
+
+
+
+    /*
     @Override
     public Iterable<EventModel> getAllEventsByUserId(HttpServletRequest request) {
         // Logic to get all events by user
@@ -314,7 +315,7 @@ public class ModuleController implements APIModuleController {
 
         log.info(log_header + "Events retrieved successfully for module: {}", id);
         return new ResponseEntity<>(events, headers, HttpStatus.OK);
-    }
+    }*/
 
     // Called by the timetable service - INTERSERVICE COMMUNICATION
     /*

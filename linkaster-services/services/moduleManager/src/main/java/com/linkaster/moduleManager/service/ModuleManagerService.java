@@ -2,9 +2,7 @@ package com.linkaster.moduleManager.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import java.sql.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.linkaster.moduleManager.dto.EventCreate;
+import com.linkaster.moduleManager.dto.EventSeedDTO;
 import com.linkaster.moduleManager.dto.GroupChatRegDTO;
 import com.linkaster.moduleManager.dto.ModuleCreate;
-import com.linkaster.moduleManager.model.EventModel;
 import com.linkaster.moduleManager.model.Module;
-import com.linkaster.moduleManager.repository.EventRepository;
 import com.linkaster.moduleManager.repository.ModuleRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,11 +33,9 @@ public class ModuleManagerService {
 
     private ModuleRepository moduleRepository;
 
-    private EventRepository eventRepository;
+    //private EventRepository eventRepository;
 
     private RestTemplate restTemplate = new RestTemplate();
-
-
 
     @Value("${address.logicGateway.url}")
     private String logicGatewayAddress;
@@ -48,9 +43,9 @@ public class ModuleManagerService {
     private final String log_header = "ModuleManagerService --- ";
 
     @Autowired
-    public ModuleManagerService(ModuleRepository moduleRepository, EventRepository eventRepository) {
+    public ModuleManagerService(ModuleRepository moduleRepository/*, EventRepository eventRepository */) {
         this.moduleRepository = moduleRepository;
-        this.eventRepository = eventRepository;
+        //this.eventRepository = eventRepository;
     }
 
     public Module createModule(HttpServletRequest request, ModuleCreate module, String creatorRole) {
@@ -244,7 +239,7 @@ public class ModuleManagerService {
     }
 
     //Create a new event
-    public EventModel createEvent(EventCreate eventCreate, HttpServletRequest request) {
+    public boolean createEvent(EventCreate eventCreate, HttpServletRequest request) {
 
         log.info(log_header + "Creating event: " + eventCreate);
 
@@ -252,36 +247,93 @@ public class ModuleManagerService {
 
         long ownerId;
 
+        Long moduleId;
+        try {
+            moduleId = Long.parseLong(eventCreate.getModuleId());
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid module ID: " + eventCreate.getModuleId());
+            return false;
+        }
+
         try {
             ownerId = Long.parseLong(ownerIdString);  // Convert to long
         } catch (NumberFormatException e) {
             log.error(log_header + "Invalid owner ID: " + ownerIdString);
-            return null;  // or handle the error appropriately
+            return false;  // or handle the error appropriately
         }
 
         // Check if the module exists
-        if (!moduleRepository.existsById(eventCreate.getModuleId())) {
-            log.error(log_header + "Module with ID: " + eventCreate.getModuleId() + " does not exist");
-            return null;
+        Optional<Module> moduleOptional = moduleRepository.findById(moduleId);
+        if (!moduleOptional.isPresent()) {
+            log.error(log_header + "Module with ID: " + moduleId + " does not exist");
+            return false;
         }
 
-    
+        Module module = moduleOptional.get();
 
-        // Create the event
-        EventModel newEvent = EventModel.builder()
+        // Fetch student IDs from the module safely
+        List<Long> userIdsInModule = module.getStudentList() != null 
+        ? new ArrayList<>(module.getStudentList()) 
+        : new ArrayList<>();
+
+        log.info(log_header + "Found " + userIdsInModule.size() + " students in the module.");
+
+        // Grow seed
+        EventSeedDTO eventSeed = EventSeedDTO.builder()
+                .moduleId(moduleId)
                 .name(eventCreate.getName())
-                .room(eventCreate.getRoom())
-                .date(new java.sql.Date(eventCreate.getDate().getTime()))
                 .startTime(eventCreate.getStartTime())
                 .endTime(eventCreate.getEndTime())
+                .startDate(eventCreate.getDate())
+                .room(eventCreate.getRoom())
                 .ownerId(ownerId)
-                .moduleId(eventCreate.getModuleId())
+                .repsToGen("4")
+                .interval("weekly")
+                .userIdsInModule(userIdsInModule)
                 .build();
 
-        // Save and return the event
-        EventModel savedEvent = eventRepository.save(newEvent);
-        log.info(log_header + "Event created successfully: " + savedEvent);
-        return savedEvent;
+        /*
+         * Check if exists, then send the event creat obj to timetable to replicate + save
+         */
+        log.info(log_header + "Permissions have been verified! Calling Timetable service to grow event...");
+
+        String pathToGrowEventSeed  = logicGatewayAddress + "/api/timetable/sproutEvents";
+    
+        // Create request back to gateway
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Keep token on call for logicGateway & moduleManager re-verification of token 
+        headers.set("Authorization", request.getHeader("Authorization"));
+        
+        // Add user info to headers
+        // Add claims to the req attributes (opt, but would be [id, username, role])
+        headers.set("id", request.getAttribute("id").toString());
+        headers.set("userEmail", request.getAttribute("userEmail").toString());
+        headers.set("role", request.getAttribute("role").toString());
+
+        HttpEntity<EventSeedDTO> requestToTimetableService = new HttpEntity<>(eventSeed, headers);
+
+        try {
+            ResponseEntity<Boolean> response = restTemplate.exchange(
+                pathToGrowEventSeed, 
+                HttpMethod.POST, 
+                requestToTimetableService, 
+                Boolean.class
+            );
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                log.info(log_header + "Event sent successfully! It's all in hands of the timetable now: " + response.getBody());
+                return response.getBody();
+            } else {
+                log.error(log_header + "Failed to create event for module: " + eventCreate.getModuleId());
+                return false;
+            }
+
+        } catch (Exception e) {
+            log.error(log_header + "Error occurred while creating event for module: '" + eventCreate.getModuleId() + "': " + e);
+            return false;
+        }
     }
 
     public List<Module> getAllModules() {
@@ -301,7 +353,7 @@ public class ModuleManagerService {
         return modules;
     }
 
-    public List<EventModel> getModuleEvents(long id) {
+    /*public List<EventModel> getModuleEvents(long id) {
         log.info(log_header + "Getting events for module: " + id);
         return eventRepository.findByModuleId(id);  // Return the actual events
     }
@@ -309,5 +361,5 @@ public class ModuleManagerService {
     public List<EventModel> getEventsByUserId(long userId) {
         log.info(log_header + "Getting events for user: " + userId);
         return eventRepository.findByOwnerId(userId);  // Return the actual events
-    }
+    }*/
 }

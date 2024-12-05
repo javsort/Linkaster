@@ -1,9 +1,10 @@
-package com.linkaster.timetableService.dto;
+package com.linkaster.moduleManager.dto;
 
 import java.sql.Date;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder
 public class EventSeedDTO {
 
     /*

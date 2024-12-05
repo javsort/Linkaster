@@ -32,6 +32,10 @@ public interface  APITimetableController {
 
     // Called by the Gateway to update a timetable from moduleManager
     @PostMapping("/sproutEvents")
-    public ResponseEntity<?> sproutEvents(HttpServletRequest request, @RequestBody EventSeedDTO eventSeedDTO);
+    public ResponseEntity<?> sproutEvents(HttpServletRequest request, @RequestBody EventSeedDTO eventSeed);
+
+    // Called by the Gateway to update a timetable from moduleManager
+    @GetMapping("/getEvents")
+    public ResponseEntity<?> getTimetableByUserId(HttpServletRequest request);
     
 }

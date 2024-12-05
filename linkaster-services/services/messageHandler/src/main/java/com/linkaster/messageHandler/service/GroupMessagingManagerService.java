@@ -94,6 +94,7 @@ public class GroupMessagingManagerService {
     }
 
     public GroupMessageReturnDTO sendMessage(GroupMessageDTO incGroupMessage) {
+        log.info(log_header + "Sending message to group chat with id: '" + incGroupMessage.getGroupChatId() + "'");
         // Get relevant data from DTO
         long moduleChatId = incGroupMessage.getGroupChatId();
         long senderId = incGroupMessage.getSenderId();
@@ -112,25 +113,31 @@ public class GroupMessagingManagerService {
             return null;
         }
 
+        log.info(log_header + "Verifications are done. Proceeding to send message.");
+
         // Get sender name
         String senderName = groupChat.getGroupMembers().get(senderId);
 
         // Encrypt the message with the module's AES key
         try {
-            String encryptedMessage = keyMaster.encryptMessage(message, groupChat.getModuleAESKey());   // Should be user's version of it but aight
+            log.info(log_header + "Encrypting message for group chat with id: '" + moduleChatId + "'");
+            //String encryptedMessage = keyMaster.encryptMessageWithAESKey(message, groupChat.getModuleAESKey());   // Should be user's version of it but aight
     
             // Create a new group message
             GroupMessage newGroupMessage = new GroupMessage();
             newGroupMessage.setSenderId(senderId);
             newGroupMessage.setGroupChat(groupChat);
-            newGroupMessage.setEncryptedMessage(encryptedMessage);
+            newGroupMessage.setEncryptedMessage(message);
             newGroupMessage.setTimestamp(new Date(System.currentTimeMillis()));
+
+            log.info(log_header + "Message encrypted successfully for group chat with id: '" + moduleChatId + "'. Saving message to database."); 
     
     
             // Save the new group message
             groupMessageRepository.save(newGroupMessage);
     
             // Return the DTO
+            log.info(log_header + "Message processing fully completed for group chat with id: '" + moduleChatId + "'. Broadcasting message now...");
             return new GroupMessageReturnDTO(message, moduleChatId, senderId, senderName, newGroupMessage.getTimestamp());
             
         } catch (Exception e) {

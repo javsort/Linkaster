@@ -3,7 +3,6 @@ package com.linkaster.moduleManager.dto;
 import java.util.List;
 
 import com.linkaster.moduleManager.model.Announcement;
-import com.linkaster.moduleManager.model.EventModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

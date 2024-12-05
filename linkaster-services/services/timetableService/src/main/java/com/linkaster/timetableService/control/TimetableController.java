@@ -1,5 +1,7 @@
 package com.linkaster.timetableService.control;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,7 +55,7 @@ public class TimetableController implements APITimetableController {
     /*
      * Get user Id from request, the rest from seedDTO -> Forward to EventSchedulingService
      */
-    public ResponseEntity<?> sproutEvents(HttpServletRequest request, @RequestBody EventSeedDTO eventSeedDTO){
+    public ResponseEntity<Boolean> sproutEvents(HttpServletRequest request, @RequestBody EventSeedDTO eventSeedDTO){
 
         log.info(log_header + "Sprouting events from a moduleManager call...");
 
@@ -62,7 +64,22 @@ public class TimetableController implements APITimetableController {
         eventSchedulingService.sproutEvents(eventSeedDTO);
 
         log.info(log_header + "Received ping from moduleManager to sprout events for module with id: '" + eventSeedDTO.getModuleId() + "'.");
-        return ResponseEntity.ok("Call to Sprout Events for module with id: '" + eventSeedDTO.getModuleId() + "' sprouted successfully. Check logs for details and any unsuccessful calls.");
+        return ResponseEntity.ok(true);
+    }
+
+    @Override
+    public ResponseEntity<?> getTimetableByUserId(HttpServletRequest request) {
+        String studentIdString = (String) request.getAttribute("id");
+        long userId;
+
+        try {
+            userId = Long.parseLong(studentIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid student ID: " + studentIdString);
+            return (ResponseEntity<?>) Collections.emptyList();
+        }
+
+        return ResponseEntity.ok(timetableCoordinatorService.getTimetableByUserId(userId));
     }
 
 

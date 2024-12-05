@@ -48,19 +48,19 @@ services:
     networks:
       - linkaster-network
 
-#  timetable-service:
-#    build:
-#      context: ../linkaster-services/services/timetableService
-#    ports:
-#      - "8082:8082"
-#    depends_on:
-#      - linkaster-MySQL
-#    environment:
-#      - SERVER_PORT=8082
-#    env_file:
-#      - .env
-#    networks:
-#      - linkaster-network
+  timetable-service:
+    build:
+      context: ../linkaster-services/services/timetableService
+    ports:
+      - "8082:8082"
+    depends_on:
+      - linkaster-MySQL
+    environment:
+      - SERVER_PORT=8082
+    env_file:
+      - .env
+    networks:
+      - linkaster-network
 #
 #  reserve-service:
 #    build:
