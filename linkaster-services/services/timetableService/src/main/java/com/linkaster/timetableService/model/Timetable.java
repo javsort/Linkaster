@@ -4,6 +4,8 @@ package com.linkaster.timetableService.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +35,7 @@ public class Timetable {
     private Long userOwnerId;
 
     @OneToMany(mappedBy = "timetable", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<EventModel> upcomingEvents = new ArrayList<>();
 }
 

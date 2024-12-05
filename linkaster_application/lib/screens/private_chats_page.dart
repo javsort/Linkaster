@@ -45,10 +45,7 @@ class _PrivateChatPageState extends State<PrivateChatPage> {
             return {
               'isSent': msg['senderId'] == widget.chat.senderId,
               'message': msg['encryptedMessage'],
-              'time': DateTime.parse(msg['timestamp'])
-                  .toLocal()
-                  .toString()
-                  .split(' ')[1],
+              'time': (msg['timestamp'])
             };
           }).toList();
         });
