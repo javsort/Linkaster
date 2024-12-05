@@ -34,6 +34,8 @@ public class MessageKeyMaster {
     private static final int RSA_KEY_SIZE = 2048;
     private static final int GCM_IV_LENGTH = 12;
 
+    private final String log_header = "MessageKeyMaster --- ";
+
     /*
      * Key Master methods
      */
@@ -41,12 +43,15 @@ public class MessageKeyMaster {
     public MessageKeyMaster() {
         // Generate key pair
         KeyPairGenerator keyGenerator;
+        log.info(log_header + "Generating application key pair");
         try {
             keyGenerator = KeyPairGenerator.getInstance("RSA");
             keyGenerator.initialize(RSA_KEY_SIZE);
             this.applicationKeyPair = keyGenerator.generateKeyPair();
+
         } catch (NoSuchAlgorithmException e) {
             log.error("Error generating application key pair", e);
+        
         }
         
         if (this.applicationKeyPair != null) {
@@ -128,21 +133,30 @@ public class MessageKeyMaster {
     }
 
     public String encryptMessageWithAESKey(String message, String encryptedKey) throws Exception {
+        log.info(log_header + "Encrypting message with AES Key");
         // Get key out of byte array -> decrypt with app private key
         PrivateKey privateKey = this.applicationKeyPair.getPrivate();
 
+        // Decrypt the AES key
+        log.info(log_header + "Decrypting AES Key");
         Cipher cipher = Cipher.getInstance(RSA_TRANSFORMATION);
+        log.info(log_header + "Got cipher instance");
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        log.info(log_header + "Initialized cipher");
         byte[] aesKeyBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedKey));
+        log.info(log_header + "AES Key decrypted successfully: " + aesKeyBytes);
 
         // Reconstruct the key
         SecretKey aesKey = new SecretKeySpec(aesKeyBytes, "AES");
+
+        log.info(log_header + "AES Key decrypted successfully: " + aesKey + "key to str: " + aesKey.toString());
 
         // Encrypt the message with the AES key
         Cipher aesCipher = Cipher.getInstance(AES_TRANSFORMATION);
         aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
         byte[] encryptedMessage = aesCipher.doFinal(message.getBytes());
 
+        log.info(log_header + "Message encrypted successfully" + encryptedMessage);
         return Base64.getEncoder().encodeToString(encryptedMessage);
     }
 

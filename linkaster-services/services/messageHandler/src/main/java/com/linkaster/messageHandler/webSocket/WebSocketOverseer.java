@@ -242,6 +242,12 @@ public class WebSocketOverseer extends TextWebSocketHandler {
         }
 
         if(recipientSession.isOpen()){
+            /*
+             * For presentation -> decrypt with user's private
+             */
+            // String decryptedMssg = privateMessagingManagerService.getDecoded(privateChatId, message.getEncryptedMessage(), recipientId);
+
+
             log.info(log_header + "Recipient is connected. Sending message...");
             // Send the message to the recipient
             PrivateMessageDTO messageToSend = new PrivateMessageDTO();
