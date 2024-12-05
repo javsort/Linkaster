@@ -1,6 +1,7 @@
 package com.linkaster.timetableService.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -16,21 +17,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "timetables")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-@Entity
-@Table(name = "timetables")
 public class Timetable {
     @Id
-    @Column(name = "timetable_id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    @Column(name = "timetable_id", unique = true, nullable = false)
+    private Long id;
 
-    @Column(name = "user_owner_id")
+    @Column(name = "user_owner_id", nullable = false)
     private Long userOwnerId;
 
     @OneToMany(mappedBy = "timetable", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventModel> upcomingEvents;
+    private List<EventModel> upcomingEvents = new ArrayList<>();
 }
+

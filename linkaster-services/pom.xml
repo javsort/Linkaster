@@ -17,10 +17,10 @@
         <module>services/logicGateway</module>
         <module>services/userService</module>
         <module>services/moduleManager</module>
-        <module>services/cabinetService</module>
-        <module>services/notifHandler</module>
+        <!-- <module>services/cabinetService</module> -->
+        <!-- <module>services/notifHandler</module> -->
         <module>services/timetableService</module>
-        <module>services/reserveService</module>
+        <!-- <module>services/reserveService</module> -->
         <module>services/feedbackService</module>
         <module>services/messageHandler</module>
     </modules>

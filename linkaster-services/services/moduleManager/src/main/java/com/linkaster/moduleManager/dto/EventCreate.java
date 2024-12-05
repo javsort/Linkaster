@@ -2,7 +2,7 @@ package com.linkaster.moduleManager.dto;
 
 import com.linkaster.moduleManager.model.Module;
 
-import java.util.Date;
+import java.sql.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -19,7 +19,6 @@ import com.linkaster.moduleManager.dto.JoinModuleCreate;
 import com.linkaster.moduleManager.dto.ModuleCreate;
 import com.linkaster.moduleManager.model.Announcement;
 import com.linkaster.moduleManager.model.Module;
-import com.linkaster.moduleManager.model.EventModel;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -87,6 +86,9 @@ public interface APIModuleController {
     @PostMapping("/event")
     public ResponseEntity<?> createEvent(@RequestBody EventCreate event, HttpServletRequest request);
 
+
+
+    /* 
     @GetMapping("/events/user")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<EventModel> getAllEventsByUserId(HttpServletRequest request);
@@ -95,7 +97,7 @@ public interface APIModuleController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> getAllEventsByModuleId(@RequestBody long moduleId);
 
-    /* 
+    
     @GetMapping("/updateTimetable")
     @ResponseStatus(HttpStatus.OK)
     public boolean updateTimetable(@RequestParam Integer time, @RequestParam Date date);
