@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:linkaster_application/config/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TeacherFeedbackPage extends StatefulWidget {
 
@@ -14,6 +15,7 @@ class TeacherFeedbackPage extends StatefulWidget {
 }
 
 class _TeacherFeedbackPageState extends State<TeacherFeedbackPage> {
+  String? token;
   late Future<List<FeedbackItem>> feedbackItems;
 
   @override
@@ -21,13 +23,23 @@ class _TeacherFeedbackPageState extends State<TeacherFeedbackPage> {
     super.initState();
     feedbackItems = fetchFeedbacks();
   }
+  Future<void> _retrieveToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    token = prefs.getString('authToken');
+    print('Retrieved token: $token');
+  });
 
+    if (token != null) {
+      await fetchFeedbacks(); 
+    }
+  }
   Future<List<FeedbackItem>> fetchFeedbacks() async {
     try {
       final response = await http.post(
         Uri.parse('${AppConfig.apiBaseUrl}/api/feedback/getInstructorFeedbacks'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({}),                                     ///FIX
+        headers: {'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',},
       );
 
       if (response.statusCode == 200) {
@@ -105,17 +117,17 @@ class FeedbackCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              feedback.isAnonymous ? 'Anonymous' : feedback.senderName,
+              feedback.senderID == '0' ? 'Anonymous' : feedback.senderID,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 fontStyle:
-                    feedback.isAnonymous ? FontStyle.italic : FontStyle.normal,
+                    feedback.senderID == '0' ? FontStyle.italic : FontStyle.normal,
               ),
             ),
             SizedBox(height: 8),
             Text(
-              feedback.message,
+              feedback.contents,
               style: TextStyle(fontSize: 15),
             ),
           ],
@@ -126,24 +138,18 @@ class FeedbackCard extends StatelessWidget {
 }
 
 class FeedbackItem {
-  final String senderName;
-  final String message;
-  final DateTime timestamp;
-  final bool isAnonymous;
+  final String senderID;
+  final String contents;
 
   FeedbackItem({
-    required this.senderName,
-    required this.message,
-    required this.timestamp,
-    required this.isAnonymous,
+    required this.senderID,
+    required this.contents,
   });
 
   factory FeedbackItem.fromJson(Map<String, dynamic> json) {
     return FeedbackItem(
-      senderName: json['senderName'] ?? 'Anonymous',
-      message: json['contents'],
-      timestamp: DateTime.parse(json['timestamp']), // Ensure backend provides this field
-      isAnonymous: json['anonymous'],
+      senderID: json['sender'],
+      contents: json['contents'],
     );
   }
 }
