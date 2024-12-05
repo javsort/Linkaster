@@ -1,5 +1,7 @@
 package com.linkaster.timetableService.control;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,6 +65,21 @@ public class TimetableController implements APITimetableController {
 
         log.info(log_header + "Received ping from moduleManager to sprout events for module with id: '" + eventSeedDTO.getModuleId() + "'.");
         return ResponseEntity.ok(true);
+    }
+
+    @Override
+    public ResponseEntity<?> getTimetableByUserId(HttpServletRequest request) {
+        String studentIdString = (String) request.getAttribute("id");
+        long userId;
+
+        try {
+            userId = Long.parseLong(studentIdString);
+        } catch (NumberFormatException e) {
+            log.error(log_header + "Invalid student ID: " + studentIdString);
+            return (ResponseEntity<?>) Collections.emptyList();
+        }
+
+        return ResponseEntity.ok(timetableCoordinatorService.getTimetableByUserId(userId));
     }
 
 
