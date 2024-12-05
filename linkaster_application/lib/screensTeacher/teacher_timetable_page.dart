@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/event.dart';
+import '../models/event.dart'; // Ensure your Event model matches the data structure
 import '../config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TimetablePage extends StatefulWidget {
-  String? token;
+  final String? token;
 
-  TimetablePage({required this.token});
+  const TimetablePage({Key? key, this.token}) : super(key: key);
 
   @override
   _TimetablePageState createState() => _TimetablePageState();
@@ -42,8 +42,7 @@ class _TimetablePageState extends State<TimetablePage> {
 
   /// Fetch events from API based on the selected date
   Future<void> _fetchTimetableData(DateTime selectedDate) async {
-    final apiUrl =
-        '${AppConfig.apiBaseUrl}/api/timetable/getEvents'; // Replace with your API endpoint
+    final apiUrl = '${AppConfig.apiBaseUrl}/api/timetable/getEvents';
 
     try {
       final response = await http.get(
@@ -54,19 +53,23 @@ class _TimetablePageState extends State<TimetablePage> {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        final List<Event> events =
-            data.map((event) => Event.fromJson(event)).toList();
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final List<dynamic> eventsData = responseData['upcomingEvents'];
 
-        // Group events by date
+        final List<Event> events =
+            eventsData.map((event) => Event.fromJson(event)).toList();
+
         setState(() {
           _events.clear(); // Clear existing data
           for (var event in events) {
-            final eventDate = DateTime.parse(event.eventDate);
-            if (_events[eventDate] == null) {
-              _events[eventDate] = [];
+            final eventDate = DateTime.parse(
+                event.eventDate); // Assuming 'eventDate' is the date field
+            final normalizedDate = normalizeDate(eventDate);
+
+            if (_events[normalizedDate] == null) {
+              _events[normalizedDate] = [];
             }
-            _events[eventDate]?.add(event);
+            _events[normalizedDate]?.add(event);
           }
         });
       } else {
