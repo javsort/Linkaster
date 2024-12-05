@@ -1,4 +1,4 @@
-package com.linkaster.moduleManager.repository;
+/*package com.linkaster.moduleManager.repository;
 
 import com.linkaster.moduleManager.model.EventModel;
 
@@ -16,4 +16,4 @@ public interface EventRepository extends JpaRepository<EventModel, Long> {
     // get events by userid
     public List<EventModel> findByOwnerId(Long ownerId);
 
-}   
+}   */

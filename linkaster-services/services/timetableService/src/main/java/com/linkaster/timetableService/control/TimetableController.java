@@ -53,7 +53,7 @@ public class TimetableController implements APITimetableController {
     /*
      * Get user Id from request, the rest from seedDTO -> Forward to EventSchedulingService
      */
-    public ResponseEntity<?> sproutEvents(HttpServletRequest request, @RequestBody EventSeedDTO eventSeedDTO){
+    public ResponseEntity<Boolean> sproutEvents(HttpServletRequest request, @RequestBody EventSeedDTO eventSeedDTO){
 
         log.info(log_header + "Sprouting events from a moduleManager call...");
 
@@ -62,7 +62,7 @@ public class TimetableController implements APITimetableController {
         eventSchedulingService.sproutEvents(eventSeedDTO);
 
         log.info(log_header + "Received ping from moduleManager to sprout events for module with id: '" + eventSeedDTO.getModuleId() + "'.");
-        return ResponseEntity.ok("Call to Sprout Events for module with id: '" + eventSeedDTO.getModuleId() + "' sprouted successfully. Check logs for details and any unsuccessful calls.");
+        return ResponseEntity.ok(true);
     }
 
 
