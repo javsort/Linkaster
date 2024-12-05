@@ -2,6 +2,7 @@ package com.linkaster.messageHandler.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,9 @@ public class UserInfo {
     @Column(name = "user_id")
     private long userId;
 
-    @Column(name = "public_key")
+    
+    @Lob
+    @Column(name = "public_key", columnDefinition = "LONGTEXT")
     private String publicKey;
 
     @Column(name = "name")
