@@ -1,3 +1,11 @@
+/*
+ *  Title: create_module_club.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -104,9 +112,9 @@ class _CreateModuleDialogState extends State<CreateModuleDialog> {
     if (response.statusCode == 201) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       moduleId = responseData['moduleId'];
-      print('Module created successfully! Module ID: $moduleId');
+      print('Module created successfully! ID: $moduleId');
     } else {
-      print('Failed to create module');
+      print('Failed to create module' + response.body);
     }
   }
 
@@ -133,7 +141,7 @@ class _CreateModuleDialogState extends State<CreateModuleDialog> {
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       print('Event ${eventIndex + 1} created successfully!');
       return true;
     } else {

@@ -1,3 +1,11 @@
+/*
+ *  Title: teacher_chat_selection_page.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -98,7 +106,7 @@ class _ChatSelectionPageState extends State<TeacherChatSelectionPage> {
   }
 
   Future<void> _createPrivateChat(String email) async {
-    final apiUrl = "${AppConfig.apiBaseUrl}/api/message/private/...";
+    final apiUrl = "${AppConfig.apiBaseUrl}/api/message/private/create";
     final token = widget.token;
 
     try {
@@ -108,7 +116,7 @@ class _ChatSelectionPageState extends State<TeacherChatSelectionPage> {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({'email': email}),
+        body: jsonEncode({'userEmail': email}),
       );
 
       if (response.statusCode == 201) {
