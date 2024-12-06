@@ -25,6 +25,13 @@ import com.linkaster.logicGateway.filter.JwtFilter;
  * It allows login without authentication and requires authentication for all other requests.
  * It also disables CSRF and sets the session creation policy to STATELESS.
 */
+/*
+ *  Title: SecurityConfig.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)

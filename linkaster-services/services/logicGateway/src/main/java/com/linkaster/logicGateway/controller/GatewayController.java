@@ -27,6 +27,13 @@ import lombok.extern.slf4j.Slf4j;
  * This class is the controller for the logicGateway service.
  * It handles all incoming requests to the gateway.
  */
+/*
+ *  Title: GatewayController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @RestController
 @Slf4j
 public class GatewayController implements APIGatewayController {
