@@ -1,3 +1,11 @@
+/*
+ *  Title: group_chat.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 class GroupChat {
   final int groupChatId;
   final int moduleId;

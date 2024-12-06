@@ -1,3 +1,11 @@
+/*
+ *  Title: event.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 class Event {
   final int id;
   final int moduleId;
