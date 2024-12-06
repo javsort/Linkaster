@@ -12,9 +12,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-
 /*
- * This is the Role Model class. Determines every role in the system.
+ *  Title: Role.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +26,9 @@ import lombok.Setter;
 @Entity
 @Table(name = "roles")
 public class Role {
+    /*
+     * This is the Role Model class. Determines every role in the system.
+     */
     
     @Id
     @Column(name = "id")

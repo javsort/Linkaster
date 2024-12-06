@@ -10,6 +10,13 @@ import com.linkaster.userService.service.UserHandlerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
+/*
+ *  Title: TeacherActionsController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/teacher")     // This is the base path for the teacher actions -> EXCLUSIVE TO THIS CLASS SET (TeacherActionsController & StudentActionsController)

@@ -37,6 +37,13 @@ import lombok.extern.slf4j.Slf4j;
  * It interacts with the UserRepository and RoleRepository.
  * Creates Users and assigns roles while also providing user admin management
  */
+  /*
+ *  Title: UserHandlerService.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Service
 @Transactional
 @Slf4j

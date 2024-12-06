@@ -22,14 +22,22 @@ import com.linkaster.userService.service.UserHandlerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
+
 /*
- * This class is the controller for the User service.
- * It handles all incoming requests to the service.
- * Called by the Gateway to create, delete, update, and retrieve user information
+ *  Title: UserController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
 @Slf4j
 @RestController
 public class UserController implements APIUserController {
+    /*
+    * This class is the controller for the User service.
+    * It handles all incoming requests to the service.
+    * Called by the Gateway to create, delete, update, and retrieve user information
+    */
 
     // Services for handling user operations
     private final UserHandlerService userHandlerService;       // To implement (?)
