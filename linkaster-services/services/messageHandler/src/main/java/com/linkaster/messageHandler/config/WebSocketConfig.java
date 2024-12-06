@@ -11,6 +11,13 @@ import com.linkaster.messageHandler.webSocket.WebSocketOverseer;
 
 import lombok.extern.slf4j.Slf4j;
 
+/*
+ *  Title: WebSocketConfig.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Configuration
 @EnableWebSocket
 @Slf4j

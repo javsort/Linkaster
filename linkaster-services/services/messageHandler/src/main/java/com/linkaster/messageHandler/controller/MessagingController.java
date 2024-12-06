@@ -21,6 +21,13 @@ import com.linkaster.messageHandler.service.PrivateMessagingManagerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
+/*
+ *  Title: MessagingController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Slf4j
 @RestController
 public class MessagingController implements APIMessagingController {

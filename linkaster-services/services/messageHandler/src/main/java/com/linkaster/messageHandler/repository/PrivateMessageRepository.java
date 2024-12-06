@@ -9,6 +9,14 @@ import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 /*
  * This is a repository interface to handle database actions for the PrivateMessage entity.
  */
+
+   /*
+ *  Title: PrivateMessageRepository.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Repository
 public interface PrivateMessageRepository extends JpaRepository<PrivateMessage, Object>{
 

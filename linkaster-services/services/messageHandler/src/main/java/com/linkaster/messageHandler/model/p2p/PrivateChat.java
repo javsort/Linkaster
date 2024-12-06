@@ -29,6 +29,13 @@ import lombok.Setter;
  * 
  * To be implemented in the future.
  */
+/*
+ *  Title: PrivateChat.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter

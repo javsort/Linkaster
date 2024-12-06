@@ -32,6 +32,13 @@ import lombok.extern.slf4j.Slf4j;
  * Will handle all private messaging related services
  */
 
+  /*
+ *  Title: PrivateMessagingManagerService.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Service
 @Transactional
 @Slf4j
