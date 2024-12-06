@@ -7,6 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import com.linkaster.timetableService.model.Timetable;
 
+/*
+ *  Title: TimetableRepository.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Repository
 public interface TimetableRepository extends JpaRepository<Timetable, Long> {
     @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Timetable t WHERE t.userOwnerId = :userOwnerId")

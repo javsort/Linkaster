@@ -4,15 +4,28 @@
   <groupId>com.linkaster.timetableService</groupId>
   <artifactId>timetableService</artifactId>
   <packaging>jar</packaging>
+
+  <!--
+  #
+  #  Title: timetableService -> pom.xml
+  #  Author: Ortega Mendoza, Javier
+  #  Date: 2024
+  #  Code Version: 1.0
+  #  Availability: https://github.com/javsort/Linkaster
+  #
+  -->
+
   <version>1.0-SNAPSHOT</version>
   <name>timetableService</name>
   <url>http://maven.apache.org</url>
+
   <parent>
     <groupId>com.linkaster</groupId>
     <artifactId>linkaster-services</artifactId>
     <version>1.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>

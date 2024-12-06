@@ -15,6 +15,13 @@ import com.linkaster.timetableService.dto.EventSeedDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+/*
+ *  Title: APITimetableController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @RequestMapping("/api/timetable")
 public interface  APITimetableController {
 
