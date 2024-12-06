@@ -1,3 +1,11 @@
+/*
+ *  Title: create_module_class.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -133,11 +141,12 @@ class _CreateModuleDialogState extends State<CreateModuleDialog> {
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       print('Event ${eventIndex + 1} created successfully!');
       return true;
     } else {
-      print('Failed to create event ${eventIndex + 1}');
+      print(
+          'Failed to create event ${eventIndex + 1} and response ${response.body}');
       return false;
     }
   }

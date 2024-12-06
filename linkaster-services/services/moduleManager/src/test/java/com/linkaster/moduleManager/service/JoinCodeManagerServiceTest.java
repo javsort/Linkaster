@@ -1,3 +1,11 @@
+/*
+ *  Title: JoinCodeManagerServiceTest.java
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 package com.linkaster.moduleManager.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,10 +67,16 @@ public class JoinCodeManagerServiceTest {
     // Prepare test data
     MockitoAnnotations.openMocks(this);
     JoinModuleCreate joinModuleCreate = new JoinModuleCreate("moduleCode123");
+
+    //Prints the joinModuleCreate object
+    System.out.println(joinModuleCreate);
+
     HttpServletRequest request = mock(HttpServletRequest.class);
 
     // Mock request attributes
     when(request.getAttribute("id")).thenReturn("1");
+
+    System.out.println("Id from request = 1");
 
     // Prepare module for testing
     Module existingModule = Module.builder()
@@ -75,6 +89,8 @@ public class JoinCodeManagerServiceTest {
         .type("class_module")
         .studentList(new ArrayList<Long>())
         .build();
+
+    System.out.println("Existing module = " + existingModule);
 
     // Mock repository methods
     when(moduleRepository.findByModuleCode("moduleCode123")).thenReturn(existingModule);

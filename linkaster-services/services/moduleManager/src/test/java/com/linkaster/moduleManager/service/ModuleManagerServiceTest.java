@@ -1,3 +1,12 @@
+/*
+ *  Title: ModuleManagerServiceTest.java
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
+
 package com.linkaster.moduleManager.service;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -49,13 +58,16 @@ public class ModuleManagerServiceTest {
     public void testCreateModule_ModuleAlreadyExists() {
         // Mock HttpServletRequest
         when(request.getAttribute("id")).thenReturn("1");
-        when(request.getAttribute("userEmail")).thenReturn("user@example.com");
+        when(request.getAttribute("userEmail"))
+        .thenReturn("user@example.com");
 
         // Mock moduleRepository to return that the module already exists
-        when(moduleRepository.existsByModuleCode(anyString())).thenReturn(true);
+        when(moduleRepository.existsByModuleCode(anyString()))
+        .thenReturn(true);
 
         // Call the method
-        Module createdModule = moduleService.createModule(request, moduleCreate, "teacher");
+        Module createdModule = moduleService.
+        createModule(request, moduleCreate, "teacher");
 
         // Verify that no module is created
         assertNull(createdModule);

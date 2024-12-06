@@ -1,3 +1,12 @@
+/*
+ *  Title: SecurityConfig.java
+ *  Author: Javier Ortega Mendoza
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
+
 package com.linkaster.moduleManager.config;
 
 import org.springframework.context.annotation.Bean;

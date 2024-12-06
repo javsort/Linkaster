@@ -1,3 +1,11 @@
+/*
+ *  Title: group_chat_info.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 class GroupChatInfo {
   final String chatname;
   final String name;

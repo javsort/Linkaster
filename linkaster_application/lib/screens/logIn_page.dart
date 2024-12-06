@@ -1,3 +1,11 @@
+/*
+ *  Title: logIn_page.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 import 'package:flutter/material.dart';
 import './home_screen.dart'; // LinkasterHome as HomeScreen
 import 'register_page.dart';

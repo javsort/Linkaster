@@ -1,3 +1,12 @@
+/*
+ *  Title: ModuleController.java
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
+
 package com.linkaster.moduleManager.controller;
 
 import java.util.Collections;

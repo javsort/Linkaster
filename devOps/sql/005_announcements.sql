@@ -1,3 +1,12 @@
+--
+-- Title: 005_announcements.sql
+-- Author: Marcos Gonzalez Fernandez
+-- Date: 2024
+-- Version: 1.0
+-- Availability: https://github.com/jasvort/Linkaster
+--
+
+
 -- Create the announcements table
 CREATE TABLE announcements (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
