@@ -1,3 +1,12 @@
+/*
+ *  Title: GroupChatRegDTO.java
+ *  Author: Marcos Gonzalez Fernandez
+ *  Co-Author: Javier Ortega Mendoza
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 
 package com.linkaster.moduleManager.dto;
 

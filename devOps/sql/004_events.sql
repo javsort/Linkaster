@@ -1,3 +1,11 @@
+--
+--  Title: 004_events.sql
+--  Author: Ortega Mendoza, Javier & Gonzalez Fernandez, Marcos 
+--  Date: 2024
+--  Code Version: 1.0
+--  Availability: https://github.com/javsort/Linkaster
+--
+
 -- Create the timetables table
 CREATE TABLE timetables (
     timetable_id BIGINT AUTO_INCREMENT PRIMARY KEY,

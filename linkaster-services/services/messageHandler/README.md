@@ -1,4 +1,5 @@
 # Message Handler Service
+Written by: Javier Ortega Mendoza -> [javsort](https://github.com/javsort)
 I got to take notes of my own things to keep in check so:
 
 ## Overall functionality

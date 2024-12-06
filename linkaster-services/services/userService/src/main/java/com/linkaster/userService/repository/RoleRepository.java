@@ -7,11 +7,18 @@ import org.springframework.stereotype.Repository;
 
 import com.linkaster.userService.model.Role;
 
-/*
- * This is a repository interface to handle database actions for the Role entity.
+ /*
+ *  Title: RoleRepository.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
 @Repository
 public interface  RoleRepository extends JpaRepository<Role, Integer> {
+    /*
+     * This is a repository interface to handle database actions for the Role entity.
+     */
     
     // Find a role by its name
     @Query("SELECT r FROM Role r WHERE r.role = :role")

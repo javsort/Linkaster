@@ -2,6 +2,14 @@
 
 :: USE this script ONLY to build the backend and run the backend containers
 
+::
+::  FRONT_package_n_contain.bat
+::  Author: Ortega Mendoza, Javier
+::  Date: 2024
+::  Code Version: 1.0
+::  Availability: https://github.com/javsort/Linkaster
+::
+
 setlocal
 
 :: Drop all containers and networks - no matter if w or w/o backend

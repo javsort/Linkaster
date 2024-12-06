@@ -2,6 +2,14 @@ name: 'linkaster-backend'
 
 # DO NOT UNCOMMENT THE SERVICES THAT ARE NOT READY YET
 
+#
+#  Title: docker-compose-backend.yml
+#  Author: Ortega Mendoza, Javier
+#  Date: 2024
+#  Code Version: 1.0
+#  Availability: https://github.com/javsort/Linkaster
+#
+
 services:
   # Link for logic gateway service: http://logic-gateway:8080/
   logic-gateway:

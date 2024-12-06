@@ -8,7 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.linkaster.userService.dto.UserRegistration;
 
 import jakarta.servlet.http.HttpServletRequest;
-
+/*
+ *  Title: APIUserActionsController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 public interface APIUserActionsController {
 
     @GetMapping("")

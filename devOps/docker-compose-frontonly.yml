@@ -1,5 +1,13 @@
 name: 'linkaster-front-only'
 
+#
+#  Title: docker-compose-frontonly.yml
+#  Author: Ortega Mendoza, Javier
+#  Date: 2024
+#  Code Version: 1.0
+#  Availability: https://github.com/javsort/Linkaster
+#
+
 services:
   # Front-end service
   flutter-web:

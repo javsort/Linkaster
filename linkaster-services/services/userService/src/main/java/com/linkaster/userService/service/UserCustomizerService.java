@@ -20,7 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 
 
 // Service to customize user's profile
-// To be implemented
+  /*
+ *  Title: UserCustomizerService.java
+ *  Author: Gonzalez Fernandez, Marcos 
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Service
 @Transactional
 @Slf4j

@@ -1,3 +1,11 @@
+/*
+ *  Title: chat.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 class Chat {
   final int privateChatId;
   final int senderId;

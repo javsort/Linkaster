@@ -16,10 +16,12 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /*
- * This class represents a student user.
- * It extends the User class.
- *
-*/
+ *  Title: StudentUser.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,6 +30,11 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Table(name = "students")
 public class StudentUser extends User {
+    /*
+     * This class represents a student user.
+     * It extends the User class.
+     *
+    */
 
     @Column(name = "studentId", unique = true, nullable = false)
     private String studentId;

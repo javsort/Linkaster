@@ -1,3 +1,11 @@
+--
+-- Title: 003_modules.sql
+-- Author: Marcos Gonzalez Fernandez
+-- Date: 2024
+-- Version: 1.0
+-- Availability: https://github.com/jasvort/Linkaster
+--
+
 -- Create the modules table
 CREATE TABLE modules (
     module_id BIGINT AUTO_INCREMENT PRIMARY KEY,

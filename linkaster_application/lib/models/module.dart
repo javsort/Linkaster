@@ -1,3 +1,11 @@
+/*
+ *  Title: module.dart
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 class Module {
   final String subject;
   final String time;

@@ -2,6 +2,14 @@
 
 :: WARNING!!! This script builds the ENTIRE app, takes a while to run and requires a lot of resources.
 
+::
+::  FULL_package_n_contain.bat
+::  Author: Ortega Mendoza, Javier
+::  Date: 2024
+::  Code Version: 1.0
+::  Availability: https://github.com/javsort/Linkaster
+::
+
 setlocal
 
 :: Drop all containers and networks - no matter if w or w/o backend

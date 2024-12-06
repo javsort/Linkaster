@@ -1,8 +1,16 @@
+/*
+ *  Title: Module.java
+ *  Author: Marcos Gonzalez Fernandez
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
+
 package com.linkaster.moduleManager.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;

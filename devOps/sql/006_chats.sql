@@ -1,3 +1,11 @@
+--
+--  Title: 004_events.sql
+--  Author: Ortega Mendoza, Javier & Gonzalez Fernandez, Marcos 
+--  Date: 2024
+--  Code Version: 1.0
+--  Availability: https://github.com/javsort/Linkaster
+--
+
 CREATE TABLE private_chats (
     private_chat_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user1_email VARCHAR(255) NOT NULL,

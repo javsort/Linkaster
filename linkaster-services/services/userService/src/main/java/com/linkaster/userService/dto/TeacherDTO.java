@@ -6,12 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-// DTO to send teacher data to the client or between services
+/*
+ *  Title: TeacherDTO.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class TeacherDTO {
+    // DTO to send teacher data to the client or between services
     private long id;
     private String firstName;
     private String lastName;

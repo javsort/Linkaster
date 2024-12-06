@@ -17,6 +17,13 @@ import jakarta.servlet.http.HttpServletRequest;
 /*
  * This interface defines the API endpoints for the Gateway Controller.
  */
+/*
+ *  Title: APIGatewayController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @RequestMapping("/api")
 public interface APIGatewayController {
     @GetMapping("")

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#
+#  build_service.sh
+#  Author: Ortega Mendoza, Javier
+#  Date: 2024
+#  Code Version: 1.0
+#  Availability: https://github.com/javsort/Linkaster
+#
+
 # Set the Maven command
 MVN_COMMAND="./mvnw"
 

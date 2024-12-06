@@ -31,17 +31,23 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 
-// Proving who you are - Authentication
-
-/*
- * This class is responsible for authenticating users.
- * ONLY CLASS with no authorization required. Directly pinged by logicGateway to verify user credentials or register.
+  /*
+ *  Title: UserAuthenticatorService.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
 @Service
 @Transactional
 @Slf4j
 //@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class UserAuthenticatorService {
+    /*
+    * This class is responsible for authenticating users.
+    * ONLY CLASS with no authorization required. Service directly pinged by logicGateway to verify user credentials or register.
+    */
+
     @Value("${address.logicGateway.url}")
     private String logicGatewayAddress;
 

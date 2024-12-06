@@ -17,18 +17,25 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.linkaster.userService.dto.ProfileInfoDTO;
 import com.linkaster.userService.dto.UserRegistration;
-import com.linkaster.userService.model.User;
 import com.linkaster.userService.dto.message.PrivateChatReg;
 import com.linkaster.userService.dto.message.PrivateChatSeedDTO;
+import com.linkaster.userService.model.User;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 /*
- * This interface defines the API endpoints for the User Controller.
+ *  Title: APIUserController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
-
 @RequestMapping("/api/user")
 public interface APIUserController {
+    /*
+    * This interface defines the API endpoints for the User Controller.
+    */
+
     // Home endpoint
     @GetMapping("")
     public String home();

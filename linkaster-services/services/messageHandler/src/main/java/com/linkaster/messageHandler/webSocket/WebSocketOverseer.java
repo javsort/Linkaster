@@ -33,6 +33,14 @@ import lombok.extern.slf4j.Slf4j;
  * This is my purpose.
  * 
  */
+
+ /*
+ *  Title: WebSocketOverseer.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Component
 @Slf4j
 public class WebSocketOverseer extends TextWebSocketHandler {

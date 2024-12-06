@@ -20,9 +20,13 @@ import lombok.experimental.SuperBuilder;
 import java.security.KeyPair;
 
 
-/*
- * This is the User entity class. It represents a user in the system.
- * It is an abstract class that is extended by the Student and Teacher classes.
+
+ /*
+ *  Title: User.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,6 +37,10 @@ import java.security.KeyPair;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "users")
 public class User {
+    /*
+    * This is the User entity class. It represents a user in the system.
+    * It is an abstract class that is extended by the Student and Teacher classes.
+    */
 
     @Id
     @Column(name= "id")

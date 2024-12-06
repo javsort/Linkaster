@@ -4,6 +4,8 @@ Welcome to devOps folder! Here is where everything is built, contained and run.
 There are **3** different ways to build the system, each has its own `./bat` & `./sh` files to run it, along with some other helping scripts for the backend.
 
 
+Readme written by: Javier Ortega Mendoza - [javsort](https://github.com/javsort)
+
 > ⚠️ **ATTENTION!**
 > All scripts should be run from the `/scripts` folder.
 
