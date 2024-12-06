@@ -19,6 +19,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*
+ *  Title: Timetable.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Entity
 @Table(name = "timetables")
 @AllArgsConstructor

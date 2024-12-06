@@ -1,3 +1,10 @@
+#
+#  Title: notifHandler/Dockerfile
+#  Author: Ortega Mendoza, Javier
+#  Date: 2024
+#  Code Version: 1.0
+#  Availability: https://github.com/javsort/Linkaster
+#
 
 FROM openjdk:21-jdk-slim
 

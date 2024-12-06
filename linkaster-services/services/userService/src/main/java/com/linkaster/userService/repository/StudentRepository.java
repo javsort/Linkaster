@@ -10,6 +10,13 @@ import org.springframework.stereotype.Repository;
 
 import com.linkaster.userService.model.StudentUser;
 
+ /*
+ *  Title: StudentRepository.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Repository
 public interface StudentRepository extends JpaRepository<StudentUser, Long> {
     // Find a user by its role

@@ -28,6 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 /*
  * This class is a filter that intercepts all requests and checks for a valid JWT token.
  */
+/*
+ *  Title: JwtFilter.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Component
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {

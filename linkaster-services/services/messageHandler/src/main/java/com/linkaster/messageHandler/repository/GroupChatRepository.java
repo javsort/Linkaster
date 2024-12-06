@@ -9,6 +9,13 @@ import com.linkaster.messageHandler.model.group.GroupChat;
 /*
  * This is a repository interface to handle all group chats.
  */
+    /*
+ *  Title: PrivateChatRepository.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Repository
 public interface GroupChatRepository extends JpaRepository<GroupChat, Long>{
     

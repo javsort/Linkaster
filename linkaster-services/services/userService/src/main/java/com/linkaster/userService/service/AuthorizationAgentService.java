@@ -14,12 +14,18 @@ import com.linkaster.userService.util.KeyMaster;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-// What you're allowed to do after proving who you are - Authorization
-
+  /*
+ *  Title: AuthorizationAgentService.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Service
 @Transactional
 @Slf4j
 public class AuthorizationAgentService {
+    // What you're allowed to do after proving who you are - Authorization
     
     // Autowired components:
     private final KeyMaster keyMaster;

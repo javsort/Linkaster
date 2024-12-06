@@ -12,6 +12,14 @@ import lombok.NoArgsConstructor;
  * DTO to be received from module manager to sprout the upcoming events
  */
 
+ 
+/*
+ *  Title: EventSeedDTO.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

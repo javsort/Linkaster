@@ -7,6 +7,13 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 
+/*
+ *  Title: GroupMessageReturnDTO.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

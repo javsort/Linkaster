@@ -16,6 +16,13 @@ import com.linkaster.messageHandler.model.p2p.PrivateMessage;
 import jakarta.servlet.http.HttpServletRequest;
 
 
+/*
+ *  Title: APIMessagingController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @RequestMapping("/api/message")
 public interface APIMessagingController {
 

@@ -15,14 +15,23 @@ import com.linkaster.userService.service.UserAuthenticatorService;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+ 
 /*
- * This class is the controller for the UserAuthenticator service.
- * It handles all incoming requests to the service and authenticates users.
- * Called directly by logicGateway to verify user credentials
+ *  Title: AuthenticationController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
 @Slf4j
 @RestController
 public class AuthenticationController implements APIAuthenticationController {
+    /*
+     * This class is the controller for the UserAuthenticator service.
+     * It handles all incoming requests to the service and authenticates users.
+     * Called directly by logicGateway to verify user credentials
+     */
 
     // Service for authenticating users
     private final UserAuthenticatorService userAuthenticatorService;

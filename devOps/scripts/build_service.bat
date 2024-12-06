@@ -1,5 +1,13 @@
 @echo off
 
+::
+::  build_service.bat
+::  Author: Ortega Mendoza, Javier
+::  Date: 2024
+::  Code Version: 1.0
+::  Availability: https://github.com/javsort/Linkaster
+::
+
 setlocal
 set MVN_COMMAND=mvnw.cmd
 

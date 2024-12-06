@@ -10,11 +10,17 @@ import com.linkaster.userService.dto.UserLogin;
 import com.linkaster.userService.dto.UserRegistration;
 
 /*
- * This interface defines the API endpoints for the Authentication Controller.
+ *  Title: APIAuthenticationController.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
-
 @RequestMapping("/api/auth")
 public interface APIAuthenticationController {
+    /*
+    * This interface defines the API endpoints for the Authentication Controller.
+    */
     
     // Authenticate endpoint -> pinged by logicGateway
     @PostMapping("/{user_type}/login")

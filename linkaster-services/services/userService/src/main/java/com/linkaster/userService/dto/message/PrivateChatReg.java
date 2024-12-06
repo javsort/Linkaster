@@ -1,12 +1,17 @@
 package com.linkaster.userService.dto.message;
 
-import com.linkaster.userService.dto.message.UserInfo;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/*
+ *  Title: PrivateChatReg.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

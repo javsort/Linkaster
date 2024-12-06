@@ -10,6 +10,14 @@ import com.linkaster.messageHandler.model.p2p.PrivateChat;
 /*
  * This is a repository interface to handle all private chats.
  */
+
+    /*
+ *  Title: PrivateChatRepository.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Repository
 public interface PrivateChatRepository extends JpaRepository<PrivateChat, Long>{
 

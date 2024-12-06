@@ -22,6 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 /*
  * This is a utility class that provides methods to generate RSA key pairs.
  */
+
+  /*
+ *  Title: MessageKeyMaster.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Slf4j
 @Component
 public class MessageKeyMaster {

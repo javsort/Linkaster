@@ -5,12 +5,19 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/*
+ *  Title: UserRegistration.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Data
-// DTO for user registration -> what the user sends to the server
 public class UserRegistration {
+    // DTO for user registration -> what the user sends to the server
     private String name;
     private String surname;
     

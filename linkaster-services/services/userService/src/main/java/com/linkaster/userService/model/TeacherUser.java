@@ -10,10 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-/*
- * This class represents a teacher user.
+ /*
+ *  Title: TeacherUser.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +24,9 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Table(name = "teachers")
 public class TeacherUser extends User {
+    /*
+    * This class represents a teacher user.
+    */
 
     
     @Column(name = "subject")

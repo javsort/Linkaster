@@ -5,6 +5,14 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
+  /*
+ *  Title: UserCustomizerService.java
+ *  Author: Gonzalez Fernandez, Marcos 
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

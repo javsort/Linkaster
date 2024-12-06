@@ -8,6 +8,16 @@
   <name>notifHandler</name>
   <url>http://maven.apache.org</url>
 
+  <!--
+  #
+  #  Title: notifHandler -> pom.xml
+  #  Author: Ortega Mendoza, Javier
+  #  Date: 2024
+  #  Code Version: 1.0
+  #  Availability: https://github.com/javsort/Linkaster
+  #
+  -->
+
   <parent>
     <groupId>com.linkaster</groupId>
     <artifactId>linkaster-services</artifactId>

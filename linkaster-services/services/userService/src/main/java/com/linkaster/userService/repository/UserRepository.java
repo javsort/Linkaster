@@ -9,11 +9,18 @@ import org.springframework.stereotype.Repository;
 
 import com.linkaster.userService.model.User;
 
-/*
- * This is a repository interface to handle database actions for the User entity.
+  /*
+ *  Title: UserRepository.java
+ *  Author: Ortega Mendoza, Javier
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    /*
+     * This is a repository interface to handle database actions for the User entity.
+     */
 
     // Find a user by its role
     @Query("SELECT u FROM User u WHERE u.role.role = :role")

@@ -3,6 +3,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.linkaster.cabinetService</groupId>
   <artifactId>cabinetService</artifactId>
+
+  <!--
+  #
+  #  Title: cabinetService -> pom.xml
+  #  Author: Ortega Mendoza, Javier
+  #  Date: 2024
+  #  Code Version: 1.0
+  #  Availability: https://github.com/javsort/Linkaster
+  #
+  -->
+
+
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>cabinetService</name>

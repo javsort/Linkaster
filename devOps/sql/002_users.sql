@@ -1,3 +1,11 @@
+--
+--  Title: 002_users.sql
+--  Author: Ortega Mendoza, Javier & Gonzalez Fernandez, Marcos 
+--  Date: 2024
+--  Code Version: 1.0
+--  Availability: https://github.com/javsort/Linkaster
+--
+
 -- Create the users table
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

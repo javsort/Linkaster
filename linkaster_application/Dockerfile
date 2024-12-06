@@ -1,3 +1,12 @@
+
+#
+#  Title: linkaster_application/Dockerfile -> flutter container
+#  Author: Ortega Mendoza, Javier
+#  Date: 2024
+#  Code Version: 1.0
+#  Availability: https://github.com/javsort/Linkaster
+#
+
 # Use official Flutter image
 FROM dart:stable AS build
 
