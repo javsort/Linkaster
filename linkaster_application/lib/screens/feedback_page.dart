@@ -6,76 +6,148 @@
  *  Availability: https://github.com/javsort/Linkaster
  */
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../config/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FeedbackPage extends StatefulWidget {
   final String? token; // Token passed to the FeedbackPage
 
-  const FeedbackPage({
-    Key? key,
-    required this.token,
-  }) : super(key: key);
+  FeedbackPage({required this.token});
 
   @override
   _FeedbackPageState createState() => _FeedbackPageState();
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
+  List<String> recipients = [];
+  String? token;
+  List<Map<String, String>> classesStudents = []; // Stores module details
+
   String? selectedRecipient;
   bool isAnonymous = false;
-  String? feedbackInput;
   final TextEditingController feedbackController = TextEditingController();
 
-  final List<String> recipients = [
-    'Dr. Smith - Software Engineering',
-    'Prof. Johnson - Computer Science',
-    'Ms. Brown - IT Club Leader',
-    'Mr. White - Data Science Club Leader',
-    'Dr. Miller - Cyber Security',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _retrieveToken();
+  }
+
+  Future<void> _retrieveToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('authToken');
+      print('Retrieved token: $token');
+    });
+
+    if (token != null) {
+      await _fetchClasses(); 
+    }
+  }
+
+  Future<void> _fetchClasses() async {
+    final url = Uri.parse('${AppConfig.apiBaseUrl}/api/module/students');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Classes fetched: ${response.body}');
+      final List<dynamic> moduleList = jsonDecode(response.body);
+      setState(() {
+        
+        // Populate `classesStudents` and `recipients`
+        classesStudents = moduleList.map<Map<String, String>>((module) {
+          return {
+            'moduleId': module['moduleId'].toString(),
+            'moduleName': module['moduleName'],
+            'teacherId': module['teacherId'].toString(),
+            'moduleOwnerName': module['moduleOwnerName'],
+          };
+        }).toList();
+
+        recipients = classesStudents.map<String>((module) {
+          final moduleName = module['moduleName'];
+          final moduleOwnerName = module['moduleOwnerName'];
+          return '$moduleOwnerName - $moduleName';
+        }).toList();
+        
+      });
+    } else {
+      print('Failed to fetch classes: ${response.statusCode}');
+      _showError('Failed to fetch classes: (${response.statusCode})');
+    }
+  }
 
   Future<void> _submitFeedback() async {
-    String feedback = feedbackController.text;
-
-    if (selectedRecipient != null && feedback.isNotEmpty) {
-      try {
-        final url = Uri.parse(
-            'https://example.com/api/feedback'); // Replace with your actual API URL
-
-        final response = await http.post(
-          url,
-          headers: {
-            'Authorization':
-                'Bearer ${widget.token}', // Add token to the request
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'recipient': selectedRecipient,
-            'feedback': feedback,
-            'isAnonymous': isAnonymous,
-          }),
-        );
-
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Feedback submitted successfully!')),
-          );
-          feedbackController.clear();
-          setState(() {
-            selectedRecipient = null;
-            isAnonymous = false;
-          });
-        } else {
-          _showError('Failed to submit feedback. (${response.statusCode})');
-        }
-      } catch (e) {
-        _showError('An error occurred while submitting feedback.');
-      }
-    } else {
+    if (selectedRecipient == null || feedbackController.text.isEmpty) {
       _showError('Please fill in all fields before submitting.');
+      return;
+    }
+
+    final parts = selectedRecipient?.split(' - ');
+    if (parts == null || parts.length != 2) {
+      _showError('Invalid recipient format.');
+      return;
+    }
+
+    final moduleOwnerName = parts[0];
+    final moduleName = parts[1];
+
+    // Find matching module
+    final module = classesStudents.firstWhere(
+      (mod) => mod['moduleName'] == moduleName && mod['moduleOwnerName'] == moduleOwnerName,
+      orElse: () => {},
+    );
+
+    if (module.isEmpty) {
+      _showError('Error processing request: Could not find the selected module or teacher.');
+      return;
+    }
+
+    final recipientID = module['teacherId'];
+    final moduleID = module['moduleId'];
+    final senderID = "1";                                        // Replace with user id
+    final contents = feedbackController.text;
+
+    try {
+      final url = Uri.parse('${AppConfig.apiBaseUrl}/api/feedback/submitFeedback');
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'recipientID': recipientID,
+          'senderID': senderID,
+          'anonymous': isAnonymous,
+          'moduleID': moduleID,
+          'contents': contents,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Feedback submitted successfully!')),
+        );
+        feedbackController.clear();
+        setState(() {
+          selectedRecipient = null;
+          isAnonymous = false;
+        });
+      } else {
+        _showError('Failed to submit feedback. (${response.statusCode})');
+      }
+    } catch (e) {
+      _showError('An error occurred while submitting feedback.');
     }
   }
 
@@ -84,7 +156,13 @@ class _FeedbackPageState extends State<FeedbackPage> {
       SnackBar(content: Text(message)),
     );
   }
-
+/*
+ *  Title: feedback_page.dart (UI implementation)
+ *  Author: Gonzalez Fernandez, Marcos
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,7 +225,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                //add saving feedback text as feedbackInput
               ),
             ),
             SizedBox(height: 20),

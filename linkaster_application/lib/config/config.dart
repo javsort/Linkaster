@@ -1,6 +1,6 @@
 /*
  *  Title: config.dart
- *  Author: Marcos Gonzalez Fernandez
+ *  Author: Ortega Mendoza, Javier
  *  Date: 2024
  *  Code Version: 1.0
  *  Availability: https://github.com/javsort/Linkaster

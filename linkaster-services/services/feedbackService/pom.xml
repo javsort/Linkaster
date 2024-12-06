@@ -4,6 +4,17 @@
   <groupId>com.linkaster.feedbackService</groupId>
   <artifactId>feedbackService</artifactId>
   <packaging>jar</packaging>
+
+  <!--
+  #
+  #  Title: feedbackService -> pom.xml
+  #  Author: Ortega Mendoza, Javier
+  #  Date: 2024
+  #  Code Version: 1.0
+  #  Availability: https://github.com/javsort/Linkaster
+  #
+  -->
+
   <version>1.0-SNAPSHOT</version>
   <name>feedbackService</name>
   <url>http://maven.apache.org</url>

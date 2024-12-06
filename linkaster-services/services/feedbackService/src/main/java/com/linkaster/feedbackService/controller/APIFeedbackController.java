@@ -1,3 +1,10 @@
+/*
+ *  Title: APIFeedbackController.java
+ *  Author: Berenger, Marlene
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 package com.linkaster.feedbackService.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;

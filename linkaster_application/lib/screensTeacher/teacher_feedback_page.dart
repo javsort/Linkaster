@@ -5,28 +5,62 @@
  *  Code Version: 1.0
  *  Availability: https://github.com/javsort/Linkaster
  */
-
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../config/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class TeacherFeedbackPage extends StatelessWidget {
-  // Mock data - Replace this with your actual data fetching logic
-  final List<FeedbackItem> feedbackItems = [
-    FeedbackItem(
-      senderName: 'Anonymous Student',
-      message:
-          'Great lectures and very helpful office hours. Thank you for being so approachable.',
-      timestamp: DateTime.now().subtract(Duration(days: 1)),
-      isAnonymous: true,
-    ),
-    FeedbackItem(
-      senderName: 'John Doe',
-      message:
-          'The practical examples in class really helped me understand the concepts better.',
-      timestamp: DateTime.now().subtract(Duration(days: 2)),
-      isAnonymous: false,
-    ),
-    // Add more feedback items as needed
-  ];
+class TeacherFeedbackPage extends StatefulWidget {
+
+  final String? token; // Token passed to the FeedbackPage
+
+  TeacherFeedbackPage({required this.token});
+
+  @override
+  _TeacherFeedbackPageState createState() => _TeacherFeedbackPageState();
+}
+
+class _TeacherFeedbackPageState extends State<TeacherFeedbackPage> {
+  String? token;
+  late Future<List<FeedbackItem>> feedbackItems;
+
+  @override
+  void initState() {
+    super.initState();
+    feedbackItems = fetchFeedbacks();
+  }
+  Future<void> _retrieveToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    token = prefs.getString('authToken');
+    print('Retrieved token: $token');
+  });
+
+    if (token != null) {
+      await fetchFeedbacks(); 
+    }
+  }
+  Future<List<FeedbackItem>> fetchFeedbacks() async {
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.apiBaseUrl}/api/feedback/getInstructorFeedbacks'),
+        headers: {'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',},
+      );
+
+      if (response.statusCode == 200) {
+        List jsonResponse = jsonDecode(response.body);
+        return jsonResponse
+            .map((data) => FeedbackItem.fromJson(data))
+            .toList();
+      } else {
+        throw Exception('Failed to load feedbacks');
+      }
+    } catch (error) {
+      throw Exception('Error fetching feedbacks: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,21 +69,38 @@ class TeacherFeedbackPage extends StatelessWidget {
         title: Text('Feedback Received'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: feedbackItems.isEmpty
-          ? Center(
+      body: FutureBuilder<List<FeedbackItem>>(
+        future: feedbackItems,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: TextStyle(fontSize: 16, color: Colors.red),
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(
               child: Text(
                 'No feedback received yet',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-            )
-          : ListView.builder(
+            );
+          } else {
+            final feedbackList = snapshot.data!;
+            return ListView.builder(
               padding: EdgeInsets.all(16.0),
-              itemCount: feedbackItems.length,
+              itemCount: feedbackList.length,
               itemBuilder: (context, index) {
-                final feedback = feedbackItems[index];
+                final feedback = feedbackList[index];
                 return FeedbackCard(feedback: feedback);
               },
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }
@@ -73,17 +124,17 @@ class FeedbackCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              feedback.isAnonymous ? 'Anonymous' : feedback.senderName,
+              feedback.senderID == '0' ? 'Anonymous' : feedback.senderID,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 fontStyle:
-                    feedback.isAnonymous ? FontStyle.italic : FontStyle.normal,
+                    feedback.senderID == '0' ? FontStyle.italic : FontStyle.normal,
               ),
             ),
             SizedBox(height: 8),
             Text(
-              feedback.message,
+              feedback.contents,
               style: TextStyle(fontSize: 15),
             ),
           ],
@@ -94,15 +145,18 @@ class FeedbackCard extends StatelessWidget {
 }
 
 class FeedbackItem {
-  final String senderName;
-  final String message;
-  final DateTime timestamp;
-  final bool isAnonymous;
+  final String senderID;
+  final String contents;
 
   FeedbackItem({
-    required this.senderName,
-    required this.message,
-    required this.timestamp,
-    required this.isAnonymous,
+    required this.senderID,
+    required this.contents,
   });
+
+  factory FeedbackItem.fromJson(Map<String, dynamic> json) {
+    return FeedbackItem(
+      senderID: json['sender'],
+      contents: json['contents'],
+    );
+  }
 }
