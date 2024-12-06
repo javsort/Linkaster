@@ -1,8 +1,6 @@
-@echo off
+#!/bin/bash
 
-#  USE this script ONLY to build the backend and run the backend containers
-
-setlocal
+#  USE this script ONLY to build the front-end and run the front-end containers
 
 :: Drop all containers and networks - no matter if w or w/o backend
 docker-compose -f ../docker-compose-backend.yml down

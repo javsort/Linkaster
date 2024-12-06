@@ -32,6 +32,7 @@ buildNumber.properties
 /linkaster-services/services/timetableService/timetableService.iml
 /linkaster-services/services/userService/userService.iml
 
+/linkaster-services/services/**/target
 
 linkaster-services\services\unifiedService\src\main\java\com\linkaster\unifiedService\UnifiedServiceApplication.java
 linkaster-services\services\unifiedService\src\main\resources\application.yml
@@ -58,3 +59,7 @@ linkaster_application/macos/flutter/generated_plugin_registrant.h
 linkaster_application/macos/flutter/generated_plugins.xcconfig
 
 linkaster_application/pubspec.lock
+
+linkaster_application/.dart_tool/
+linkaster_application/build
+linkaster_application/flutter_01.log
