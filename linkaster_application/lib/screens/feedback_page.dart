@@ -62,14 +62,14 @@ class _FeedbackPageState extends State<FeedbackPage> {
             'moduleId': module['moduleId'].toString(),
             'moduleName': module['moduleName'],
             'teacherId': module['teacherId'].toString(),
-            'teacherName': module['teacherName'],
+            'moduleOwnerName': module['moduleOwnerName'],
           };
         }).toList();
 
         recipients = classesStudents.map<String>((module) {
-          final moduleName = module['moduleName']!;
-          final teacherName = module['teacherName']!;
-          return '$teacherName - $moduleName';
+          final moduleName = module['moduleName'];
+          final moduleOwnerName = module['moduleOwnerName'];
+          return '$moduleOwnerName - $moduleName';
         }).toList();
         
       });
@@ -91,12 +91,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
       return;
     }
 
-    final teacherName = parts[0];
+    final moduleOwnerName = parts[0];
     final moduleName = parts[1];
 
     // Find matching module
     final module = classesStudents.firstWhere(
-      (mod) => mod['moduleName'] == moduleName && mod['teacherName'] == teacherName,
+      (mod) => mod['moduleName'] == moduleName && mod['moduleOwnerName'] == moduleOwnerName,
       orElse: () => {},
     );
 
