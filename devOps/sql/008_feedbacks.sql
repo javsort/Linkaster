@@ -1,3 +1,10 @@
+/*
+ *  Title: 008_feedbacks.sql
+ *  Author: Berenger, Marlene
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 CREATE TABLE feedbacks (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     feedback_recipient_id BIGINT NOT NULL,

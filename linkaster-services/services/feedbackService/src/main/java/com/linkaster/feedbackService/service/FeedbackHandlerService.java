@@ -1,3 +1,10 @@
+/*
+ *  Title: FeedbackHandlerService.java
+ *  Author: Berenger, Marlene
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
 package com.linkaster.feedbackService.service;
 
 import java.util.Collections;

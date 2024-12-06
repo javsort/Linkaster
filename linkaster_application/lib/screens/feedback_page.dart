@@ -1,3 +1,11 @@
+/*
+ *  Title: feedback_page.dart (methods)
+ *  Author: Berenger, Marlene
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -149,7 +157,13 @@ class _FeedbackPageState extends State<FeedbackPage> {
       SnackBar(content: Text(message)),
     );
   }
-
+/*
+ *  Title: feedback_page.dart (UI implementation)
+ *  Author: Gonzalez Fernandez, Marcos
+ *  Date: 2024
+ *  Code Version: 1.0
+ *  Availability: https://github.com/javsort/Linkaster
+ */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
