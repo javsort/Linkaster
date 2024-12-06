@@ -1,3 +1,11 @@
+--
+--  Title: 001_roles.sql
+--  Author: Ortega Mendoza, Javier
+--  Date: 2024
+--  Code Version: 1.0
+--  Availability: https://github.com/javsort/Linkaster
+--
+
 -- Create the roles table
 CREATE TABLE roles (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

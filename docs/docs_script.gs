@@ -1,3 +1,11 @@
+---
+Important note:
+
+# This helper script was fully written by AI, ChatGPT. It was prompted to facilitate updates from our documentation file in Google Docs and include it in this repo. 
+Besides updating our repo with the updates from the Google Docs file, it alters no further behaviour in the overall project.
+
+---
+
 function exportToGitHub() {
   // Step 1: Get the document content
   var doc = DocumentApp.getActiveDocument();

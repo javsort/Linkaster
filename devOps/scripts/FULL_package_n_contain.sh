@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#
+#  FULL_package_n_contain.sh
+#  Author: Ortega Mendoza, Javier
+#  Date: 2024
+#  Code Version: 1.0
+#  Availability: https://github.com/javsort/Linkaster
+#
+
 # WARNING!!! This script builds the ENTIRE app, takes a while to run and requires a lot of resources.
 
 # Ensure necessary scripts are executable

@@ -1,5 +1,12 @@
 name: 'linkaster_application'
 
+#
+#  Title: docker-compose-full.yml
+#  Author: Ortega Mendoza, Javier
+#  Date: 2024
+#  Code Version: 1.0
+#  Availability: https://github.com/javsort/Linkaster
+#
 
 # DO NOT UNCOMMENT THE SERVICES THAT ARE NOT READY YET -> if you're testing, you can uncomment the one being tested
 
